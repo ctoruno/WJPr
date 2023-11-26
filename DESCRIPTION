@@ -22,7 +22,7 @@ Description: The WJPr package contains the most important data and visualization
     of visualization functions for replicating the image charts from the Country Reports.
     Additionally, you can find the Rule of Law Index scores data for all factors and subfactors
     as complementary data.
-URL: https://github.com/ctoruno/WJPr
+URL: https://github.com/ctoruno/WJPr, https://ctoruno.github.io/WJPr/
 BugReports: https://github.com/ctoruno/WJPr/issues
 License: MIT License
 Encoding: UTF-8
