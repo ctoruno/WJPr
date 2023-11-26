@@ -12,6 +12,7 @@ The WJPr package contains the most important data and visualization tools used b
 Useful links:
 \itemize{
   \item \url{https://github.com/ctoruno/WJPr}
+  \item \url{https://ctoruno.github.io/WJPr/}
   \item Report bugs at \url{https://github.com/ctoruno/WJPr/issues}
 }
 
