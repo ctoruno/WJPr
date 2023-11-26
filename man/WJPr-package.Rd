@@ -16,4 +16,13 @@ Useful links:
 }
 
 }
+\author{
+\strong{Maintainer}: Carlos A. Toruno Paniagua \email{ctoruno@worldjusticeproject.org}
+
+Authors:
+\itemize{
+  \item A. Santiago Pardo Gonzalez \email{spardo@worldjusticeproject.org}
+}
+
+}
 \keyword{internal}
