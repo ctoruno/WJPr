@@ -55,18 +55,21 @@ A ggplot object
 object with a bar chart following WJP style guidelines.
 }
 \examples{
-
+\dontrun{
 # Always load the WJP fonts if not passing a custom theme to function
-wjp_fonts(path2SP)
+wjp_fonts()
 
 # Preparing data
-data2plot <- gpp \%>\% select(country, q1a, q1b, q1c) \%>\% 
-  mutate(across(!country, ~case_when(.x == 1 | .x == 2 ~ 0, .x == 3 | .x == 4 ~ 1))) \%>\% 
+data2plot <- gpp \%>\% 
+  select(country, q1a, q1b, q1c) \%>\%
+  mutate(dplyr::across(!country, 
+                       ~case_when(.x == 1 | .x == 2 ~ 0, .x == 3 | .x == 4 ~ 1))) \%>\%
   group_by(country) \%>\%
   summarise(across(everything(), \(x) mean(x, na.rm = TRUE))) \%>\% 
   mutate(across(!country, \(x) x*100)) \%>\%
   pivot_longer(!country, names_to = "group", values_to = "value2plot")
- 
- # Plotting chart
- wjp_bars(data = data2plot, target = "value2plot", grouping = "country", colors = "group")
+
+# Plotting chart
+wjp_bars(data = data2plot, target = "value2plot", grouping = "country", colors = "group")
+}
 }

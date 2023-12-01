@@ -1,18 +1,31 @@
-wjp_fonts <- function(path2SP){
-  path2fonts<- paste0(path2SP, "6. Country Reports/0. Fonts/")
-  sysfonts::font_add(family     = "Lato Full",
-                     regular    = paste0(path2fonts, "Lato-Regular.ttf"),
-                     italic     = paste0(path2fonts, "Lato-LightItalic.ttf"),
-                     bold       = paste0(path2fonts, "Lato-Bold.ttf"),
-                     bolditalic = paste0(path2fonts, "Lato-BoldItalic.ttf"))
-  sysfonts::font_add(family  = "Lato Light",
-                     regular = paste0(path2fonts, "Lato-Light.ttf"))
-  sysfonts::font_add(family  = "Lato Black",
-                     regular = paste0(path2fonts, "Lato-Black.ttf"))
-  sysfonts::font_add(family  = "Lato Black Italic",
-                     regular = paste0(path2fonts, "Lato-BlackItalic.ttf"))
-  sysfonts::font_add(family  = "Lato Medium",
-                     regular = paste0(path2fonts, "Lato-Medium.ttf"))
+wjp_fonts <- function(){
+  sysfonts::font_add_google(
+    "Lato",
+    family     = "Lato Full",
+    regular.wt = 400,
+    bold.wt    = 700,
+    repo       = "http://fonts.gstatic.com/",
+    db_cache   = TRUE,
+    handle     = curl::new_handle()
+  )
+  sysfonts::font_add_google(
+    "Lato",
+    family     = "Lato Light",
+    regular.wt = 300,
+    bold.wt    = 700,
+    repo       = "http://fonts.gstatic.com/",
+    db_cache   = TRUE,
+    handle     = curl::new_handle()
+  )
+  sysfonts::font_add_google(
+    "Lato",
+    family     = "Lato Black",
+    regular.wt = 900,
+    bold.wt    = 900,
+    repo       = "http://fonts.gstatic.com/",
+    db_cache   = TRUE,
+    handle     = curl::new_handle()
+  )
   showtext::showtext_auto()
 }
 
@@ -46,3 +59,5 @@ WJP_theme <- function() {
         plot.margin  = unit(c(0, 0, 0, 0), "points")
   ) 
 }
+
+

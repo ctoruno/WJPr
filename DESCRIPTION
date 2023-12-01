@@ -28,8 +28,10 @@ License: MIT License
 Encoding: UTF-8
 LazyData: true
 Imports:
+    magrittr,
     dplyr,
     tidyr,
+    tibble,
     ggplot2,
     rlang,
     lifecycle,
@@ -39,7 +41,9 @@ Imports:
     sysfonts,
     showtext,
     ggtext,
-    ggrepel
+    ggrepel,
+    haven,
+    ggh4x
 Depends: 
     R (>= 2.10)
 RoxygenNote: 7.2.3

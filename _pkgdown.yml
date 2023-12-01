@@ -1,4 +1,5 @@
 url: https://ctoruno.github.io/WJPr/
 template:
   bootstrap: 5
+  bootswatch: minty
 
