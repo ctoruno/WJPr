@@ -47,6 +47,7 @@ object with a diverging horizontal bar chart following WJP style guidelines.
 }
 \examples{
 
+\dontrun{
 # Always load the WJP fonts if not passing a custom theme to function
 wjp_fonts()
 
@@ -77,5 +78,5 @@ data2plot$div<- factor(data2plot$div, levels = c("Not at all confident", "Not ve
 
 # Plotting chart
 wjp_divbars(data = data2plot, target = "value2plot", grouping = "country", diverging = "div", cvec = colors4plot, labels = "Label")
-
+}
 }
