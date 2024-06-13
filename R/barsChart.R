@@ -74,11 +74,13 @@ wjp_bars <- function(
                     lab_pos       = all_of(lab_pos),
                     order_var     = all_of(order))
   }
+  if (grouping == colors) {
+    data <- data %>%
+      mutate(grouping_var = colors_var)
+  }
   
   # Creating plot
   if(is.null(order)) {
-    
-    print(" ALL GOOD")
     
     if (stacked == F) {
       plt <- ggplot(data, 
