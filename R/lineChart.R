@@ -88,17 +88,17 @@ wjp_lines <- function(
     plt <- plt +
       geom_point(size = 2,
                  show.legend = F) +
-      geom_line(size  = 1,
-                show.legend = F)
+      geom_line(linewidth    = 1,
+                show.legend  = F)
       
   } else {
     plt <- plt +
       geom_point(size = 2,
                  aes(alpha   = colors_var),
                  show.legend = F) +
-      geom_line(size = 1,
-                aes(alpha   = colors_var),
-                show.legend = F) +
+      geom_line(linewidth    = 1,
+                aes(alpha    = colors_var),
+                show.legend  = F) +
       scale_alpha_manual(values = transparencies)
   }
   
