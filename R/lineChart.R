@@ -156,10 +156,11 @@ wjp_lines <- function(
                          expand = c(0,0),
                          breaks = seq(0,100,20),
                          labels = paste0(seq(0,100,20), "%")) +
-      scale_x_continuous(breaks = x.breaks,
+      scale_x_continuous(limits = c(head(x.breaks, 1), tail(x.breaks, 1)),
+                         breaks = x.breaks,
                          expand = expansion(mult = c(0.075, 0.125)),
                          labels = x.labels,
-                         guide = "axis_minor",
+                         guide  = "axis_minor",
                          minor_breaks = sec.ticks)
     
     if (!is.null(cvec)) {
