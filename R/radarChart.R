@@ -157,86 +157,109 @@ wjp_radar <- function(
   radar <-
     
     # We set up the ggplot
-    ggplot(data = map_df(seq(0, 1, 0.20) + central_distance, circle_coords),
-           aes(x = x, 
-               y = y)) +
+    ggplot(
+      data = map_df(seq(0, 1, 0.20) + central_distance, circle_coords),
+      aes(x = x, 
+          y = y)
+    ) +
     
     # We draw the outter ring
-    geom_polygon(data     = circle_coords(1 + central_distance),
-                 linetype = "dotted",
-                 color    = "#d1cfd1",
-                 fill     = NA) +
+    geom_polygon(
+      data     = circle_coords(1 + central_distance),
+      linetype = "dotted",
+      color    = "#d1cfd1",
+      fill     = NA
+    ) +
     
     # We draw the inner rings
-    geom_path(aes(group = r), 
-              lty       = 2, 
-              color     = "#d1cfd1") +
+    geom_path(
+      aes(group = r), 
+      lty       = 2, 
+      color     = "#d1cfd1"
+    ) +
     
     # We draw the ZERO ring
-    geom_polygon(data = map_df(seq(0, 1, 0.20) + central_distance, circle_coords) %>%
-                   filter(r == 0.2),
-                 fill      = NA,
-                 linetype  = "solid",
-                 color     = "#d1cfd1") +
+    geom_polygon(
+      data = map_df(seq(0, 1, 0.20) + central_distance, circle_coords) %>%
+        filter(r == 0.2),
+      fill      = NA,
+      linetype  = "solid",
+      color     = "#d1cfd1"
+    ) +
     
     # Then, we draw the Y-axis lines
-    geom_line(data = axis_coords(), 
-              aes(x     = x, 
-                  y     = y, 
-                  group = id),
-              color = "#d1cfd1") +
+    geom_line(
+      data = axis_coords(), 
+      aes(x     = x, 
+          y     = y, 
+          group = id),
+      color = "#d1cfd1"
+    ) +
     
     # Along with its labels
-    geom_text(data = axis_measure, 
-              aes(x     = x, 
-                  y     = y, 
-                  label = paste0(format(round(r*100, 0),
-                                        nsmall = 0),
-                                 "%")),
-              family      = "Lato Full",
-              fontface    = "plain",
-              color = "#524F4C") +
+    geom_text(
+      data = axis_measure, 
+      aes(x     = x, 
+          y     = y, 
+          label = paste0(format(round(r*100, 0),
+                                nsmall = 0),
+                         "%")),
+      family      = "Lato Full",
+      fontface    = "plain",
+      color = "#524F4C"
+    ) +
     
     # Then, we add the axis labels
-    geom_richtext(data  = text_coords() %>%
-                    mutate(n = row_number(),
-                           across(x, 
-                                  ~.x*-1),
-                           across(c(x,y),
-                                  ~if_else(n == 2, .x*1.125, .x))),  # We need to adjust by the long text in axis number 8
-                  aes(x = x, 
-                      y = y), 
-                  label = data %>% 
-                    arrange(order_var) %>% 
-                    filter(color_var == maincat) %>% 
-                    pull(label_var),
-                  family      = "Lato Full",
-                  fontface    = "plain",
-                  fill        = NA, 
-                  label.color = NA) +
+    geom_richtext(
+      data  = text_coords() %>%
+        mutate(
+          n = row_number(),
+          # across(x, 
+          #        ~.x*-1),
+          # across(c(x,y),
+          #        ~if_else(n == 2, .x*1.125, .x)) # We need to adjust by the long text in axis number 8
+        ),
+      aes(x = x, 
+          y = y), 
+      label = data %>% 
+        arrange(order_var) %>% 
+        filter(color_var == maincat) %>% 
+        pull(label_var),
+      family      = "Lato Full",
+      fontface    = "plain",
+      fill        = NA, 
+      label.color = NA
+    ) +
     
-    # We add the data points along whith its lines
-    geom_point(data = rescaled_data, 
-               aes(x     = x, 
-                   y     = y, 
-                   group = color_var, 
-                   color = as.factor(color_var)), 
-               size      = 3) +
-    geom_path(data = rescaled_data, 
-              aes(x     = x, 
-                  y     = y, 
-                  group = color_var, 
-                  color = as.factor(color_var)), 
-              size = 1) +
+    # We add the data points along with its lines
+    geom_point(
+      data = rescaled_data, 
+      aes(x     = x, 
+          y     = y, 
+          group = color_var, 
+          color = as.factor(color_var)), 
+      size      = 3
+    ) +
+    geom_path(
+      data = rescaled_data, 
+      aes(x     = x, 
+          y     = y, 
+          group = color_var, 
+          color = as.factor(color_var)), 
+      size = 1
+    ) +
     
+    # Remaining aesthetics
     coord_cartesian(clip = "off") + 
     scale_x_continuous(expand = expansion(mult = 0.125)) + 
     scale_y_continuous(expand = expansion(mult = 0.10)) + 
     scale_color_manual(values = colors) +
     theme_void() +
-    theme(panel.background   = element_blank(),
-          plot.background    = element_blank(),
-          legend.position    = "none")
+    theme(
+      panel.background   = element_blank(),
+      plot.background    = element_blank(),
+      legend.position    = "none"
+    )
   
   return(radar)
   
