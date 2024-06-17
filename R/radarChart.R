@@ -69,7 +69,7 @@ wjp_radar <- function(
       )
   } else {
     data <- data %>%
-      group_by(color_var) %>%
+      group_by(year, color_var) %>%
       mutate(
         order_var = row_number()
       ) %>%
@@ -146,7 +146,9 @@ wjp_radar <- function(
     ) %>%
     group_by(color_var) %>%
     arrange(order_var) %>%
-    mutate(coords = rescaled_coords(target_var + central_distance)) %>%
+    mutate(
+      coords = rescaled_coords(target_var + central_distance)
+    ) %>%
     unnest(cols   = c(coords)) %>%
     mutate(across(x, 
                   ~.x*-1))
@@ -239,10 +241,6 @@ wjp_radar <- function(
   return(radar)
   
 }
-
-
-
-
 
 
 
