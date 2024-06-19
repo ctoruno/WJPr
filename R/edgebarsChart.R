@@ -8,8 +8,9 @@
 #' @param y_value A string specifying the variable in the data frame that contains the numeric values to be plotted as bars.
 #' @param x_var A string specifying the variable in the data frame that contains the categories for the x-axis.
 #' @param label_var A string specifying the variable in the data frame that contains the labels to be displayed near the bars.
-#' @param x_lab_pos A string specifying the variable in the data frame that contains the positions for the x-axis labels. Default is NULL.
+#' @param x_lab_pos A string specifying the variable in the data frame that contains the order in which the bars will be displayed. Default is NULL.
 #' @param y_lab_pos A numeric value specifying the y-axis position for displaying labels. Default is 0.
+#' @param nudge_lab A numeric value specifying the padding for displaying labels in milimeters. Default is 2.5.
 #' @param bar_color A string specifying the color for the bars. Default is "#2a2a94".
 #' @param margin_top A numeric value specifying the top margin of the plot. Default is 20.
 #'
@@ -36,6 +37,7 @@ wjp_edgebars <- function(
     label_var    = NULL,
     x_lab_pos    = NULL,
     y_lab_pos    = 0,
+    nudge_lab    = 2.5,
     bar_color    = "#2a2a94",
     margin_top   = 20  
   ) {
@@ -79,8 +81,8 @@ wjp_edgebars <- function(
     ) +
     geom_richtext(
       aes(
-        x        = x_lab_pos, 
-        y        = y_lab_pos-0.01,
+        x        = reorder(x_var,x_lab_pos), 
+        y        = y_lab_pos,
         label    = label_var, 
         family   = "Lato Full", 
         fontface = "plain"
@@ -89,7 +91,8 @@ wjp_edgebars <- function(
       hjust = 0, 
       vjust = 0, 
       size  = 3.514598,
-      label.color = NA
+      label.color = NA,
+      label.padding = unit(c(0, 0, nudge_lab, 0), "mm"),
     ) +
     geom_text(
       aes(
@@ -127,21 +130,3 @@ wjp_edgebars <- function(
   
   return(plt)
 }
-
-# y_value      = "values2plot"
-# x_var        = "variable"
-# label_var    = "labels"
-# y_lab_pos    = 0
-# bar_color    = "#2a2a94"
-# margin_top   = 20
-# 
-# 
-# wjp_edgebars(
-#   data         = data,
-#   y_value      = "values2plot",
-#   x_var        = "variable",
-#   label_var    = "labels",
-#   y_lab_pos    = 0,
-#   bar_color    = "#2a2a94",
-#   margin_top   = 20,
-# )
