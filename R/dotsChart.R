@@ -56,7 +56,7 @@ wjp_dotsChart <- function(
     grouping,  
     labels,  
     cvec      = NULL, 
-    order,
+    order     = NULL,
     diffOpac  = F,  
     opacities = NULL,      
     diffShp   = F,     
