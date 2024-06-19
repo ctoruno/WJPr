@@ -50,7 +50,7 @@
 #' 
 #' 
 
-wjp_dotsChart <- function(
+wjp_dots <- function(
     data,             
     target,      
     grouping,  
