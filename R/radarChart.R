@@ -30,12 +30,6 @@
 #' wjp_radar(data, "axis_var", "target_var", "label_var", "order_var", colors, maincat)
 #' }
 #'
-#' @import dplyr
-#' @import ggplot2
-#' @import tidyr
-#' @import tibble
-#' @import ggtext
-#' @import purrr
 #'
 #' @export
 
