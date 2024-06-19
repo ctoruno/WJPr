@@ -48,27 +48,40 @@
 #' wjp_dotsChart(data= data2plot, target = "value2plot", grouping = "div", order = "order_value", labels = "country")
 #' }
 #' 
+#' 
 
 wjp_dotsChart <- function(
-    data,             # Data frame with data
-    target,       # Variable that will supply the values to plot
-    grouping,     # Variable containing the grouping values. Plot will show a different color per group.
-    labels,       # Variable containing the Y-Axis labels to show in the plot
-    cvec = NULL,           # Named vector with the colors to apply to lines
+    data,             
+    target,      
+    grouping,  
+    labels,  
+    cvec      = NULL, 
     order,
-    diffOpac = F,     # Should the dots have different opacity levels?
-    opacities = NULL,        # Named vector with opacity levels
-    diffShp = F,      # Should point be displayed using different shapes?
-    shapes  = NA,      # Named vector with shapes to be displayed
-    ptheme= WJP_theme()
+    diffOpac  = F,  
+    opacities = NULL,      
+    diffShp   = F,     
+    shapes    = NA,
+    ptheme    = WJP_theme()
 ){
   
   # Renaming variables in the data frame to match the function naming
-  data <- data %>%
-    rename(target_var    = all_of(target),
-           grouping_var  = all_of(grouping),
-           labels_var    = all_of(labels),
-           order_var     = all_of(order))
+  if (is.null(order)){
+    data <- data %>%
+      rename(target_var    = all_of(target),
+             grouping_var  = all_of(grouping),
+             labels_var    = all_of(labels)) %>%
+      group_by(grouping_var) %>%
+      mutate(
+        order_var = row_number()
+      )
+    
+  } else {
+    data <- data %>%
+      rename(target_var    = all_of(target),
+             grouping_var  = all_of(grouping),
+             labels_var    = all_of(labels),
+             order_var     = all_of(order))
+  }
   
   # Creating a strip pattern
   strips <- data %>%
