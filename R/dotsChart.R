@@ -186,7 +186,7 @@ wjp_dots <- function(
                                        "%"),
                        position = "right") +
     coord_flip() +
-    WJP_theme() +
+    ptheme +
     theme(axis.title.x       = element_blank(),
           axis.title.y       = element_blank(),
           panel.grid.major.y = element_blank(),

@@ -105,7 +105,7 @@ wjp_gauge <- function(
     scale_fill_manual(values  = cvec) +
     coord_polar(theta = "y",
                 start = -pi/2) +
-    WJP_theme() +
+    ptheme +
     labs(y = "",
          x = "") +
     theme(

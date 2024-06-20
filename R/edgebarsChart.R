@@ -39,7 +39,8 @@ wjp_edgebars <- function(
     y_lab_pos    = 0,
     nudge_lab    = 2.5,
     bar_color    = "#2a2a94",
-    margin_top   = 20  
+    margin_top   = 20,
+    ptheme       = WJP_theme()
   ) {
   
   # Renaming variables in the data frame to match the function naming
@@ -116,7 +117,7 @@ wjp_edgebars <- function(
       expand = expansion(mult = c(0,0.15))
     ) +
     coord_flip(clip = "off") +
-    WJP_theme() +
+    ptheme +
     theme(
       panel.grid.major.x = element_blank(),
       panel.grid.major.y = element_blank(),
