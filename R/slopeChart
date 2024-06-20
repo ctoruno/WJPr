@@ -33,11 +33,11 @@ wjp_slope <- function(
   
   # Creating ggplot
   plt <- ggplot(data, 
-                aes(x     = grouping_var,
+                aes(x     = sample,
                     y     = target_var,
                     color = colors_var,
                     label = labels_var,
-                    group = ngroups))
+                    group = grouping_var))
   
   if (transparency == F) {
     plt <- plt +
