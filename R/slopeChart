@@ -27,7 +27,6 @@ wjp_slope <- function(
     data <- data %>%
       rename(target_var    = all_of(target),
              grouping_var  = all_of(grouping),
-             labels_var    = all_of(labels),
              colors_var    = all_of(colors))
   }
   
