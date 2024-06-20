@@ -1,4 +1,38 @@
-
+#' Plot a Dumbbell Chart following WJP style guidelines
+#'
+#' @description
+#' `wjp_dumbbells()` takes a data frame with a specific data structure (usually long shaped) and returns a ggplot
+#' object with a dumbbell chart following WJP style guidelines.
+#'
+#' @param data A data frame containing the data to be plotted.
+#' @param target A string specifying the variable in the data frame that contains the numeric values to be plotted.
+#' @param rows A string specifying the variable in the data frame that contains the categories for the rows.
+#' @param color A string specifying the variable in the data frame that indicates the groups for start and end points.
+#' @param cgroups A vector of two strings specifying the groups to be compared in the dumbbell plot.
+#' @param cvec A vector of colors to apply to the points and lines. Default is NULL.
+#' @param order A named vector specifying the order of the categories. Default is NULL.
+#' @param ptheme A ggplot2 theme object to be applied to the plot. Default is WJP_theme().
+#'
+#' @return A ggplot object representing the dumbbell plot.
+#'
+#' @examples
+#' \dontrun{
+#' data <- data.frame(
+#'   group = c("A", "B", "C", "A", "B", "C"),
+#'   target = c(30, 50, 20, 40, 60, 30),
+#'   color = c("start", "start", "start", "end", "end", "end")
+#' )
+#' cgroups <- c("start", "end")
+#' cvec <- c("#2a2a94", "#d1cfd1")
+#' 
+#' wjp_dumbbells(data, "target", "group", "color", cgroups, cvec)
+#' }
+#'
+#' @import dplyr
+#' @import ggplot2
+#' @import tidyr
+#'
+#' @export
 
 wjp_dumbbells <- function(
     data,             
