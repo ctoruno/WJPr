@@ -6,13 +6,7 @@ wjp_slope <- function(
     labels         = NULL,
     colors,
     cvec           = NULL,
-    repel          = F, 
-    transparency   = F,        
-    transparencies = NULL,   
-    custom.axis    = F,         
-    x.breaks       = NULL,    
-    x.labels       = NULL,    
-    sec.ticks      = NULL,       
+    repel          = FALSE,
     ptheme         = WJP_theme()
 ){
   
@@ -29,41 +23,35 @@ wjp_slope <- function(
              target_var    = all_of(target),
              grouping_var  = all_of(grouping),
              colors_var    = all_of(colors))
-  }
+  } 
+  
+  data <- data %>%
+    mutate(
+      labpos = case_when(
+        grouping_var == min(data$grouping_var) ~ grouping_var-0.5,
+        grouping_var == max(data$grouping_var) ~ grouping_var+0.5,
+      )
+    )
   
   # Creating ggplot
   plt <- ggplot(data, 
-                aes(x     = "year",
+                aes(x     = grouping_var,
                     y     = target_var,
                     color = colors_var,
                     label = labels_var,
-                    group = grouping_var))
-  
-  if (transparency == F) {
-    plt <- plt +
-      geom_point(size = 2,
-                 show.legend = F) +
-      geom_line(linewidth    = 1,
-                show.legend  = F)
-    
-  } else {
-    plt <- plt +
-      geom_point(size = 2,
-                 aes(alpha   = colors_var),
-                 show.legend = F) +
-      geom_line(linewidth    = 1,
-                aes(alpha    = colors_var),
-                show.legend  = F) +
-      scale_alpha_manual(values = transparencies)
-  }
+                    group = ngroups)) +
+    geom_point(size = 2,
+               show.legend = F) +
+    geom_line(linewidth    = 1,
+              show.legend  = F)
   
   if (repel == F) {
     
     # Applying regular geom_text
     plt <- plt +
-      geom_text(aes(y     = target_var + 7.5,
-                    x     = grouping_var,
-                    label = labels_var),
+      geom_text(aes(y       = target_var,
+                    x       = labpos,
+                    label   = labels_var),
                 family      = "Lato Full",
                 fontface    = "bold",
                 size        = 3.514598,
@@ -74,7 +62,7 @@ wjp_slope <- function(
     # Applying ggrepel for a better visualization of plots
     plt <- plt +
       geom_text_repel(mapping = aes(y     = target_var,
-                                    x     = grouping_var,
+                                    x     = labpos,
                                     label = labels_var),
                       family      = "Lato Full",
                       fontface    = "bold",
@@ -91,49 +79,29 @@ wjp_slope <- function(
     
   }
   
-  # Continuing with ggplot  
-  
-  if (custom.axis == F) {
-    plt <- plt +
-      scale_y_continuous(limits = c(0, 105),
-                         expand = c(0,0),
-                         breaks = seq(0,100,20),
-                         labels = paste0(seq(0,100,20), "%"))
-    
-    if (!is.null(cvec)) {
-      plt <- plt +
-        scale_color_manual(values = cvec)
-    }
-    
-  } else {
-    plt <- plt +
-      scale_y_continuous(limits = c(0, 105),
-                         expand = c(0,0),
-                         breaks = seq(0,100,20),
-                         labels = paste0(seq(0,100,20), "%")) +
-      scale_x_continuous(limits = c(head(x.breaks, 1), tail(x.breaks, 1)),
-                         breaks = x.breaks,
-                         expand = expansion(mult = c(0.075, 0.125)),
-                         labels = x.labels,
-                         guide  = "axis_minor",
-                         minor_breaks = sec.ticks)
-    
-    if (!is.null(cvec)) {
-      plt <- plt +
-        scale_color_manual(values = cvec)
-    }
-  }
-  
   plt <- plt +
+    scale_x_continuous(
+      n.breaks = 2,
+      breaks   = data %>% ungroup() %>% distinct(grouping_var) %>% pull(grouping_var)
+    ) +
+    scale_y_continuous(limits = c(0, 105),
+                       expand = c(0,0),
+                       breaks = seq(0,100,20),
+                       labels = paste0(seq(0,100,20), "%")) +
+    scale_color_manual(values = cvec) +
     ptheme +
-    theme(panel.grid.major.x = element_blank(),
-          panel.grid.major.y = element_line(colour = "#d1cfd1"),
-          axis.title.x       = element_blank(),
-          axis.title.y       = element_blank(),
-          axis.line.x        = element_line(color    = "#d1cfd1"),
-          axis.ticks.x       = element_line(color    = "#d1cfd1",
-                                            linetype = "solid"),
-          ggh4x.axis.ticks.length.minor = rel(1))
-  
+    theme(
+      panel.grid.major.x = element_line(color    = "#ACA8AC",
+                                        linetype = "solid",
+                                        linewidth = 0.75),
+      panel.grid.major.y = element_blank(),
+      axis.line.y        = element_blank(),
+      axis.title.x       = element_blank(),
+      axis.title.y       = element_blank(),
+      axis.line.x        = element_blank(),
+      axis.ticks.x       = element_blank(),
+      axis.text.y        = element_blank() 
+    )
+
   return(plt)
 }
