@@ -110,7 +110,7 @@ wjp_gauge <- function(
          x = "") +
     theme(
       legend.position  = "none",
-      plot.margin      = grid::unit(c(0,0,0,0), "mm")
+      plot.margin      = grid::unit(c(0,0,0,0), "mm"),
       panel.grid.major = element_blank(),
       axis.title.x     = element_blank(),
       axis.text.x      = element_blank(),
