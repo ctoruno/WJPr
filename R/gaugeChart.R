@@ -114,6 +114,7 @@ wjp_gauge <- function(
       legend.position  = "none",
       plot.margin      = grid::unit(crop, "mm"),
       panel.grid.major = element_blank(),
+      panel.background = element_blank(),
       axis.title.x     = element_blank(),
       axis.text.x      = element_blank(),
       axis.text.y      = element_blank()
