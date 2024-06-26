@@ -8,6 +8,7 @@
 #' @param cvec A vector of colors to apply to the segments.
 #' @param factor_order A vector specifying the order in which the segments should be plotted.
 #' @param labels A string specifying the variable in the data frame that contains the labels to be displayed. Default is NULL.
+#' @param crop A numeric vector specifying the amount of space to crop from the Top, Right, Bottom, and Right margins, respectively. Default is c(-10,0,0,-8).
 #' @param ptheme A ggplot2 theme object to be applied to the plot. Default is WJP_theme().
 #'
 #' @return A ggplot object representing the gauge chart.
@@ -34,6 +35,7 @@ wjp_gauge <- function(
     cvec           = NULL,
     factor_order   = NULL,
     labels         = NULL,
+    crop           = c(-10,0,0,-8),
     ptheme         = WJP_theme()
 ){
   
@@ -110,12 +112,21 @@ wjp_gauge <- function(
          x = "") +
     theme(
       legend.position  = "none",
-      plot.margin      = grid::unit(c(0,0,0,0), "mm"),
+      plot.margin      = grid::unit(crop, "mm"),
       panel.grid.major = element_blank(),
       axis.title.x     = element_blank(),
       axis.text.x      = element_blank(),
       axis.text.y      = element_blank()
     )
   
-  return(plt)
+  with_ggtrace(
+    x = plt + theme(aspect.ratio = .52),
+    method = Layout$render,
+    trace_steps = 5L,
+    trace_expr = quote({
+      panels <- lapply(panels, editGrob, vp = viewport(yscale = c(0.49, 1)))
+    }),
+    out = "g"
+  )
+  
 }
