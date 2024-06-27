@@ -7,6 +7,8 @@
 #' @param data Data frame containing the data to plot
 #' @param target String. Column name of the variable that will supply the values to plot.
 #' @param grouping String. Column name of the variable that supplies the grouping values. The plot will show a different color per group.
+#' @param sample_size (Optional) Integer. Supplies the number of observations for drawing binomial confidence intervals.
+#' @param draw_ci Boolean. If TRUE, will draw a binomial confidence interval with target value as parameter of interest.
 #' @param labels String. Column name of the variable that supplies the Y-Axis labels to show in the plot.
 #' @param cvec Named vector with the colors to apply to the dots. Default is NULL.
 #' @param order String. Column name of the variable that contains the custom order for the labels.
@@ -52,7 +54,9 @@
 
 wjp_dots <- function(
     data,             
-    target,      
+    target,
+    sample_size = NULL,
+    draw_ci = TRUE,
     grouping,  
     labels,  
     cvec      = NULL, 
@@ -81,6 +85,16 @@ wjp_dots <- function(
              grouping_var  = all_of(grouping),
              labels_var    = all_of(labels),
              order_var     = all_of(order))
+  }
+  
+  # Ensure target_var is numeric -- important for confidence intervals
+  data <- data %>%
+    mutate(target_var = as.numeric(target_var))
+  
+  # Add sample_size_var if sample_size is provided in function call
+  if (!is.null(sample_size)) {
+    data <- data %>%
+      rename(sample_size_var = all_of(sample_size))
   }
   
   # Creating a strip pattern
@@ -118,6 +132,22 @@ wjp_dots <- function(
     scale_fill_manual(values = c("grey"  = "#EBEBEB",
                                  "white"  = "#FFFFFF"),
                       na.value = NULL)
+  
+  if (draw_ci && !is.null(sample_size)) {
+    alpha <- 0.05  # 95% confidence interval
+    plt <- plt +
+      geom_errorbar(
+        data = data,
+        aes(
+          x = reorder(labels_var, -order_var),
+          ymin = target_var - qnorm(1 - alpha / 2) * sqrt((target_var * (100 - target_var)) / sample_size_var),
+          ymax = target_var + qnorm(1 - alpha / 2) * sqrt((target_var * (100 - target_var)) / sample_size_var),
+          color = grouping_var
+        ),
+        width = 0.2,
+        show.legend = FALSE
+      )
+  }
   
   if (diffShp == F) {
     
