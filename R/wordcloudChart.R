@@ -27,7 +27,7 @@ wjp_wordcloud <- function(df, word_col, freq_col, min_freq = 2, cvec = NULL, pth
   
   # Create the word cloud plot
   p <- ggplot(df, aes_string(label = word_col, size = freq_col, color = freq_col)) +
-    geom_text_wordcloud() +
+    geom_text_wordcloud_area() +
     scale_size_area(max_size = 30) +
     scale_color_gradientn(colors = cvec) +
     theme_minimal() +
