@@ -90,7 +90,7 @@ wjp_bars <- function(
                         fill  = colors_var)) +
         geom_bar(stat = "identity",
                  show.legend = F, width = width) +
-        geom_text(aes(y    = target_var + 10),
+        geom_text(aes(y    = target_var + lab_pos),
                   color    = "#4a4a49",
                   family   = "Lato Full",
                   fontface = "bold")
@@ -103,7 +103,7 @@ wjp_bars <- function(
         geom_bar(stat         = "identity",
                  position     = "stack", 
                  show.legend  = F,  width = width) +
-        geom_text(aes(y    = lab_pos),
+        geom_text(aes(y    = lab_pos + lab_pos),
                   color    = "#ffffff",
                   family   = "Lato Full",
                   fontface = "bold")
@@ -119,7 +119,7 @@ wjp_bars <- function(
                         fill  = colors_var)) +
         geom_bar(stat = "identity",
                  show.legend = F,  width = width) +
-        geom_text(aes(y    = target_var + 10),
+        geom_text(aes(y    = target_var + lab_pos),
                   color    = "#4a4a49",
                   family   = "Lato Full",
                   fontface = "bold")
