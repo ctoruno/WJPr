@@ -66,17 +66,26 @@ wjp_bars <- function(
                     lab_pos       = all_of(lab_pos),
                     order_var     = all_of(order))
   } else {
+    
     data <- data %>%
       dplyr::rename(target_var    = all_of(target),
                     grouping_var  = all_of(grouping),
                     labels_var    = all_of(labels),
                     colors_var    = all_of(colors),
-                    lab_pos       = all_of(lab_pos),
                     order_var     = all_of(order))
+    
+    if (is.null(lab_pos)){
+      data <- data %>%
+        dplyr::mutate(lab_pos = target_var)
+    } else {
+      data <- data %>%
+        dplyr::rename(lab_pos = all_of(lab_pos))
+    }
+    
   }
   if (grouping == colors) {
     data <- data %>%
-      mutate(grouping_var = colors_var)
+      dplyr::mutate(grouping_var = colors_var)
   }
   
   # Creating plot
@@ -90,7 +99,7 @@ wjp_bars <- function(
                         fill  = colors_var)) +
         geom_bar(stat = "identity",
                  show.legend = F, width = width) +
-        geom_text(aes(y    = target_var + lab_pos),
+        geom_text(aes(y    = lab_pos),
                   color    = "#4a4a49",
                   family   = "Lato Full",
                   fontface = "bold")
@@ -103,7 +112,7 @@ wjp_bars <- function(
         geom_bar(stat         = "identity",
                  position     = "stack", 
                  show.legend  = F,  width = width) +
-        geom_text(aes(y    = lab_pos + lab_pos),
+        geom_text(aes(y    = lab_pos),
                   color    = "#ffffff",
                   family   = "Lato Full",
                   fontface = "bold")
