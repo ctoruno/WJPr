@@ -8,11 +8,14 @@
 #' @param y_value A string specifying the variable in the data frame that contains the numeric values to be plotted as bars.
 #' @param x_var A string specifying the variable in the data frame that contains the categories for the x-axis.
 #' @param label_var A string specifying the variable in the data frame that contains the labels to be displayed near the bars.
+#' @param color_var A string specifying the variable in the data frame that contains the the color groupings for the bars. Default is NULL.
+#' @param bar_colors A named vector specifying the colors for the bars. Default is NULL.
 #' @param x_lab_pos A string specifying the variable in the data frame that contains the order in which the bars will be displayed. Default is NULL.
 #' @param y_lab_pos A numeric value specifying the y-axis position for displaying labels. Default is 0.
 #' @param nudge_lab A numeric value specifying the padding for displaying labels in milimeters. Default is 2.5.
-#' @param bar_color A string specifying the color for the bars. Default is "#2a2a94".
 #' @param margin_top A numeric value specifying the top margin of the plot. Default is 20.
+#' @param bar_width A numeric value specifying the width of the bars. For single bars the default value of 0.35 is recommended, for plots with two bars a value of 0.5 is more suitable.
+#' @param ptheme A ggplot aesthetic theme to be applied to the chart. Default is the WJP_theme initilized with the package.
 #'
 #' @return A ggplot object representing the edge bars plot.
 #'
@@ -31,39 +34,47 @@
 #' @export
 
 wjp_edgebars <- function(
-    data         = NULL,
-    y_value      = NULL,
-    x_var        = NULL,
-    label_var    = NULL,
+    data,
+    y_value,
+    x_var,
+    label_var,
+    color_var    = NULL,
+    bar_colors   = NULL,
     x_lab_pos    = NULL,
     y_lab_pos    = 0,
     nudge_lab    = 2.5,
-    bar_color    = "#2a2a94",
     margin_top   = 20,
+    bar_width    = 0.35,
     ptheme       = WJP_theme()
   ) {
   
   # Renaming variables in the data frame to match the function naming
+  if(is.null(color_var)) {
+    color_var  <- "color"
+    bar_colors <- c("anchor" = "#2a2a94")
+    data <- data %>%
+      mutate(
+        color = "anchor"
+      )
+  }
+  
   if (is.null(x_lab_pos)) {
+    x_lab_pos <- "label_position"
     data <- data %>%
       ungroup() %>%
       mutate(
-        x_lab_pos = row_number()
-      ) %>%
-      dplyr::rename(
-        y_value   = all_of(y_value),
-        x_var     = all_of(x_var),
-        label_var = all_of(label_var)
+        label_position = row_number()
       )
-  } else {
-    data <- data %>%
-      rename(
-        y_value   = all_of(y_value),
-        x_var     = all_of(x_var),
-        label_var = all_of(label_var),
-        x_lab_pos = all_of(x_lab_pos)
-      )
-  }
+  } 
+  
+  data <- data %>%
+    rename(
+      y_value   = all_of(y_value),
+      x_var     = all_of(x_var),
+      label_var = all_of(label_var),
+      x_lab_pos = all_of(x_lab_pos),
+      color_var = all_of(color_var)
+    )
   
   # Creating plot
   plt <- ggplot(
@@ -71,13 +82,13 @@ wjp_edgebars <- function(
     aes(
       x    = reorder(x_var,x_lab_pos),
       y    = y_value, 
+      fill = color_var
     )
   ) +
     geom_bar(
-      fill     = bar_color,
-      position = "stack", 
+      position = "dodge", 
       stat     = "identity",
-      width    = 0.35, 
+      width    = bar_width, 
       show.legend = F
     ) +
     geom_richtext(
@@ -104,14 +115,14 @@ wjp_edgebars <- function(
                        "%")
       ),
       color    = "#4a4a49",
+      position = position_dodge(width = bar_width),
       family   = "Lato Full",
       fontface = "bold", 
       size     = 3.514598, 
       hjust    = -0.1
     ) +
     scale_fill_manual(
-      values = c("value"       = bar_color,
-                 "empty_value" = "#f3f3f3")
+      values = bar_colors
     ) +
     scale_y_continuous(
       expand = expansion(mult = c(0,0.15))
