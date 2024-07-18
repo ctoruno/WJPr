@@ -10,8 +10,8 @@
 #' @param label_var A string specifying the variable in the data frame that contains the labels to be displayed.
 #' @param color_var A string specifying the variable in the data frame that contains the color groupings.
 #' @param colors A vector of colors to apply to lines. The first color will be applied to percentages in labels.
-#' @param maincat A string indicating the category of labels to show in the radar.
 #' @param order_var A string specifying the variable in the data frame that contains the display order of categories.
+#' @param maincat A string indicating the category of labels to show in the radar.
 #'
 #' @return A ggplot object representing the radar plot.
 #'
@@ -39,9 +39,9 @@ wjp_radar <- function(
     target_var,       
     label_var,        
     color_var,
-    colors,           
-    maincat,
-    order_var = NULL
+    colors,   
+    order_var,
+    maincat
 ){
   
   # Renaming variables in the data frame to match the function naming
@@ -49,26 +49,13 @@ wjp_radar <- function(
     rename(axis_var    = all_of(axis_var),
            target_var  = all_of(target_var),
            label_var   = all_of(label_var),
-           color_var   = all_of(color_var)) %>%
+           color_var   = all_of(color_var),
+           order_var   = all_of(order_var)) %>%
     
-    # Radar coordinates were computed for ranges between [0,1]
+    # Radar coordinates are computed for values between [0,1]
     mutate(
       target_var = target_var/100
     )
-  
-  if (!is.null(order_var)){
-    data <- data %>%
-      rename(
-        order_var = all_of(order_var)
-      )
-  } else {
-    data <- data %>%
-      group_by(year, color_var) %>%
-      mutate(
-        order_var = row_number()
-      ) %>%
-      ungroup()
-  }
   
   # Counting number of axis for the radar
   nvertix <- length(unique(data$axis_var))
@@ -107,15 +94,22 @@ wjp_radar <- function(
   }
   
   # Y-Axis labels
-  axis_measure <- tibble(r         = seq(0, 1, 0.2),
-                         parameter = rep(data %>% 
-                                           filter(order_var == 1) %>% 
-                                           distinct(axis_var) %>% 
-                                           pull(axis_var),
-                                         6)) %>%
+  axis_measure <- tibble(
+    r         = seq(0, 1, 0.2),
+    parameter = rep(
+      data %>% 
+        filter(order_var == 1) %>% 
+        ungroup() %>%
+        distinct(axis_var) %>% 
+        pull(axis_var),
+      6
+    )
+  ) %>%
     bind_cols(
-      map_df(seq(0, 1, 0.2) + central_distance, 
-             text_coords) %>% 
+      map_df(
+        seq(0, 1, 0.2) + central_distance, 
+        text_coords
+      ) %>% 
         distinct(r, .keep_all = T) %>% 
         select(-r)
     )
@@ -143,9 +137,7 @@ wjp_radar <- function(
     mutate(
       coords = rescaled_coords(target_var + central_distance)
     ) %>%
-    unnest(cols   = c(coords)) %>%
-    mutate(across(x, 
-                  ~.x*-1))
+    unnest(cols   = c(coords)) 
   
   # Generating ggplot
   radar <-
@@ -258,6 +250,5 @@ wjp_radar <- function(
   return(radar)
   
 }
-
 
 
