@@ -9,6 +9,8 @@
 #' @param rows A string specifying the variable in the data frame that contains the categories for the rows.
 #' @param color A string specifying the variable in the data frame that indicates the groups for start and end points.
 #' @param cgroups A vector of two strings specifying the groups to be compared in the dumbbell plot.
+#' @param labels A string specifying the variable in the data frame that contains the text labels to display.
+#' @param labpos A string specifying the variable in the data frame that contains the label positions.
 #' @param cvec A vector of colors to apply to the points and lines. Default is NULL.
 #' @param order A named vector specifying the order of the categories. Default is NULL.
 #' @param ptheme A ggplot2 theme object to be applied to the plot. Default is WJP_theme().
@@ -40,13 +42,15 @@ wjp_dumbbells <- function(
     rows,
     color,
     cgroups,  
+    labels    = NULL,
+    labpos    = NULL,
     cvec      = NULL, 
     order     = NULL,
     ptheme    = WJP_theme()
 ){
   
   # Renaming variables in the data frame to match the function naming
-  data <- data %>%
+  data_wider <- data %>%
     pivot_wider(
       id_cols     = all_of(rows),
       names_from  = color,
@@ -58,22 +62,56 @@ wjp_dumbbells <- function(
       end   = all_of(cgroups[2])
     )
   
+  if (!is.null(labels)) {
+    data_wider <- data_wider %>%
+      left_join(
+        data %>%
+          pivot_wider(
+            id_cols     = all_of(rows),
+            names_from  = color,
+            values_from = labels
+          ) %>%
+          rename(
+            group = all_of(rows),
+            lab0  = all_of(names(cvec[1])),
+            lab1  = all_of(names(cvec[2]))
+          ),
+        by = "group"
+      )
+    
+    data_wider <- data_wider %>%
+      left_join(
+        data %>%
+          pivot_wider(
+            id_cols     = all_of(rows),
+            names_from  = color,
+            values_from = labpos
+          ) %>%
+          rename(
+            group = all_of(rows),
+            labp0 = all_of(names(cvec[1])),
+            labp1 = all_of(names(cvec[2]))
+          ),
+        by = "group"
+      )
+  }
+  
   if (is.null(order)){
-    data <- data %>%
+    data_wider <- data_wider %>%
       ungroup() %>%
       mutate(
         order = row_number()
       )
     
   } else {
-   data <- data %>% 
+    data_wider <- data_wider %>% 
      mutate(
        order = recode(group, !!!order)
      )
   }
   
   # Creating a strip pattern
-  strips <- data %>%
+  strips <- data_wider %>%
     group_by(group) %>%
     summarise() %>%
     mutate(ymin = 0,
@@ -91,7 +129,7 @@ wjp_dumbbells <- function(
   
   # Drawing plot
   plt <- ggplot() +
-    geom_blank(data      = data,
+    geom_blank(data      = data_wider,
                aes(x     = reorder(group, -order),
                    y     = end)) +
     geom_ribbon(data      = strips,
@@ -107,7 +145,7 @@ wjp_dumbbells <- function(
       na.value = NULL
     ) +
     geom_segment(
-      data = data,
+      data = data_wider,
       aes(
         x    = group,
         xend = group,
@@ -118,7 +156,7 @@ wjp_dumbbells <- function(
       size  = 1.5 
     ) +
     geom_point(
-      data = data,
+      data = data_wider,
       aes(
         x     = group,
         y     = start
@@ -127,14 +165,42 @@ wjp_dumbbells <- function(
       size  = 3
     ) +
     geom_point(
-      data = data,
+      data = data_wider,
       aes(
         x     = group,
         y     = end
       ),
       color = cvec[2],
       size  = 3
-    ) +
+    ) 
+  
+  if (!is.null(labels)) {
+    plt <- plt +
+      geom_text(
+        data = data_wider,
+        aes(
+          x     = group,
+          y     = labp0,
+          label = lab0
+        ),
+        family   = "Lato Full",
+        fontface = "bold",
+        color    = cvec[1] 
+      ) +
+      geom_text(
+        data = data_wider,
+        aes(
+          x     = group,
+          y     = labp1,
+          label = lab1
+        ),
+        family   = "Lato Full",
+        fontface = "bold",
+        color    = cvec[2]
+      )
+  }
+  
+  plt <- plt +
     scale_color_manual(values = cvec) +
     scale_y_continuous(limits = c(0,100),
                        breaks = seq(0,100,20),
