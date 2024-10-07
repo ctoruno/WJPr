@@ -50,12 +50,12 @@ wjp_radar <- function(
            target_var  = all_of(target_var),
            label_var   = all_of(label_var),
            color_var   = all_of(color_var),
-           order_var   = all_of(order_var)) %>%
+           order_var   = all_of(order_var)) # %>%
     
     # Radar coordinates are computed for values between [0,1]
-    mutate(
-      target_var = target_var/100
-    )
+    # mutate(
+    #   target_var = target_var / 100
+    # )
   
   # Counting number of axis for the radar
   nvertix <- length(unique(data$axis_var))
@@ -187,9 +187,7 @@ wjp_radar <- function(
       data = axis_measure, 
       aes(x     = x, 
           y     = y, 
-          label = paste0(format(round(r*100, 0),
-                                nsmall = 0),
-                         "%")),
+          label = c("0","0.2","0.4","0.6","0.8","1")),
       family      = "Lato Full",
       fontface    = "plain",
       color = "#524F4C"
