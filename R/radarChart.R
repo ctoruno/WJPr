@@ -12,6 +12,7 @@
 #' @param colors A vector of colors to apply to lines. The first color will be applied to percentages in labels.
 #' @param order_var A string specifying the variable in the data frame that contains the display order of categories.
 #' @param maincat A string indicating the category of labels to show in the radar.
+#' @param source A string which can take two values (GPP or QRQ). 
 #'
 #' @return A ggplot object representing the radar plot.
 #'
@@ -41,7 +42,8 @@ wjp_radar <- function(
     color_var,
     colors,   
     order_var,
-    maincat
+    maincat,
+    source = "GPP"
 ){
   
   # Renaming variables in the data frame to match the function naming
@@ -53,9 +55,11 @@ wjp_radar <- function(
            order_var   = all_of(order_var)) # %>%
     
     # Radar coordinates are computed for values between [0,1]
-    # mutate(
-    #   target_var = target_var / 100
-    # )
+    # for GPP, data passed to function will be in [0,100] 
+    # for QRQ, scores are already in [0,1]
+    mutate(
+      target_var = ifelse(source == "GPP", target_var / 100, target_var)
+    )
   
   # Counting number of axis for the radar
   nvertix <- length(unique(data$axis_var))
@@ -187,11 +191,15 @@ wjp_radar <- function(
       data = axis_measure, 
       aes(x     = x, 
           y     = y, 
-          label = c("0","0.2","0.4","0.6","0.8","1")),
+          label = ifelse(source == "GPP", 
+                         paste0(format(round(r*100, 0),
+                                       nsmall = 0),
+                                        "%"),
+                        c("0","0.2","0.4","0.6","0.8","1")),
       family      = "Lato Full",
       fontface    = "plain",
       color = "#524F4C"
-    ) +
+    )) +
     
     # Then, we add the axis labels
     geom_richtext(
