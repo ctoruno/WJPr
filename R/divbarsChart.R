@@ -11,6 +11,7 @@
 #' @param negative String. Value that indicates that the bar should be in the negative quadrant.
 #' @param cvec Named vector with the colors to apply to each bar segment. Default is NULL.
 #' @param labels String. Column name of the variable that supplies the labels to show in the plot. Default is NULL.
+#' @param label_color String. Hex code to be use for the labels.
 #' @param custom_order Boolean. If TRUE, the plot will expect a custom order of the graph labels. Default is FALSE.
 #' @param order String. Vector that contains the custom order for the y-axis labels. Default is NULL.
 #' @param ptheme ggplot theme function to apply to the plot. By default, function applies WJP_theme()
@@ -61,7 +62,8 @@ wjp_divbars <- function(
     diverging,     
     negative = NULL,   
     cvec = NULL,
-    labels = NULL,       
+    labels = NULL,  
+    label_color = "#ffffff",
     custom_order = F, 
     order = NULL,  
     ptheme= WJP_theme()
@@ -83,6 +85,7 @@ wjp_divbars <- function(
            order_var     = any_of(order))
   data$labels_var <- rep("", nrow(data))
   }
+  
   # Creating ggplot
   if (custom_order == F) {
     chart <- ggplot(data, aes(x     = rows_var,
@@ -101,10 +104,10 @@ wjp_divbars <- function(
   
   # Adding geoms
   chart <- chart +
-    geom_bar(stat        = "identity",
-             position    = "stack",
-             show.legend = F,
-             width       = 0.85) +
+    geom_bar(stat         = "identity",
+             position     = "stack",
+             show.legend  = F,
+             width        = 0.85) +
     geom_hline(yintercept = 0,
                linetype   = "solid",
                size       = 0.5,
@@ -123,7 +126,9 @@ wjp_divbars <- function(
     scale_x_discrete(limits   = rev) +
     coord_flip() +
     WJP_theme() +
-    geom_text(aes(label = labels_var), position=position_stack(vjust=0.5))+
+    geom_text(aes(label = labels_var), 
+              color    = label_color, 
+              position = position_stack(vjust=0.5)) +
     theme(panel.grid.major = element_blank(),
           axis.text.x      = element_text(family = "Lato Full",
                                           face   = "bold",
@@ -140,7 +145,6 @@ wjp_divbars <- function(
           axis.line.x       = element_line(linetype   = "solid",
                                            size       = 0.5,
                                            color      = "#262424"))
-  
   
   return(chart)
   

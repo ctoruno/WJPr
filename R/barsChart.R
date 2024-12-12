@@ -6,19 +6,19 @@
 #'
 #' @param data Data frame containing the data to plot
 #' @param target String. Column name of the variable that will supply the values to plot.
-#' @param grouping String. Column name of the variable that supplies the grouping values.
-#' @param labels String. Column name of the variable containing the value labels to display in plot.
-#' @param colors String. Column name of the variable that contains the color grouping.
-#' @param cvec Named vector with the colors to apply to bars.
-#' @param direction String. Should the bars be plotted in a "horizontal" or "vertical" way?
+#' @param grouping String. Column name of the variable that supplies the grouping values. Values can be grouped either in the X- or Y- Axis.
+#' @param labels String. Column name of the variable containing the value labels to display in plot. Default is NULL.
+#' @param colors String. Column name of the variable that contains the color grouping. Default is NULL.
+#' @param cvec Named vector with the colors to apply to bars. Vector names should have the values specified by the "colors" variables, while vector values should have 
+#' @param direction String. Should the bars be plotted in a "horizontal" or "vertical" way? Default is "vertical".
 #' @param stacked Boolean. If TRUE, bars will be stacked on top of each other per group. Default is FALSE.
-#' @param lab_pos String. Column name of the variable that contains the coordinates for the value labels.
+#' @param lab_pos String. Column name of the variable that contains the coordinates for the value labels. Default is NULL.
 #' @param expand Boolean. If TRUE, the plot will give extra space for value labels. Default is FALSE.
-#' @param order_var String. Column name of the variable that contains the custom order for labels.
-#' @param width Numeric value between 0 and 1. Width of bars as a percentage of the space for each bar.
+#' @param order String. Column name of the variable that contains the custom order for labels.
+#' @param width Numeric value between 0 and 1. Width of bars as a percentage of the space for each bar. Default is 0.9.
 #' @param ptheme ggplot theme function to apply to the plot. By default, function applies WJP_theme()
 #'
-#' @return A ggplot object
+#' @returns A ggplot object
 #' @export
 #'
 #' @examples
@@ -45,12 +45,12 @@ wjp_bars <- function(
     target,        
     grouping,      
     labels     = NULL,        
-    colors,        
+    colors     = NULL,        
     cvec       = NULL,            
     direction  = "vertical",         
-    stacked    = F,       
+    stacked    = FALSE,       
     lab_pos    = NULL,    
-    expand     = F,      
+    expand     = FALSE,      
     order      = NULL,
     width      = 0.9,
     ptheme     = WJP_theme()
@@ -63,88 +63,93 @@ wjp_bars <- function(
       dplyr::rename(target_var    = all_of(target),
                     grouping_var  = all_of(grouping),
                     colors_var    = all_of(colors),
-                    lab_pos       = all_of(lab_pos),
                     order_var     = all_of(order))
   } else {
-    
     data <- data %>%
       dplyr::rename(target_var    = all_of(target),
                     grouping_var  = all_of(grouping),
                     labels_var    = all_of(labels),
                     colors_var    = all_of(colors),
                     order_var     = all_of(order))
-    
-    if (is.null(lab_pos)){
-      data <- data %>%
-        dplyr::mutate(lab_pos = target_var)
-    } else {
-      data <- data %>%
-        dplyr::rename(lab_pos = all_of(lab_pos))
-    }
-    
   }
-  if (grouping == colors) {
+  
+  if (is.null(lab_pos)){
     data <- data %>%
-      dplyr::mutate(grouping_var = colors_var)
+      dplyr::mutate(lab_pos = target_var)
+  } else {
+    data <- data %>%
+      dplyr::rename(lab_pos = all_of(lab_pos))
+  }
+  
+  if (is.null(colors)) {
+    data <- data %>%
+      dplyr::mutate(colors_var = grouping_var)
+  } else {
+    if (grouping == colors){
+      data <- data %>%
+        dplyr::mutate(colors_var = grouping_var)
+    }
   }
   
   # Creating plot
   if(is.null(order)) {
     
     if (stacked == F) {
-      plt <- ggplot(data, 
-                    aes(x     = grouping_var,
-                        y     = target_var,
-                        label = labels_var,
-                        fill  = colors_var)) +
-        geom_bar(stat = "identity",
-                 show.legend = F, width = width) +
-        geom_text(aes(y    = lab_pos),
-                  color    = "#4a4a49",
-                  family   = "Lato Full",
-                  fontface = "bold")
+      plt <- ggplot2::ggplot(data, 
+                             aes(x     = grouping_var,
+                                 y     = target_var,
+                                 label = labels_var,
+                                 fill  = colors_var)) +
+        ggplot2::geom_bar(stat  = "identity",
+                          width = width,
+                          show.legend = F) +
+        ggplot2::geom_text(aes(y    = lab_pos),
+                           color    = "#4a4a49",
+                           family   = "Lato Full",
+                           fontface = "bold")
     } else {
-      plt <- ggplot(data, 
+      plt <- ggplot2::ggplot(data, 
                     aes(x     = grouping_var,
                         y     = target_var,
                         label = labels_var,
                         fill  = colors_var)) +
-        geom_bar(stat         = "identity",
-                 position     = "stack", 
-                 show.legend  = F,  width = width) +
-        geom_text(aes(y    = lab_pos),
-                  color    = "#ffffff",
-                  family   = "Lato Full",
-                  fontface = "bold")
+        ggplot2::geom_bar(stat         = "identity",
+                          position     = "stack", 
+                          show.legend  = F,  
+                          width        = width) +
+        ggplot2::geom_text(aes(y       = lab_pos),
+                           color       = "#ffffff",
+                           family      = "Lato Full",
+                           fontface    = "bold")
     }
     
   } else {
     
     if (stacked == F) {
-      plt <- ggplot(data, 
-                    aes(x     = reorder(grouping_var, order_var),
-                        y     = target_var,
-                        label = labels_var,
-                        fill  = colors_var)) +
-        geom_bar(stat = "identity",
-                 show.legend = F,  width = width) +
-        geom_text(aes(y    = target_var + lab_pos),
-                  color    = "#4a4a49",
-                  family   = "Lato Full",
-                  fontface = "bold")
+      plt <- ggplot2::ggplot(data, 
+                             aes(x     = reorder(grouping_var, order_var),
+                                 y     = target_var,
+                                 label = labels_var,
+                                 fill  = colors_var)) +
+        ggplot2::geom_bar(stat = "identity",
+                          show.legend = F,  width = width) +
+        ggplot2::geom_text(aes(y    = target_var + lab_pos),
+                           color    = "#4a4a49",
+                           family   = "Lato Full",
+                           fontface = "bold")
     } else {
-      plt <- ggplot(data, 
-                    aes(x     = reorder(grouping_var, order_var),
-                        y     = target_var,
-                        label = labels_var,
-                        fill  = colors_var)) +
-        geom_bar(stat         = "identity",
-                 position     = "stack", 
-                 show.legend  = F,  width = width) +
-        geom_text(aes(y    = lab_pos),
-                  color    = "#ffffff",
-                  family   = "Lato Full",
-                  fontface = "bold")
+      plt <- ggplot2::ggplot(data, 
+                             aes(x     = reorder(grouping_var, order_var),
+                                 y     = target_var,
+                                 label = labels_var,
+                                 fill  = colors_var)) +
+        ggplot2::geom_bar(stat         = "identity",
+                          position     = "stack", 
+                          show.legend  = F,  width = width) +
+        ggplot2::geom_text(aes(y    = lab_pos),
+                           color    = "#ffffff",
+                           family   = "Lato Full",
+                           fontface = "bold")
     }
   }
   
@@ -153,44 +158,36 @@ wjp_bars <- function(
   
   if (!is.null(cvec)) {
     plt <- plt +
-      scale_fill_manual(values = cvec)
-  }
-  
-  if (expand == F) {
-    uplimitV = 100
-    uplimitH = 105
-  } else {
-    uplimitV = 110
-    uplimitH = 105
+      ggplot2::scale_fill_manual(values = cvec)
   }
   
   if (direction == "vertical") {
     plt  <- plt +
-      scale_y_continuous(limits = c(0, uplimitV),
-                         breaks = seq(0,100,20),
-                         labels = paste0(seq(0,100,20), "%")) +
+      ggplot2::scale_y_continuous(limits = c(0, 110),
+                                  breaks = seq(0,100,20),
+                                  labels = paste0(seq(0,100,20), "%")) +
       ptheme +
-      theme(panel.grid.major.x = element_blank(),
-            panel.grid.major.y = element_line(color = "#D0D1D3"),
-            axis.title.x       = element_blank())
+      ggplot2::theme(panel.grid.major.x = element_blank(),
+                     panel.grid.major.y = element_line(color = "#D0D1D3"),
+                     axis.title.x       = element_blank())
   }
   
   if (direction == "horizontal") {
     plt  <- plt +
-      scale_y_continuous(limits = c(0, uplimitH),
-                         breaks = seq(0,100,20),
-                         labels = paste0(seq(0,100,20), "%"),
-                         position = "right") +
-      scale_x_discrete(limits = rev) +
-      coord_flip() +
+      ggplot2::scale_y_continuous(limits = c(0, 110),
+                                  breaks = seq(0,100,20),
+                                  labels = paste0(seq(0,100,20), "%"),
+                                  position = "right") +
+      ggplot2::scale_x_discrete(limits = rev) +
+      ggplot2::coord_flip() +
       ptheme +
-      theme(panel.grid.major.y = element_blank(),
-            panel.grid.major.x = element_line(color = "#D0D1D3"),
-            axis.title.y       = element_blank(),
-            axis.title.x       = element_blank(),
-            axis.text.y        = element_text(hjust = 0))
+      ggplot2::theme(panel.grid.major.y = element_blank(),
+                     panel.grid.major.x = element_line(color = "#D0D1D3"),
+                     axis.title.y       = element_blank(),
+                     axis.title.x       = element_blank(),
+                     axis.text.y        = element_text(hjust = 0))
   }
-    
+  
   return(plt)
   
 }

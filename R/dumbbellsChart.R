@@ -129,21 +129,21 @@ wjp_dumbbells <- function(
   
   # Drawing plot
   plt <- ggplot() +
-    geom_blank(data      = data_wider,
-               aes(x     = reorder(group, -order),
-                   y     = end)) +
-    geom_ribbon(data      = strips,
-                aes(x     = x,
-                    ymin  = ymin,
-                    ymax  = ymax,
-                    group = xposition,
-                    fill  = fill),
-                show.legend = F) +
-    scale_fill_manual(
-      values   = c("grey"  = "#EBEBEB",
-                   "white" = "#FFFFFF"),
-      na.value = NULL
-    ) +
+    # geom_blank(data      = data_wider,
+    #            aes(x     = reorder(group, -order),
+    #                y     = end)) +
+    # geom_ribbon(data      = strips,
+    #             aes(x     = x,
+    #                 ymin  = ymin,
+    #                 ymax  = ymax,
+    #                 group = xposition,
+    #                 fill  = fill),
+    #             show.legend = F) +
+    # scale_fill_manual(
+    #   values   = c("grey"  = "#EBEBEB",
+    #                "white" = "#FFFFFF"),
+    #   na.value = NULL
+    # ) +
     geom_segment(
       data = data_wider,
       aes(
@@ -201,7 +201,7 @@ wjp_dumbbells <- function(
   }
   
   plt <- plt +
-    scale_color_manual(values = cvec) +
+    # scale_color_manual(values = cvec) +
     scale_y_continuous(limits = c(0,100),
                        breaks = seq(0,100,20),
                        labels = paste0(seq(0,100,20),
