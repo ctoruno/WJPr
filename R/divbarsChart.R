@@ -127,6 +127,8 @@ wjp_divbars <- function(
     coord_flip() +
     WJP_theme() +
     geom_text(aes(label = labels_var), 
+              family   = "Lato Full", 
+              fontface = "bold",
               color    = label_color, 
               position = position_stack(vjust=0.5)) +
     theme(panel.grid.major = element_blank(),
