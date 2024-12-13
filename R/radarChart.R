@@ -57,7 +57,7 @@ wjp_radar <- function(
   if (source == "GPP") {
     data <- data %>%
       mutate(
-        target_var = if_else(source == "GPP", target_var/100, target_var)
+        target_var = target_var/100
       )
   }
     
