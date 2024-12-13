@@ -23,33 +23,40 @@ wjp_lollipops <- function(
   }
   
   # Creating plot
-  ggplot(data2plot) +
+  ggplot(data) +
     geom_linerange(
-      aes(y    = reorder(grouping_var, order_var),  
-          xmin = 0, 
-          xmax = target_var), 
+      aes(x    = reorder(grouping_var, order_var),  
+          ymin = 0, 
+          ymax = target_var), 
       size  = line_size, 
       color = line_color
     ) +
     geom_point(
-      aes(x = target_var, 
-          y = reorder(grouping_var, order_value)),
+      aes(y = target_var, 
+          x = reorder(grouping_var, order_var)),
       size  = line_size, 
       shape = 16, 
       color = point_color
     ) +
     geom_text(
-      aes(x = target_var + 0.075, 
-          y = grouping_var, 
-          label = paste0(target_var*100,"%")),
+      aes(y = target_var + 7, 
+          x = grouping_var, 
+          label = paste0(round(target_var, 0),"%")),
       size     = 3.514598, 
       color    = "black",
       family   = "Lato Full", 
       fontface = "bold"
     ) +
-    coord_cartesian(clip="off") +
+    scale_y_continuous(breaks   = seq(0, 100, by = 10),
+                       limits   = c(0,105),
+                       labels   = paste0(seq(0, 100, by = 10),"%"), 
+                       position = "right") +
+    coord_flip() +
     theme_minimal() +
-    scale_x_continuous(breaks = seq(0, 1, by = 0.1),limits = c(0,1),
-                       labels = scales::percent_format(accuracy = 1), position = "top") +
-    WJP_theme()
+    WJP_theme() +
+    theme(
+      axis.title.x = element_blank(),
+      axis.title.y = element_blank(),
+      panel.grid.major.y = element_blank()
+    )
 }
