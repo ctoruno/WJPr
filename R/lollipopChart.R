@@ -6,8 +6,7 @@ wjp_lollipops <- function(
     line_size     = 3,
     point_size    = 4,
     line_color    = "#c4c4c4",
-    point_color   = "#2a2a94",
-    
+    point_color   = "#2a2a94"
 ) {
   
   # Renaming variables in the data frame to match the function naming
