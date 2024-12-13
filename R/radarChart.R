@@ -52,11 +52,15 @@ wjp_radar <- function(
            target_var  = all_of(target_var),
            label_var   = all_of(label_var),
            color_var   = all_of(color_var),
-           order_var   = all_of(order_var)) %>%
-    mutate(
-      target_var = if_else(source == "GPP", target_var/100, target_var)
-    )
+           order_var   = all_of(order_var))
   
+  if (source == "GPP") {
+    data <- data %>%
+      mutate(
+        target_var = if_else(source == "GPP", target_var/100, target_var)
+      )
+  }
+    
   # Counting number of axis for the radar
   nvertix <- length(unique(data$axis_var))
   
