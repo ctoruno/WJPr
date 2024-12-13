@@ -52,13 +52,9 @@ wjp_radar <- function(
            target_var  = all_of(target_var),
            label_var   = all_of(label_var),
            color_var   = all_of(color_var),
-           order_var   = all_of(order_var)) # %>%
-    
-    # Radar coordinates are computed for values between [0,1]
-    # for GPP, data passed to function will be in [0,100] 
-    # for QRQ, scores are already in [0,1]
+           order_var   = all_of(order_var)) %>%
     mutate(
-      target_var = ifelse(source == "GPP", target_var / 100, target_var)
+      target_var = if_else(source == "GPP", target_var/100, target_var)
     )
   
   # Counting number of axis for the radar
