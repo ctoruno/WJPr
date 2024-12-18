@@ -118,6 +118,13 @@ wjp_radar <- function(
         select(-r)
     )
   
+  if (source == "GPP"){
+    axis_measure <- axis_measure %>%
+      mutate(
+        r = paste0(r*100, "%")
+      )
+  }
+  
   # Generating data points
   rescaled_coords <- function(r, n_axis = nvertix){
     fi <- seq(0, 2*pi, (1/n_axis)*2*pi) + pi/2
@@ -188,18 +195,14 @@ wjp_radar <- function(
     
     # Along with its labels
     geom_text(
-      data = axis_measure, 
-      aes(x     = x, 
-          y     = y, 
-          label = ifelse(source == "GPP", 
-                         paste0(format(round(r*100, 0),
-                                       nsmall = 0),
-                                        "%"),
-                        c("0","0.2","0.4","0.6","0.8","1")),
-      family      = "Lato Full",
-      fontface    = "plain",
-      color = "#524F4C"
-    )) +
+      data = axis_measure,
+      aes(x     = x,
+          y     = y,
+          label = r,
+          family   = "Lato Full",
+          fontface = "plain",
+          color    = "#524F4C"
+      )) +
     
     # Then, we add the axis labels
     geom_richtext(
