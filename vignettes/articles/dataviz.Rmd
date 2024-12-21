@@ -28,7 +28,9 @@ This vignette describes the use of the data visualization functions included in 
 8. Edgebars
 
 ```{r setup, message=FALSE}
-library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
 library(haven)
 library(kableExtra)
 library(WJPr)
