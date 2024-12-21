@@ -1,20 +1,24 @@
-diffmeans <- function(data, target_vars, group_vars, geo_var, type = "categorical", t = 0.1){
+diffmeans <- function(data, target_vars, group_vars, geo_var, type = "categorical", t = 0.1, collapse = TRUE, verbose = FALSE){
   
   # Looping through grouping alternatives
   groloop <- lapply(
     group_vars %>% set_names(group_vars),
     function(grouping){
       
-      print("=================")
-      print(grouping)
+      if (verbose == TRUE){
+        print("=================")
+        print(grouping)
+      }
       
       # Looping through target variables
       varloop <- lapply(
         target_vars %>% set_names(target_vars),
         function(target){
           
-          print("--------------")
-          print(target)
+          if (verbose == TRUE){
+            print("--------------")
+            print(target)
+          }
           
           # Preparing data for tests
           data_subset <- data %>%
@@ -76,6 +80,24 @@ diffmeans <- function(data, target_vars, group_vars, geo_var, type = "categorica
             )
         }
       )
+      
+      if (collapse == TRUE){
+        varloop <- imap_dfr(
+          varloop,
+          function(df, var){
+            df %>%
+              mutate(
+                variable = var
+              ) %>%
+              relocate(variable)
+          }
+        ) 
+      } else {
+        varloop <- varloop
+      }
+      
+      return(varloop)
+      
     }
   )
 }

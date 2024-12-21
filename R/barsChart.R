@@ -22,23 +22,57 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Always load the WJP fonts if not passing a custom theme to function
+#' # Always load the WJP fonts (optional)
 #' wjp_fonts()
 #' 
 #' # Preparing data
-#' data2plot <- gpp %>% 
-#'   select(country, q1a, q1b, q1c) %>%
-#'   mutate(dplyr::across(!country, 
-#'                        ~case_when(.x == 1 | .x == 2 ~ 0, .x == 3 | .x == 4 ~ 1))) %>%
-#'   group_by(country) %>%
-#'   summarise(across(everything(), \(x) mean(x, na.rm = TRUE))) %>% 
-#'   mutate(across(!country, \(x) x*100)) %>%
-#'   pivot_longer(!country, names_to = "group", values_to = "value2plot")
+#' gpp_data <- WJPr::gpp
+#' 
+#' data4bars <- gpp_data %>%
+#'   select(country, year, q1a) %>%
+#'   group_by(country, year) %>%
+#'   mutate(
+#'     q1a = as.double(q1a),
+#'     trust = case_when(
+#'       q1a <= 2  ~ 1,
+#'       q1a <= 4  ~ 0,
+#'       q1a == 99 ~ NA_real_
+#'     ),
+#'     year = as.character(year)
+#'   ) %>%
+#'   summarise(
+#'     trust   = mean(trust, na.rm = TRUE),
+#'     .groups = "keep"
+#'   ) %>%
+#'   mutate(
+#'     trust = trust*100
+#'   ) %>%
+#'   filter(year == "2022") %>%
+#'   mutate(
+#'     color_variable = country,
+#'     value_label = paste0(
+#'       format(
+#'         round(trust, 0),
+#'         nsmall = 0
+#'       ),
+#'       "%"
+#'     ),
+#'     label_position = trust + 5
+#'   )
 #' 
 #' # Plotting chart
-#' wjp_bars(data = data2plot, target = "value2plot", grouping = "country", colors = "group")
-#' }
+#' wjp_bars(
+#'   data4bars,              
+#'   target    = "trust",        
+#'   grouping  = "country",
+#'   labels    = "value_label",
+#'   lab_pos   = "label_position",
+#'   colors    = "color_variable",
+#'   cvec      = c("Atlantis"  = "#2E4057",
+#'                 "Narnia"    = "#083D77",
+#'                 "Neverland" = "#F4D35E")
+#'   )
+#'
 
 wjp_bars <- function(
     data,              

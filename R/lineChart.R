@@ -7,7 +7,7 @@
 #' @param data Data frame containing the data to plot
 #' @param target String. Column name of the variable that will supply the values to plot.
 #' @param grouping String. Column name of the variable that supplies the grouping values (X-Axis).
-#' @param ngroups Vector containing each of the groups for the lineas. If there is only a single group, please input c = (1).
+#' @param ngroups Vector containing each of the groups for the lines. If there is only a single group, please input c = (1).
 #' @param labels String. Column name of the variable containing the value labels to display in plot.
 #' @param colors String. Column name of the variable that contains the color grouping.
 #' @param cvec Named vector with the colors to apply to each line.
@@ -25,32 +25,86 @@
 #'
 #' @examples
 #' 
-#' \dontrun{
 #' # Always load the WJP fonts if not passing a custom theme to function
 #' wjp_fonts()
 #' 
 #' # Preparing data
-#' data2plot <- gpp %>% 
-#'   select(year, q1a, q1b, q1c) %>% 
-#'   mutate(across(!year, 
-#'          ~case_when(.x == 1 | .x == 2 ~ 0, .x == 3 | .x == 4 ~ 1))) %>% 
+#' gpp_data <- WJPr::gpp
+#' 
+#' data4lines <- gpp_data %>%
+#' filter(
+#'   country == "Atlantis"
+#' ) %>%
+#'   select(year, q1a, q1b, q1c) %>%
+#'   mutate(
+#'     across(
+#'       !year,
+#'       \(x) as.double(x)
+#'     ),
+#'     across(
+#'       !year,
+#'       ~case_when(
+#'         .x <= 2  ~ 1,
+#'         .x <= 4  ~ 0,
+#'         .x == 99 ~ NA_real_
+#'       )
+#'     ),
+#'     year = as.character(year)
+#'   ) %>%
 #'   group_by(year) %>%
-#'   summarise(across(everything(), \(x) mean(x, na.rm = TRUE))) %>% 
-#'   mutate(across(!year, \(x) x*100)) %>%
-#'   pivot_longer(!year, names_to = "group", values_to = "value2plot")
+#'   summarise(
+#'     across(
+#'       everything(),
+#'       \(x) mean(x, na.rm = TRUE)
+#'     ),
+#'     .groups = "keep"
+#'   ) %>%
+#'   mutate(
+#'     across(
+#'       everything(),
+#'       \(x) x*100
+#'     )
+#'   ) %>%
+#'   pivot_longer(
+#'     !year,
+#'     names_to  = "variable",
+#'     values_to = "percentage" 
+#'   ) %>%
+#'   mutate(
+#'     institution = case_when(
+#'       variable == "q1a" ~ "Institution A",
+#'       variable == "q1b" ~ "Institution B",
+#'       variable == "q1c" ~ "Institution C"
+#'     ),
+#'     value_label = paste0(
+#'       format(
+#'         round(percentage, 0),
+#'         nsmall = 0
+#'       ),
+#'       "%"
+#'     )
+#'   )
 #'  
 #'  # Plotting chart
-#'  wjp_lines(data = data2plot, target = "value2plot", grouping = "year", colors = "group", ngroups = data2plot$group)
-#'  }
+#'  wjp_lines(
+#'   data4lines %>% filter(institution == "Institution A"),                    
+#'   target         = "percentage",             
+#'   grouping       = "year",
+#'   ngroups        = 1,                 
+#'   colors         = "institution",
+#'   cvec           = c("Institution A" = "#08605F"),
+#'   labels         = "value_label"
+#'  )
+
 
 wjp_lines <- function(
     data,                    
     target,             
     grouping,
     ngroups,                 
-    labels         = NULL,
     colors,
     cvec           = NULL,
+    labels         = NULL,
     repel          = F, 
     transparency   = F,        
     transparencies = NULL,   
@@ -98,45 +152,81 @@ wjp_lines <- function(
                  show.legend = F) +
       geom_line(linewidth    = 1,
                 aes(alpha    = colors_var),
-                show.legend  = F) +
-      scale_alpha_manual(values = transparencies)
+                show.legend  = F)
   }
   
   if (repel == F) {
     
     # Applying regular geom_text
-    plt <- plt +
-      geom_text(aes(y     = target_var + 7.5,
-                    x     = grouping_var,
-                    label = labels_var),
-                family      = "Lato Full",
-                fontface    = "bold",
-                size        = 3.514598,
-                show.legend = F)
+    
+    if (transparency == F) {
+      plt <- plt +
+        geom_text(aes(y       = target_var + 7.5,
+                      x       = grouping_var,
+                      label   = labels_var),
+                  family      = "Lato Full",
+                  fontface    = "bold",
+                  size        = 3.514598,
+                  show.legend = F)
+    } else {
+      plt <- plt +
+        geom_text(aes(y       = target_var + 7.5,
+                      x       = grouping_var,
+                      label   = labels_var,
+                      alpha   = colors_var),
+                  family      = "Lato Full",
+                  fontface    = "bold",
+                  size        = 3.514598,
+                  show.legend = F)
+    }
+    
     
   } else {
     
     # Applying ggrepel for a better visualization of plots
-    plt <- plt +
-      geom_text_repel(mapping = aes(y     = target_var,
-                                    x     = grouping_var,
-                                    label = labels_var),
-                      family      = "Lato Full",
-                      fontface    = "bold",
-                      size        = 3.514598,
-                      show.legend = F,
-                      
-                      # Additional options from ggrepel package:
-                      min.segment.length = 1000,
-                      seed               = 42,
-                      box.padding        = 0.5,
-                      direction          = "y",
-                      force              = 5,
-                      force_pull         = 1)
+    if (transparency == F) {
+      plt <- plt +
+        geom_text_repel(mapping = aes(y     = target_var,
+                                      x     = grouping_var,
+                                      label = labels_var),
+                        family      = "Lato Full",
+                        fontface    = "bold",
+                        size        = 3.514598,
+                        show.legend = F,
+                        
+                        # Additional options from ggrepel package:
+                        min.segment.length = 1000,
+                        seed               = 42,
+                        box.padding        = 0.5,
+                        direction          = "y",
+                        force              = 5,
+                        force_pull         = 1)
+    } else {
+      plt <- plt +
+        geom_text_repel(mapping = aes(y     = target_var,
+                                      x     = grouping_var,
+                                      label = labels_var,
+                                      alpha = colors_var),
+                        family      = "Lato Full",
+                        fontface    = "bold",
+                        size        = 3.514598,
+                        show.legend = F,
+                        
+                        # Additional options from ggrepel package:
+                        min.segment.length = 1000,
+                        seed               = 42,
+                        box.padding        = 0.5,
+                        direction          = "y",
+                        force              = 5,
+                        force_pull         = 1)
+    }
       
   }
   
-  # Continuing with ggplot  
+  if (transparency == T) {
+    plt <- plt +
+      scale_alpha_manual(values = transparencies)
+  }
   
   if (custom.axis == F) {
     plt <- plt +
@@ -177,8 +267,15 @@ wjp_lines <- function(
           axis.title.y       = element_blank(),
           axis.line.x        = element_line(color    = "#d1cfd1"),
           axis.ticks.x       = element_line(color    = "#d1cfd1",
-                                            linetype = "solid"),
-          ggh4x.axis.ticks.length.minor = rel(1))
+                                            linetype = "solid"))
+  
+  if (custom.axis == TRUE) {
+    plt <- plt +
+      theme(
+        ggh4x.axis.ticks.length.minor = rel(1)
+      )
+    
+  }
   
   return(plt)
 }

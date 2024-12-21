@@ -49,3 +49,4 @@ po/*~
 rsconnect/
 docs
 .DS_Store
+inst/doc

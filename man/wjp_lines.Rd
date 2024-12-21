@@ -9,9 +9,9 @@ wjp_lines(
   target,
   grouping,
   ngroups,
-  labels = NULL,
   colors,
   cvec = NULL,
+  labels = NULL,
   repel = F,
   transparency = F,
   transparencies = NULL,
@@ -29,13 +29,13 @@ wjp_lines(
 
 \item{grouping}{String. Column name of the variable that supplies the grouping values (X-Axis).}
 
-\item{ngroups}{Vector containing each of the groups for the lineas. If there is only a single group, please input c = (1).}
-
-\item{labels}{String. Column name of the variable containing the value labels to display in plot.}
+\item{ngroups}{Vector containing each of the groups for the lines. If there is only a single group, please input c = (1).}
 
 \item{colors}{String. Column name of the variable that contains the color grouping.}
 
 \item{cvec}{Named vector with the colors to apply to each line.}
+
+\item{labels}{String. Column name of the variable containing the value labels to display in plot.}
 
 \item{repel}{Boolean. If TRUE, function will apply the ggrepel package to repel labels. Default is FALSE.}
 
@@ -62,21 +62,74 @@ object with a line chart following WJP style guidelines.
 }
 \examples{
 
-\dontrun{
 # Always load the WJP fonts if not passing a custom theme to function
 wjp_fonts()
 
 # Preparing data
-data2plot <- gpp \%>\% 
-  select(year, q1a, q1b, q1c) \%>\% 
-  mutate(across(!year, 
-         ~case_when(.x == 1 | .x == 2 ~ 0, .x == 3 | .x == 4 ~ 1))) \%>\% 
+gpp_data <- WJPr::gpp
+
+data4lines <- gpp_data \%>\%
+filter(
+  country == "Atlantis"
+) \%>\%
+  select(year, q1a, q1b, q1c) \%>\%
+  mutate(
+    across(
+      !year,
+      \(x) as.double(x)
+    ),
+    across(
+      !year,
+      ~case_when(
+        .x <= 2  ~ 1,
+        .x <= 4  ~ 0,
+        .x == 99 ~ NA_real_
+      )
+    ),
+    year = as.character(year)
+  ) \%>\%
   group_by(year) \%>\%
-  summarise(across(everything(), \(x) mean(x, na.rm = TRUE))) \%>\% 
-  mutate(across(!year, \(x) x*100)) \%>\%
-  pivot_longer(!year, names_to = "group", values_to = "value2plot")
+  summarise(
+    across(
+      everything(),
+      \(x) mean(x, na.rm = TRUE)
+    ),
+    .groups = "keep"
+  ) \%>\%
+  mutate(
+    across(
+      everything(),
+      \(x) x*100
+    )
+  ) \%>\%
+  pivot_longer(
+    !year,
+    names_to  = "variable",
+    values_to = "percentage" 
+  ) \%>\%
+  mutate(
+    institution = case_when(
+      variable == "q1a" ~ "Institution A",
+      variable == "q1b" ~ "Institution B",
+      variable == "q1c" ~ "Institution C"
+    ),
+    value_label = paste0(
+      format(
+        round(percentage, 0),
+        nsmall = 0
+      ),
+      "\%"
+    )
+  )
  
  # Plotting chart
- wjp_lines(data = data2plot, target = "value2plot", grouping = "year", colors = "group", ngroups = data2plot$group)
- }
+ wjp_lines(
+  data4lines \%>\% filter(institution == "Institution A"),                    
+  target         = "percentage",             
+  grouping       = "year",
+  ngroups        = 1,                 
+  colors         = "institution",
+  cvec           = c("Institution A" = "#08605F"),
+  labels         = "value_label"
+ )
 }

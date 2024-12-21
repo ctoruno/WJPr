@@ -9,12 +9,12 @@ wjp_bars(
   target,
   grouping,
   labels = NULL,
-  colors,
+  colors = NULL,
   cvec = NULL,
   direction = "vertical",
-  stacked = F,
+  stacked = FALSE,
   lab_pos = NULL,
-  expand = F,
+  expand = FALSE,
   order = NULL,
   width = 0.9,
   ptheme = WJP_theme()
@@ -25,27 +25,27 @@ wjp_bars(
 
 \item{target}{String. Column name of the variable that will supply the values to plot.}
 
-\item{grouping}{String. Column name of the variable that supplies the grouping values.}
+\item{grouping}{String. Column name of the variable that supplies the grouping values. Values can be grouped either in the X- or Y- Axis.}
 
-\item{labels}{String. Column name of the variable containing the value labels to display in plot.}
+\item{labels}{String. Column name of the variable containing the value labels to display in plot. Default is NULL.}
 
-\item{colors}{String. Column name of the variable that contains the color grouping.}
+\item{colors}{String. Column name of the variable that contains the color grouping. Default is NULL.}
 
-\item{cvec}{Named vector with the colors to apply to bars.}
+\item{cvec}{Named vector with the colors to apply to bars. Vector names should have the values specified by the "colors" variables, while vector values should have}
 
-\item{direction}{String. Should the bars be plotted in a "horizontal" or "vertical" way?}
+\item{direction}{String. Should the bars be plotted in a "horizontal" or "vertical" way? Default is "vertical".}
 
 \item{stacked}{Boolean. If TRUE, bars will be stacked on top of each other per group. Default is FALSE.}
 
-\item{lab_pos}{String. Column name of the variable that contains the coordinates for the value labels.}
+\item{lab_pos}{String. Column name of the variable that contains the coordinates for the value labels. Default is NULL.}
 
 \item{expand}{Boolean. If TRUE, the plot will give extra space for value labels. Default is FALSE.}
 
-\item{width}{Numeric value between 0 and 1. Width of bars as a percentage of the space for each bar.}
+\item{order}{String. Column name of the variable that contains the custom order for labels.}
+
+\item{width}{Numeric value between 0 and 1. Width of bars as a percentage of the space for each bar. Default is 0.9.}
 
 \item{ptheme}{ggplot theme function to apply to the plot. By default, function applies WJP_theme()}
-
-\item{order_var}{String. Column name of the variable that contains the custom order for labels.}
 }
 \value{
 A ggplot object
@@ -55,21 +55,55 @@ A ggplot object
 object with a bar chart following WJP style guidelines.
 }
 \examples{
-\dontrun{
-# Always load the WJP fonts if not passing a custom theme to function
+# Always load the WJP fonts (optional)
 wjp_fonts()
 
 # Preparing data
-data2plot <- gpp \%>\% 
-  select(country, q1a, q1b, q1c) \%>\%
-  mutate(dplyr::across(!country, 
-                       ~case_when(.x == 1 | .x == 2 ~ 0, .x == 3 | .x == 4 ~ 1))) \%>\%
-  group_by(country) \%>\%
-  summarise(across(everything(), \(x) mean(x, na.rm = TRUE))) \%>\% 
-  mutate(across(!country, \(x) x*100)) \%>\%
-  pivot_longer(!country, names_to = "group", values_to = "value2plot")
+gpp_data <- WJPr::gpp
+
+data4bars <- gpp_data \%>\%
+  select(country, year, q1a) \%>\%
+  group_by(country, year) \%>\%
+  mutate(
+    q1a = as.double(q1a),
+    trust = case_when(
+      q1a <= 2  ~ 1,
+      q1a <= 4  ~ 0,
+      q1a == 99 ~ NA_real_
+    ),
+    year = as.character(year)
+  ) \%>\%
+  summarise(
+    trust   = mean(trust, na.rm = TRUE),
+    .groups = "keep"
+  ) \%>\%
+  mutate(
+    trust = trust*100
+  ) \%>\%
+  filter(year == "2022") \%>\%
+  mutate(
+    color_variable = country,
+    value_label = paste0(
+      format(
+        round(trust, 0),
+        nsmall = 0
+      ),
+      "\%"
+    ),
+    label_position = trust + 5
+  )
 
 # Plotting chart
-wjp_bars(data = data2plot, target = "value2plot", grouping = "country", colors = "group")
-}
+wjp_bars(
+  data4bars,              
+  target    = "trust",        
+  grouping  = "country",
+  labels    = "value_label",
+  lab_pos   = "label_position",
+  colors    = "color_variable",
+  cvec      = c("Atlantis"  = "#2E4057",
+                "Narnia"    = "#083D77",
+                "Neverland" = "#F4D35E")
+  )
+
 }
