@@ -32,6 +32,7 @@ Imports:
     withr (>= 3.0.1)
 Suggests: 
     cli (>= 3.6.3),
+    kableExtra (>=1.4.0),
     knitr,
     lifecycle (>= 1.0.4),
     rmarkdown,
