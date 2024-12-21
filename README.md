@@ -97,5 +97,5 @@ This project is licensed under the MIT License. See the LICENSE.md file for deta
 
 ## Acknowledgments
 
-WJPr was developed by the Data Analytics Unit at The World Justice Project. Special thanks to the team for their invaluable input in creating this package.
+WJPr was developed by the Data Analytics Unit at The World Justice Project. Special thanks to the whole team for their invaluable input in creating this package.
 
