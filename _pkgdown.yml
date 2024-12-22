@@ -2,5 +2,5 @@ url: https://ctoruno.github.io/WJPr/
 template:
   bootstrap: 5
   bootswatch: flatly
-  light-switch: true
+  # light-switch: true
 
