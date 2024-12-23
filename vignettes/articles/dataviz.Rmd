@@ -381,7 +381,7 @@ kbl(data4lines)
 Be aware that I'm also leaving trust in Institution B and  Institution C and pivoting the data frame to a long format. However, we will start by plotting only the percentage of people who trust in Institution A over time. For this, we proceed to use the `wjp_lines()` function. Some parameters are used the same way:
 
 - `target` contains the column name that has the values to be plotted in the bars.
-- `grouping` contains the column name that has the categorical groupings. In most line charts, this parameter refers to the years.
+- `grouping` contains the column name that has the categorical groupings. In most line charts, this parameter refers to the year or time variable.
 - `colors` contains the column name that will distinguish the different colors in the line chart.
 - `cvec` contains a named vector linking values to specific color codes.
 - `labels` contains the column name that has the value labels to be displayed, if any.
@@ -441,7 +441,232 @@ wjp_lines(
 )
 ```
 
-## Controlling the order of the bars
+## Slope Charts
+
+Sometimes, you want to track the evolution of some variables over time but you want to focus only in two points in time. For this specific cases a slope chart is a better option in aesthetic terms than a line chart. The `wjp_slope()` function can help you in that. I will exemplify the use of this chart when we want to disaggregate the evolution of trust in Institution A between 2017 and 2022 in all three countries. We start by preparing the data for our new design:
+
+```{r}
+data4slopes <- gpp_data %>%
+  select(year, gend, q1a) %>%
+  filter(
+    year %in% c(2017, 2019)
+  ) %>%
+  mutate(
+    q1a = as.double(q1a),
+    trust = case_when(
+      q1a <= 2  ~ 1,
+      q1a <= 4  ~ 0
+    ),
+    gender = case_when(
+      gend == 1 ~ "Male",
+      gend == 2 ~ "Female"
+    )
+  ) %>%
+  group_by(year, gender) %>%
+  summarise(
+    trust = mean(trust, na.rm = T)*100,
+    .groups = "keep"
+  ) %>%
+  mutate(
+    value_label = paste0(
+      format(
+        round(trust, 0),
+        nsmall = 0
+      ),
+      "%"
+    )
+  )
+
+kbl(data4slopes)
+```
+
+Once we have the data ready for our slopes, we proceed to use the `wjp_slope()` function. All the required parameters for this function have been covered in previous examples:
+
+- `target` contains the column name that has the values to be plotted in the bars.
+- `grouping` contains the column name that has the categorical groupings. In most slope charts, this parameter refers to the year or time variable.
+- `colors` contains the column name that will distinguish the different colors in the slope chart.
+- `cvec` contains a named vector linking values to specific color codes.
+- `labels` contains the column name that has the value labels to be displayed, if any.
+- `ngroups` refers to the number of lines to be plotted. If only one, please pass "1" if more than 1 line is to be plotted, then pass the column with the groups as a vector.
+- `repel` activates the ggrepel feature to avoid label overlapping.
+
+```{r}
+wjp_slope(
+    data4slopes,                    
+    target    = "trust",             
+    grouping  = "year",
+    ngroups   = data4slopes$gender,                 
+    labels    = "value_label",
+    colors    = "gender",
+    cvec      = c("Male"   = "#08605F",
+                  "Female" = "#9E6240"),
+    repel     = TRUE
+)
+```
+
+## Dots Charts
+
+### Minimal Example
+
+When we need to plot multiple variables and show the results for multiple agents or regions, a dot chart comes very handy. The `wjp_dots()` functions helps you to chart the data as quickly as possible. Let's try to plot the percentage of people who had a lot or some trust in institutions A, B, C, and D in all three countries: Atlantis, Narnia, and Neverland. We begin by preparing our data for a minimal example as follows:
+
+```{r}
+data4dots <- gpp_data %>%
+  select(country, q1a, q1b, q1c, q1d) %>%
+  mutate(
+    across(
+      !country,
+      \(x) case_when(
+        x <= 2 ~ 1,
+        x <= 4 ~ 0
+      )
+    )
+  ) %>%
+  group_by(country) %>%
+  summarise(
+    across(
+      everything(),
+      \(x) mean(x, na.rm = T)*100
+    ),
+    .groups = "keep"
+  ) %>%
+  pivot_longer(
+    !country,
+    names_to  = "variable",
+    values_to = "percentage" 
+  ) %>%
+  mutate(
+    institution = case_when(
+      variable == "q1a" ~ "Institution A",
+      variable == "q1b" ~ "Institution B",
+      variable == "q1c" ~ "Institution C",
+      variable == "q1d" ~ "Institution D",
+    )
+  )
+kbl(data4dots)
+```
+
+Once we have the data ready for our slopes, we proceed to use the `wjp_dots()` function. All the required parameters for this function have been covered in previous examples:
+
+- `target` contains the column name that has the values to be plotted in the bars.
+- `grouping` contains the column name that has the categorical groupings. In most slope charts, this parameter refers to the year or time variable.
+- `colors` contains the column name that will distinguish the different colors in the slope chart.
+- `cvec` contains a named vector linking values to specific color codes.
+
+```{r}
+wjp_dots(
+    data4dots,             
+    target      = "percentage",
+    grouping    = "institution",  
+    colors      = "country",  
+    cvec        = c("Atlantis"  = "#08605F",
+                    "Narnia"    = "#9E6240",
+                    "Neverland" = "#2E0E02")
+)
+```
+
+### Controlling opacities and shapes
+
+A special feature of the `wjp_dots()` is that it allows you to apply a special highlight to certain data points through the manipulation of shapes and opacities. For this, we begin by setting the `diffOpac` and the `diffShp` parameters to TRUE. Then, we proceed to pass a named vector with the specific values of opacities and the desired symbol codes. The control of these traits works on the same values passed as through the `colors` and `cvec` parameters. To check the symbol codes used in ggplot, you can read the [ggplot2 documentation](https://ggplot2.tidyverse.org/articles/ggplot2-specs.html#sec:shape-spec).
+
+```{r}
+wjp_dots(
+    data4dots,             
+    target      = "percentage",
+    grouping    = "institution",  
+    colors      = "country",  
+    cvec        = c("Atlantis"  = "#08605F",
+                    "Narnia"    = "#9E6240",
+                    "Neverland" = "#2E0E02"),
+    diffOpac    = TRUE,
+    opacities   = c("Atlantis"  = 0.3,
+                    "Narnia"    = 1.0,
+                    "Neverland" = 0.3),
+    diffShp     = TRUE,     
+    shapes      = c("Atlantis"  = 15,
+                    "Narnia"    = 21,
+                    "Neverland" = 15)
+)
+```
+
+### Adding confidence intervals
+
+The `wjp_dots()` function has a special feature that allows us to add confidence intervals to the plotted data points. This comes very handy when we want to visualize if two data points are statistically different from each other. Let's assume that we want to know if the trust levels in Institution A, B, C, and D, are statistically different between males and females in our sample. For this, we first need to plot our data a little bit different given that, besides the data point (mean), we will also require the standard deviation and the sample size for each group and variable.
+
+```{r}
+data4dots_errorbars <- gpp_data %>%
+  select(gend, q1a, q1b, q1c, q1d) %>%
+  mutate(
+    gend = case_when(
+      gend == 1 ~ "Male",
+      gend == 2 ~ "Female",
+    ),
+    across(
+      !gend,
+      \(x) case_when(
+        x <= 2 ~ 1,
+        x <= 4 ~ 0
+      )
+    )
+  ) %>%
+  group_by(gend) %>%
+  summarise(
+    across(
+      c(q1a, q1b, q1c, q1d),
+      \(x) mean(x, na.rm = T)*100,
+      .names = "{col}_mean"
+    ),
+    across(
+      c(q1a, q1b, q1c, q1d),
+      \(x) sum(!is.na(x)),
+      .names = "{col}_n"
+    ),
+    across(
+      c(q1a, q1b, q1c, q1d),
+      \(x) sd(x, na.rm = T)*100,
+      .names = "{col}_sd"
+    ),
+    .groups = "keep"
+  ) %>%
+  pivot_longer(
+    !gend,
+    names_to      = c("variable", "stat"), 
+    names_pattern = "(.*)_(.*)",
+    values_to     = "value"
+  ) %>%
+  pivot_wider(
+    names_from  = "stat",
+    values_from = "value"
+  ) %>%
+  mutate(
+    institution = case_when(
+      variable == "q1a" ~ "Institution A",
+      variable == "q1b" ~ "Institution B",
+      variable == "q1c" ~ "Institution C",
+      variable == "q1d" ~ "Institution D",
+    )
+  )
+
+kbl(data4dots_errorbars)
+```
+
+Once that we have the data ready. We make use of the `wjp_dots()` function and we set `draw_ci = TRUE` inside the function call. Additionally, we also need to specify the `sd` and `sample_size` parameters, which are the column names that contain the standard deviation and the sample size for each variable and group.
+
+```{r}
+wjp_dots(
+    data4dots_errorbars,             
+    target      = "mean",
+    grouping    = "institution",  
+    colors      = "gend",  
+    cvec        = c("Male"   = "#08605F",
+                    "Female" = "#9E6240"),
+    draw_ci     = TRUE,
+    sd          = "sd",
+    sample_size = "n"
+)
+```
+
+## Controlling the order of elements
 
 Sometimes, we might want to control the order in which we show some elements in our charts. Some of the plotting functions in our WJPr package include the a `custom_order` and an `order` parameter. Let's say that we want to further customize the diverging bars that we showed above and present the bars following in a specific order: Neverland (1), Atlantis (2), and Narnia (3). For this, we begin by setting the `custom_order` to TRUE and adding a new column to our data that has the specific order of the elements:
 
@@ -468,6 +693,32 @@ wjp_divbars(
     order        = "order_no" 
 )
 ```
+
+Same can be done when working with dot charts:
+
+```{r}
+data4dots <- data4dots %>%
+  mutate(
+    order_no = case_when(
+      variable == "q1c" ~ 1,
+      variable == "q1b" ~ 2,
+      variable == "q1d" ~ 3,
+      variable == "q1a" ~ 4
+    )
+  )
+
+wjp_dots(
+    data4dots,             
+    target      = "percentage",
+    grouping    = "institution",  
+    colors      = "country",  
+    cvec        = c("Atlantis"  = "#08605F",
+                    "Narnia"    = "#9E6240",
+                    "Neverland" = "#2E0E02"),
+    order       = "order_no"
+)
+```
+
 
 
 ## Adding more customizations

@@ -33,7 +33,7 @@ The package provides built-in datasets for analysis:
 
 ```R
 # View the first few rows of the dataset
-head(WJPr::gpp)
+head(WJPr::roli)
 ```
 
 ### Example: Creating a Visualization
@@ -93,7 +93,7 @@ Contributions are welcome! If you have suggestions, bug reports, or new feature 
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE.md file for details.
+This project is licensed under the MIT License. See the `LICENSE.md` file for details.
 
 ## Acknowledgments
 

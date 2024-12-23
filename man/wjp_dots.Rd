@@ -7,16 +7,18 @@
 wjp_dots(
   data,
   target,
-  sample_size = NULL,
-  draw_ci = TRUE,
   grouping,
-  labels,
+  colors,
   cvec = NULL,
   order = NULL,
-  diffOpac = F,
+  diffOpac = FALSE,
   opacities = NULL,
-  diffShp = F,
+  diffShp = FALSE,
   shapes = NA,
+  draw_ci = FALSE,
+  sd = NULL,
+  sample_size = NULL,
+  bgcolor = "#ffffff",
   ptheme = WJP_theme()
 )
 }
@@ -25,13 +27,9 @@ wjp_dots(
 
 \item{target}{String. Column name of the variable that will supply the values to plot.}
 
-\item{sample_size}{(Optional) Integer. Supplies the number of observations for drawing binomial confidence intervals.}
+\item{grouping}{String. Column name of the variable that supplies the Y-Axis labels to show in the plot.}
 
-\item{draw_ci}{Boolean. If TRUE, will draw a binomial confidence interval with target value as parameter of interest.}
-
-\item{grouping}{String. Column name of the variable that supplies the grouping values. The plot will show a different color per group.}
-
-\item{labels}{String. Column name of the variable that supplies the Y-Axis labels to show in the plot.}
+\item{colors}{String. Column name of the variable that supplies the grouping values. The plot will show a different color per group.}
 
 \item{cvec}{Named vector with the colors to apply to the dots. Default is NULL.}
 
@@ -45,43 +43,70 @@ wjp_dots(
 
 \item{shapes}{Named vector with shapes to be displayed. Default is NULL.}
 
+\item{draw_ci}{Boolean. If TRUE, will draw a binomial confidence interval with target value as parameter of interest.}
+
+\item{sd}{String. Column name of the variable that supplies the standard error for drawing confidence intervals.}
+
+\item{sample_size}{String. Column name of the variable that supplies the number of observations for drawing confidence intervals.}
+
+\item{bgcolor}{String. Hex code for the "white" background in the strips.}
+
 \item{ptheme}{ggplot theme function to apply to the plot. By default, function applies WJP_theme().}
 }
 \value{
 A ggplot object
 }
 \description{
-\code{wjp_dotsChart()} takes a data frame with a specific data structure (usually long shaped) and returns a ggplot
+\code{wjp_dots()} takes a data frame with a specific data structure (usually long shaped) and returns a ggplot
 object with a dots chart following WJP style guidelines.
 }
 \examples{
-\dontrun{
 # Always load the WJP fonts if not passing a custom theme to function
 wjp_fonts()
 
 # Preparing data
-data2plot <- gpp \%>\% 
-select(country, q49a)\%>\%
-  mutate(div = case_when(
-    q49a == 1  ~ "Very confident",
-    q49a == 2  ~ "Fairly confident",
-    q49a == 3  ~ "Not very confident",
-    q49a == 4  ~ "Not at all confident",
-    q49a == 99 ~ NA_character_
+data4dots <- gpp_data \%>\%
+  select(country, q1a, q1b, q1c, q1d) \%>\%
+  mutate(
+    across(
+      !country,
+      \(x) case_when(
+        x <= 2 ~ 1,
+        x <= 4 ~ 0
+      )
+    )
+  ) \%>\%
+  group_by(country) \%>\%
+  summarise(
+    across(
+      everything(),
+      \(x) mean(x, na.rm = T)*100
+    ),
+    .groups = "keep"
+  ) \%>\%
+  pivot_longer(
+    !country,
+    names_to  = "variable",
+    values_to = "percentage" 
+  ) \%>\%
+  mutate(
+    institution = case_when(
+      variable == "q1a" ~ "Institution A",
+      variable == "q1b" ~ "Institution B",
+      variable == "q1c" ~ "Institution C",
+      variable == "q1d" ~ "Institution D",
+    )
   )
-  )\%>\% drop_na()\%>\%
-  group_by(country, div)\%>\%
-  count()\%>\%
-  group_by(country)\%>\%
-  transmute(div, value2plot = n/sum(n)*100)\%>\%
-  mutate(order_value = case_when(
-    country == "Atlantis" ~ 1,
-    country == "Narnia" ~ 2,
-    country == "Neverland" ~ 3))
 
 # Plotting chart
-wjp_dotsChart(data= data2plot, target = "value2plot", grouping = "div", order = "order_value", labels = "country")
-}
-
+wjp_dots(
+  data4dots,             
+  target      = "percentage",
+  grouping    = "institution",  
+  colors      = "country",  
+  cvec        = c("Atlantis"  = "#08605F",
+                  "Narnia"    = "#9E6240",
+                  "Neverland" = "#2E0E02")
+)
 
 }

@@ -1,29 +1,101 @@
+#' Plot a Slope Chart following WJP style guidelines
+#'
+#' @description
+#' `wjp_slope()` takes a data frame with a specific data structure (usually long shaped) and returns a ggplot
+#' object with a slope chart following WJP style guidelines.
+#'
+#' @param data Data frame containing the data to plot
+#' @param target String. Column name of the variable that will supply the values to plot.
+#' @param grouping String. Column name of the variable that supplies the grouping values (X-Axis).
+#' @param ngroups Vector containing each of the groups for the lines. If there is only a single group, please input c = (1).
+#' @param colors String. Column name of the variable that contains the color grouping.
+#' @param cvec Named vector with the colors to apply to each line.
+#' @param labels String. Column name of the variable containing the value labels to display in plot. Default is NULL.
+#' @param repel Boolean. If TRUE, function will apply the ggrepel package to repel labels. Default is FALSE.
+#' @param ptheme ggplot theme function to apply to the plot. By default, function applies WJP_theme()
+#'
+#' @return A ggplot object
+#' @export
+#'
+#' @examples
+#' 
+#' # Always load the WJP fonts if not passing a custom theme to function
+#' wjp_fonts()
+#' 
+#' # Preparing data
+#' gpp_data <- WJPr::gpp
+#' 
+#' data4slopes <- gpp_data %>%
+#' select(year, gend, q1a) %>%
+#'   filter(
+#'     year %in% c(2017, 2019)
+#'   ) %>%
+#'   mutate(
+#'     q1a = as.double(q1a),
+#'     trust = case_when(
+#'       q1a <= 2  ~ 1,
+#'       q1a <= 4  ~ 0
+#'     ),
+#'     gender = case_when(
+#'       gend == 1 ~ "Male",
+#'       gend == 2 ~ "Female"
+#'     )
+#'   ) %>%
+#'   group_by(year, gender) %>%
+#'   summarise(
+#'     trust = mean(trust, na.rm = T)*100,
+#'     .groups = "keep"
+#'   ) %>%
+#'   mutate(
+#'     value_label = paste0(
+#'       format(
+#'         round(trust, 0),
+#'         nsmall = 0
+#'       ),
+#'       "%"
+#'     )
+#'   )
+#' 
+#' # Plotting chart
+#' wjp_slope(
+#'   data4slopes,                    
+#'   target    = "trust",             
+#'   grouping  = "year",
+#'   ngroups   = data4slopes$gender,                 
+#'   labels    = "value_label",
+#'   colors    = "gender",
+#'   cvec      = c("Male"   = "#08605F",
+#'                 "Female" = "#9E6240"),
+#'   repel     = TRUE
+#' )
+
 wjp_slope <- function(
     data,                    
     target,             
     grouping,
-    ngroups,                 
-    labels         = NULL,
+    ngroups,  
     colors,
-    cvec           = NULL,
-    repel          = FALSE,
-    ptheme         = WJP_theme()
+    cvec      = NULL,
+    labels    = NULL,
+    repel     = FALSE,
+    ptheme    = WJP_theme()
 ){
   
   # Renaming variables in the data frame to match the function naming
   if (is.null(labels)) {
     data <- data %>%
-      dplyr::mutate(labels_var    = "") %>%
-      rename(target_var    = all_of(target),
-             grouping_var  = all_of(grouping),
-             colors_var     = all_of(colors))
+      dplyr::mutate(labels_var = "")
   } else {
     data <- data %>%
-      rename(labels_var    = all_of(labels),
-             target_var    = all_of(target),
-             grouping_var  = all_of(grouping),
-             colors_var    = all_of(colors))
-  } 
+      rename(labels_var = all_of(labels))
+  }
+  
+  data <- data %>%
+    rename(
+      target_var    = all_of(target),
+      grouping_var  = all_of(grouping),
+      colors_var    = all_of(colors)
+    )
   
   data <- data %>%
     mutate(
@@ -32,6 +104,12 @@ wjp_slope <- function(
         grouping_var == max(data$grouping_var) ~ grouping_var+0.5,
       )
     )
+  
+  if (is.null(cvec)){
+    default_colors <- c("#F79256", "#1D4E89", "#FBD1A2", "#3CBBB1", "#394648")
+    nitems <- length(unique(ngroups))
+    cvec   <- default_colors[1:nitems]
+  }
   
   # Creating ggplot
   plt <- ggplot(data, 

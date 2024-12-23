@@ -1,105 +1,133 @@
 #' Plot a Dots Chart following WJP style guidelines
 #'
 #' @description
-#' `wjp_dotsChart()` takes a data frame with a specific data structure (usually long shaped) and returns a ggplot
+#' `wjp_dots()` takes a data frame with a specific data structure (usually long shaped) and returns a ggplot
 #' object with a dots chart following WJP style guidelines.
 #' 
 #' @param data Data frame containing the data to plot
 #' @param target String. Column name of the variable that will supply the values to plot.
-#' @param grouping String. Column name of the variable that supplies the grouping values. The plot will show a different color per group.
-#' @param sample_size (Optional) Integer. Supplies the number of observations for drawing binomial confidence intervals.
-#' @param draw_ci Boolean. If TRUE, will draw a binomial confidence interval with target value as parameter of interest.
-#' @param labels String. Column name of the variable that supplies the Y-Axis labels to show in the plot.
+#' @param colors String. Column name of the variable that supplies the grouping values. The plot will show a different color per group.
+#' @param grouping String. Column name of the variable that supplies the Y-Axis labels to show in the plot.
 #' @param cvec Named vector with the colors to apply to the dots. Default is NULL.
 #' @param order String. Column name of the variable that contains the custom order for the labels.
 #' @param diffOpac Boolean. If TRUE, the plot will expect different levels of opacities for the dots. Default is FALSE.
 #' @param opacities Named vector with the opacity levels to apply to the dots. Default is NULL.
 #' @param diffShp Boolean. If TRUE, the plot will expect different shapes for the dots. Default is FALSE.
 #' @param shapes Named vector with shapes to be displayed. Default is NULL.
+#' @param draw_ci Boolean. If TRUE, will draw a binomial confidence interval with target value as parameter of interest.
+#' @param sd  String. Column name of the variable that supplies the standard error for drawing confidence intervals.
+#' @param sample_size  String. Column name of the variable that supplies the number of observations for drawing confidence intervals.
+#' @param bgcolor String. Hex code for the "white" background in the strips.
 #' @param ptheme ggplot theme function to apply to the plot. By default, function applies WJP_theme().
 #'
 #' @return A ggplot object
 #' @export
 #' 
 #' @examples
-#' \dontrun{
 #' # Always load the WJP fonts if not passing a custom theme to function
 #' wjp_fonts()
 #' 
 #' # Preparing data
-#' data2plot <- gpp %>% 
-#' select(country, q49a)%>%
-#'   mutate(div = case_when(
-#'     q49a == 1  ~ "Very confident",
-#'     q49a == 2  ~ "Fairly confident",
-#'     q49a == 3  ~ "Not very confident",
-#'     q49a == 4  ~ "Not at all confident",
-#'     q49a == 99 ~ NA_character_
+#' data4dots <- gpp_data %>%
+#'   select(country, q1a, q1b, q1c, q1d) %>%
+#'   mutate(
+#'     across(
+#'       !country,
+#'       \(x) case_when(
+#'         x <= 2 ~ 1,
+#'         x <= 4 ~ 0
+#'       )
+#'     )
+#'   ) %>%
+#'   group_by(country) %>%
+#'   summarise(
+#'     across(
+#'       everything(),
+#'       \(x) mean(x, na.rm = T)*100
+#'     ),
+#'     .groups = "keep"
+#'   ) %>%
+#'   pivot_longer(
+#'     !country,
+#'     names_to  = "variable",
+#'     values_to = "percentage" 
+#'   ) %>%
+#'   mutate(
+#'     institution = case_when(
+#'       variable == "q1a" ~ "Institution A",
+#'       variable == "q1b" ~ "Institution B",
+#'       variable == "q1c" ~ "Institution C",
+#'       variable == "q1d" ~ "Institution D",
+#'     )
 #'   )
-#'   )%>% drop_na()%>%
-#'   group_by(country, div)%>%
-#'   count()%>%
-#'   group_by(country)%>%
-#'   transmute(div, value2plot = n/sum(n)*100)%>%
-#'   mutate(order_value = case_when(
-#'     country == "Atlantis" ~ 1,
-#'     country == "Narnia" ~ 2,
-#'     country == "Neverland" ~ 3))
 #' 
 #' # Plotting chart
-#' wjp_dotsChart(data= data2plot, target = "value2plot", grouping = "div", order = "order_value", labels = "country")
-#' }
-#' 
+#' wjp_dots(
+#'   data4dots,             
+#'   target      = "percentage",
+#'   grouping    = "institution",  
+#'   colors      = "country",  
+#'   cvec        = c("Atlantis"  = "#08605F",
+#'                   "Narnia"    = "#9E6240",
+#'                   "Neverland" = "#2E0E02")
+#' )
 #' 
 
 wjp_dots <- function(
     data,             
     target,
+    grouping,
+    colors,  
+    cvec        = NULL, 
+    order       = NULL,
+    diffOpac    = FALSE,  
+    opacities   = NULL,      
+    diffShp     = FALSE,     
+    shapes      = NA,
+    draw_ci     = FALSE,
+    sd          = NULL,
     sample_size = NULL,
-    draw_ci = TRUE,
-    grouping,  
-    labels,  
-    cvec      = NULL, 
-    order     = NULL,
-    diffOpac  = F,  
-    opacities = NULL,      
-    diffShp   = F,     
-    shapes    = NA,
-    ptheme    = WJP_theme()
+    bgcolor     = "#ffffff",
+    ptheme      = WJP_theme()
 ){
   
   # Renaming variables in the data frame to match the function naming
+  data <- data %>%
+    rename(
+      target_var    = all_of(target),
+      colors_var    = all_of(colors),
+      grouping_var  = all_of(grouping)
+    ) %>%
+    mutate(target_var = as.numeric(target_var)) # Ensure target_var is numeric
+  
   if (is.null(order)){
     data <- data %>%
-      rename(target_var    = all_of(target),
-             grouping_var  = all_of(grouping),
-             labels_var    = all_of(labels)) %>%
-      group_by(grouping_var) %>%
+      group_by(colors_var) %>%
       mutate(
         order_var = row_number()
       )
     
   } else {
     data <- data %>%
-      rename(target_var    = all_of(target),
-             grouping_var  = all_of(grouping),
-             labels_var    = all_of(labels),
-             order_var     = all_of(order))
+      rename(order_var = all_of(order))
   }
   
-  # Ensure target_var is numeric -- important for confidence intervals
-  data <- data %>%
-    mutate(target_var = as.numeric(target_var))
-  
-  # Add sample_size_var if sample_size is provided in function call
-  if (!is.null(sample_size)) {
-    data <- data %>%
-      rename(sample_size_var = all_of(sample_size))
+  # Add sample_size_var if drawing CI
+  if (draw_ci){
+    z <- qnorm(1 - 0.05 / 2)
+    data  <- data %>%
+      rename(sd_var = all_of(sd),
+             sample_size_var = all_of(sample_size)) %>%
+      mutate(
+        se = sd_var / sqrt(sample_size_var),
+        lower = target_var - z * se,
+        upper = target_var + z * se
+      )
   }
   
   # Creating a strip pattern
   strips <- data %>%
-    group_by(labels_var) %>%
+    group_by(grouping_var) %>%
     summarise() %>%
     mutate(ymin = 0,
            ymax = 100,
@@ -111,17 +139,15 @@ wjp_dots <- function(
     pivot_longer(c(xmin, xmax),
                  names_to  = "cat",
                  values_to = "x") %>%
-    select(-cat) %>%
-    filter(fill != "white")
+    select(-cat)
     
-  
   # Creating ggplot
   plt <- ggplot() +
     geom_blank(data      = data,
-               aes(x     = reorder(labels_var, -order_var),
+               aes(x     = reorder(grouping_var, -order_var),
                    y     = target_var,
-                   label = labels_var,
-                   color = grouping_var)) +
+                   label = grouping_var,
+                   color = colors_var)) +
     geom_ribbon(data      = strips,
                 aes(x     = x,
                     ymin  = ymin,
@@ -129,20 +155,19 @@ wjp_dots <- function(
                     group = xposition,
                     fill  = fill),
                 show.legend = F) +
-    scale_fill_manual(values = c("grey"  = "#EBEBEB",
-                                 "white"  = "#FFFFFF"),
-                      na.value = NULL)
+    scale_fill_manual(values = c("grey"  = "#D6D6D6",
+                                 "white" = bgcolor),
+                      na.value = NA)
   
-  if (draw_ci && !is.null(sample_size)) {
-    alpha <- 0.05  # 95% confidence interval
+  if (draw_ci) {
     plt <- plt +
       geom_errorbar(
         data = data,
         aes(
-          x = reorder(labels_var, -order_var),
-          ymin = target_var - qnorm(1 - alpha / 2) * sqrt((target_var * (100 - target_var)) / sample_size_var),
-          ymax = target_var + qnorm(1 - alpha / 2) * sqrt((target_var * (100 - target_var)) / sample_size_var),
-          color = grouping_var
+          x     = reorder(grouping_var, -order_var),
+          ymin  = lower,
+          ymax  = upper,
+          color = colors_var
         ),
         width = 0.2,
         show.legend = FALSE
@@ -154,18 +179,18 @@ wjp_dots <- function(
     if (diffOpac == F) {
       plt <- plt +
         geom_point(data      = data,
-                   aes(x     = reorder(labels_var, -order_var),
+                   aes(x     = reorder(grouping_var, -order_var),
                        y     = target_var,
-                       color = grouping_var),
+                       color = colors_var),
                    size = 4,
                    show.legend = F)
     } else {
       plt <- plt +
         geom_point(data = data,
-                   aes(x     = reorder(labels_var, -order_var),
+                   aes(x     = reorder(grouping_var, -order_var),
                        y     = target_var,
-                       color = grouping_var,
-                       alpha = grouping_var),
+                       color = colors_var,
+                       alpha = colors_var),
                    size      = 4,
                    show.legend   = F) +
         scale_alpha_manual(values = opacities)
@@ -176,10 +201,10 @@ wjp_dots <- function(
     if (diffOpac == F) {
       plt <- plt +
         geom_point(data      = data,
-                   aes(x     = reorder(labels_var, -order_var),
+                   aes(x     = reorder(grouping_var, -order_var),
                        y     = target_var,
-                       color = grouping_var,
-                       shape = grouping_var),
+                       color = colors_var,
+                       shape = colors_var),
                    fill   = NA,
                    size   = 4,
                    stroke = 2,
@@ -189,11 +214,11 @@ wjp_dots <- function(
     } else {
       plt <- plt +
         geom_point(data = data,
-                   aes(x     = reorder(labels_var, -order_var),
+                   aes(x     = reorder(grouping_var, -order_var),
                        y     = target_var,
-                       color = grouping_var,
-                       shape = grouping_var,
-                       alpha = grouping_var),
+                       color = colors_var,
+                       shape = colors_var,
+                       alpha = colors_var),
                    fill   = NA,
                    size   = 4,
                    stroke = 2,
@@ -206,7 +231,7 @@ wjp_dots <- function(
   
   if (!is.null(cvec)){
     plt <- plt +
-    scale_color_manual(values = cvec)
+      scale_color_manual(values = cvec)
   }
   
   plt <- plt +

@@ -21,10 +21,10 @@
 #' Rule of Law Index Historical Data
 #'
 #' Index scores, at country-year level, for all factors and subfactors
-#' from 2012 to 2023.
+#' from 2012 to 2024.
 #'
 #' @format ## `roli`
-#' A data frame with 1,199 rows and 57 columns:
+#' A data frame with 1,341 rows and 57 columns:
 #' \describe{
 #'   \item{country}{Country name}
 #'   \item{year}{Year}
