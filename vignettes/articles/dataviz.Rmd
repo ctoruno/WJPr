@@ -17,16 +17,18 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette describes the use of the data visualization functions included in the `WJPr` package on a fictional `GPP` dataset that is included as part of the package. Until version 1.0.0, there are eight data viz functions included in the base package:
+This vignette demonstrates how to use the data visualization functions included in the `WJPr` package with a fictional dataset called `GPP`, which is bundled with the package. Version 1.0.0 of `WJPr` comes with ten plotting functions, enabling the creation of the following chart types:
 
-1. Bars (Horizontal/Vertical/Stacked)
-2. Diverging Horizontal Bars
+1. Bar (Horizontal/Vertical/Stacked)
+2. Diverging Bars
 3. Lines
 4. Slopes
-5. Dots
+5. Dots (with error bars)
 6. Dumbbells
 7. Radar
-8. Edgebars
+8. Rose
+9. Edgebars
+10. Gauge
 
 ```{r setup, message=FALSE}
 library(ggplot2)
@@ -45,11 +47,11 @@ wjp_fonts()
 gpp_data <- WJPr::gpp
 ```
 
-## Bar Charts
+## Bar Chart
 
 ### Preparing the data
 
-We will begin by plotting a simple vertical chart. When it comes to GPP data, we usually plot percentages of response between groups of respondents. For this task, we will try to plot the percentage of respondents in each country in our GPP dataset that have a lot or some trust in Institution A. This is given by the percentage of people who answered 1 o 2 for question Q1A. Therefore, we proceed to wrangle our data to reflect this:
+To begin, we will plot a simple vertical bar chart. For the `GPP` dataset, a common use case involves visualizing the percentage of responses across different groups of respondents. In this example, we will plot the percentage of respondents in each country who have "a lot" or "some" trust in Institution A. This is calculated as the percentage of people who answered 1 or 2 to question Q1A. The first step is to wrangle the data accordingly:
 
 ```{r}
 data4bars <- gpp_data %>%
@@ -78,7 +80,7 @@ kbl(data4bars)
 
 ### Simple vertical chart
 
-Once that we have our data ready, we begin by plotting a very simple vertical chart with our GPP data. We just need to specify the names of the columns that contain the values to be plotted in the Y-Axis (`target`) and the variable containing the categories to be displayed in the X-Axis (`grouping`).
+Once the data is prepared, we can create a basic vertical bar chart using the `wjp_bars()` function. You only need to specify the names of the columns that contain the values to be plotted on the Y-axis (`target`) and the categories to be displayed on the X-axis (`grouping`).
 
 ```{r, warning=FALSE}
 wjp_bars(
@@ -90,7 +92,7 @@ wjp_bars(
 
 ### Controlling color
 
-We can specify the colors to be used using the `colors` and the `cvec` parameters. The `colors` parameter contain the name of the column that will distinguish the different colors, and then, the `cvec` parameter will pass a named vector linking specific values to specific colors. In the following example, we want all the bars to have a cool gray color, therefore, we use the column "year" as the `color` parameter and we pass a named vector in which we specify that values associated to year "2002" will have a color code equal to "#8789C0".
+Colors can be customized using the `colors` and `cvec` parameters. The `colors` parameter specifies the column used to distinguish color groups, while `cvec` is a named vector that maps specific values to specific colors. For example, to give all bars a consistent cool gray color, we can use the "year" column for `colors` and map the year "2002" to the color code "#8789C0".
 
 ```{r}
 wjp_bars(
@@ -102,7 +104,7 @@ wjp_bars(
 )
 ```
 
-If we would prefer to have a different color per country, we need to create a new column given that we are already using that same column as the grouping var. In the following example, we first create a new column called "color_variable" containing the same values as the columns "country"
+If you prefer to assign a unique color to each country, you'll need to create a new column because the `grouping` parameter is already using the "country" column. In the example below, we create a new column called "color_variable" with the same values as the "country" column:
 
 ```{r}
 data4bars <- data4bars %>%
@@ -123,7 +125,7 @@ wjp_bars(
 
 ### Adding value labels
 
-If we want to add value labels to our chart, we can then make use of our `labels` and `lab_pos` parameters. The first one contains the name of the column that contains the specific labels to be displayed. Given that the `target` parameter might have a lot of decimals, we usually create a string label rounding the values plotted in the Y-Axis. Once you have the specific value labels, you might also need to specify where specifically you would like the labels to be displayed. In the following example, we create two columns: "value_label" and "label_position", we will place the labels 5 percentage points above the top limit of the bars:
+To add value labels to the bars, use the `labels` and `lab_pos` parameters. The `labels` parameter specifies the column containing the label values, while `lab_pos` determines the position of the labels. Since the `target` column may contain values with many decimals, it’s common to create a separate column for rounded labels. In this example, we create two new columns, `value_label` and `label_position`, placing the labels 5 percentage points above the tops of the bars:
 
 ```{r}
 data4bars <- data4bars %>%
@@ -153,7 +155,7 @@ wjp_bars(
 
 ### Switch to horizontal bars
 
-By default, the plotted bars are vertical. However, making a horizontal bars plot is as easy as setting the `direction` parameter to "horizontal".
+By default, the bars are plotted vertically. However, switching to horizontal bars is as simple as setting the `direction` parameter to "horizontal".
 
 ```{r}
 wjp_bars(
@@ -170,9 +172,9 @@ wjp_bars(
 )
 ```
 
-## Stacked Bars
+## Stacked Bars Chart
 
-You can also use the `wjp_bars()` function to plot stacked bars. Let's assume that, instead of plotting the percentage of people who stated that had "A lot" or "Some" trust in Institution A, we prefer to plot the percentage of people that selected every possible answer in each country. First, we need to modify our data to reflect this changes as follows:
+The `wjp_bars()` function can also be used to create stacked bar charts. For instance, instead of plotting the percentage of respondents who have "a lot" or "some" trust in Institution A, we can visualize the percentage distribution for all possible responses in each country. First, we modify the data to reflect this new design:
 
 ```{r}
 data4bars <- gpp_data %>%
@@ -217,9 +219,9 @@ data4bars <- gpp_data %>%
 kbl(data4bars)
 ```
 
-Pay attention on how we transformed our "q1a" column into a factor variable and we defined the specific levels (order) of answers. By specifying the factor levels, we are taking control on how each answer will be plotted. If we don't specify the factor levels, the answers will be plotted in alphabetical order, which is not what we want given that our variable of interest is a ordered categorical variable.
+Notice that we transform the q1a column into a factor variable and define the specific levels (order) of responses. Specifying factor levels allows us to control how the answers are displayed in the chart. If we don’t define the factor levels, the responses will default to alphabetical order, which may not align with the intended order of this ordinal variable.
 
-Once that we have modified our data to fit the new design of our bar chart, we proceed to use the `wjp_bars()` function as showed above but this time, we set the `stacked` parameter to TRUE:
+Once the data is ready, we can use the `wjp_bars()` function again, this time setting the `stacked` parameter to "TRUE":
 
 ```{r, warning=FALSE}
 stacked_bar <- wjp_bars(
@@ -241,9 +243,9 @@ stacked_bar <- wjp_bars(
 stacked_bar
 ```
 
-## Diverging Bars Charts
+## Diverging Bars Chart
 
-Diverging bars are a specific type of bar chart. However, they use the negative part of the cartesian plane to plot additional information. Let's go back to our prior example where we were displaying the levels of trust that people in our sample had in Institution A. We could use diverging bars to plot the percentage of people who answered "A lot" and "Some" on one side, and the percentage of people who answered "Little" and "None" on the other. For this, we need to wrangle our data a little bit different:
+Diverging bar charts are a variation of standard bar charts that use both the positive and negative sides of the Cartesian plane to display information. For example, let’s revisit our earlier case where we plotted levels of trust in Institution A. With diverging bars, we can plot the percentage of respondents who answered "A lot" and "Some" on one side, and the percentage of respondents who answered "Little" and "None" on the other. To achieve this, we first need to wrangle the data slightly differently:
 
 ```{r}
 data4divbars <- gpp_data %>%
@@ -291,16 +293,23 @@ data4divbars <- gpp_data %>%
 kbl(data4divbars)
 ```
 
-Please pay attention on how we create a variable called "direction" to distinguish the direction in which these values will be plotted. Values associated with a "negative" direction are turned into negative numbers.
+Diverging bar charts are a variation of standard bar charts that use both the positive and negative sides of the Cartesian plane to display information. For example, let’s revisit our earlier case where we plotted levels of trust in Institution A. With diverging bars, we can plot the percentage of respondents who answered "A lot" and "Some" on one side, and the percentage of respondents who answered "Little" and "None" on the other. To achieve this, we first need to wrangle the data slightly differently:
 
-Once that we have the data we proceed use the `wjp_divbars()` function. Some parameters are used the same way:
+Pay close attention to how we create a new variable, `direction`, to specify the direction in which the values should be plotted. Values associated with a "negative" direction are converted into negative numbers.
 
-- `target` contains the column name that has the values to be plotted in the bars.
-- `grouping` contains the column name that has the categorical groupings.
-- `cvec` contains a named vector linking values to specific color codes.
-- `labels` contains the column name that has the value labels to be displayed, if any.
+Once the data is prepared, we can use the `wjp_divbars()` function to create the chart. Several parameters are used in the same way as in the wjp_bars() function:
 
-Besides these familiar parameters, `wjp_divbars()` has two unique ones that are required for this function to work. First, we need to set a `diverging` parameter that will contain the column name used to distinguish the direction of the values, as well as the `negative` parameter, which contains the exact value that distinguishes the negative values from the positive values within the `diverging` variable.
+- `target`: Specifies the column containing the values to be plotted.
+- `grouping`: Specifies the column containing the categorical groupings.
+- `cvec`: Contains a named vector that links specific values to color codes.
+- `labels`: Specifies the column containing the value labels to display (optional).
+
+In addition to these familiar parameters, the `wjp_divbars()` function has two unique parameters essential for diverging bar charts:
+
+- `diverging`: Specifies the column name that identifies the direction of the values (positive or negative).
+- `negative`: Specifies the value in the diverging column that indicates negative values.
+
+By combining these parameters, the `wjp_divbars()` function allows for clear and effective visualization of contrasting groups within the data.
 
 
 ```{r}
@@ -316,9 +325,9 @@ wjp_divbars(
 )
 ```
 
-## Line Charts
+## Line Chart
 
-Line charts are an excellent choice to display the evolution of values over time. You can use the `wjp_lines()` function to draw a line chart. Let's assume that we now want to focus on the evolution over time of the percentage of people who has "a lot" or "some" trust in Institution A in Atlantis. First, we need to wrangle the data to fit our new design:
+Line charts are a great way to display the evolution of values over time. The `wjp_lines()` function allows you to create line charts with ease. Let’s assume we want to examine the percentage of people who have "a lot" or "some" trust in Institution A in Atlantis over time. To begin, we need to wrangle the data to match this design:
 
 ```{r}
 data4lines <- gpp_data %>%
@@ -378,15 +387,17 @@ data4lines <- gpp_data %>%
 kbl(data4lines)
 ```
 
-Be aware that I'm also leaving trust in Institution B and  Institution C and pivoting the data frame to a long format. However, we will start by plotting only the percentage of people who trust in Institution A over time. For this, we proceed to use the `wjp_lines()` function. Some parameters are used the same way:
+Note that we are also retaining data on trust in Institution B and Institution C, and we are pivoting the dataset to a long format. However, for simplicity, we will start by plotting only the percentage of people who trust Institution A over time. We can achieve this with the `wjp_lines()` function. Many of the parameters work similarly to those in other functions:
 
-- `target` contains the column name that has the values to be plotted in the bars.
-- `grouping` contains the column name that has the categorical groupings. In most line charts, this parameter refers to the year or time variable.
-- `colors` contains the column name that will distinguish the different colors in the line chart.
-- `cvec` contains a named vector linking values to specific color codes.
-- `labels` contains the column name that has the value labels to be displayed, if any.
+- `target`: Specifies the column containing the values to be plotted on the Y-axis.
+- `grouping`: Specifies the column containing the categorical groupings. For most line charts, this is the year or time variable.
+- `colors`: Specifies the column used to distinguish different colors for the lines.
+- `cvec`: Contains a named vector mapping specific values to their corresponding color codes.
+- `labels`: Specifies the column containing value labels to display, if any.
 
-Besides these parameters, the `wjp_lines()` function also requires to set a `ngroups` parameter. The way we are setting this parameter depends on the number of groups. If we are just plotting a single line just like in the example bellow, we input `ngroups = 1`:
+Additionally, the `wjp_lines()` function requires the ngroups parameter to define the number of groups. Here’s how to set it:
+
+1. For a single line: If plotting only one line, as in the example below, set ngroups = 1.
 
 ```{r}
 wjp_lines(
@@ -400,7 +411,7 @@ wjp_lines(
 )
 ```
 
-Iif we are plotting multiple lines, we need to specify the full column that contains the groups as in the example bellow. Please also notice how we are setting `repel = TRUE` so the value labels do not overlap between each other. However, you need to have the `ggrepel` package loaded in memory.
+2. For multiple lines: When plotting multiple lines, specify the column containing the group identifiers. In this case, also consider setting repel = TRUE to prevent overlapping value labels. Note that the ggrepel package must be loaded for this feature to work.
 
 ```{r}
 library(ggrepel)
@@ -420,7 +431,7 @@ wjp_lines(
 
 ### Controlling opacities
 
-The `wjp_lines()` function has a special feature in which you can add a special highlight to certain lines by assigning different levels of opacity to different lines. Let's say that we want to highlight the line representing the trust levels in Institution A. We start by setting `transparency = TRUE` and we pass a named vector with the opacity levels that we want to assign to different lines to the `transparencies` parameter. Please note that the named vector needs to be based using the same values that were used for the color vector. 
+The `wjp_lines()` function includes a special feature that allows you to highlight specific lines by adjusting their opacity. For instance, if you want to highlight the line representing trust levels in Institution A, start by setting `transparency = TRUE`. Then, use the `transparencies` parameter to pass a named vector specifying the opacity levels for each line. Ensure the named vector uses the same values as the color vector (`cvec`) to align opacities with the corresponding lines.
 
 ```{r}
 wjp_lines(
@@ -441,9 +452,11 @@ wjp_lines(
 )
 ```
 
-## Slope Charts
+## Slope Chart
 
-Sometimes, you want to track the evolution of some variables over time but you want to focus only in two points in time. For this specific cases a slope chart is a better option in aesthetic terms than a line chart. The `wjp_slope()` function can help you in that. I will exemplify the use of this chart when we want to disaggregate the evolution of trust in Institution A between 2017 and 2022 in all three countries. We start by preparing the data for our new design:
+Slope charts are a great choice for visualizing the evolution of variables between two specific points in time. They provide a more aesthetically pleasing alternative to line charts in such cases. The `wjp_slope()` function is designed for this purpose.
+
+Let’s use an example where we disaggregate the evolution of trust in Institution A between 2017 and 2022 across three countries. We begin by preparing the data to fit this design:
 
 ```{r}
 data4slopes <- gpp_data %>%
@@ -480,15 +493,17 @@ data4slopes <- gpp_data %>%
 kbl(data4slopes)
 ```
 
-Once we have the data ready for our slopes, we proceed to use the `wjp_slope()` function. All the required parameters for this function have been covered in previous examples:
+Once the data is ready, we can use the wjp_slope() function. This function relies on parameters that have been covered in previous examples:
 
-- `target` contains the column name that has the values to be plotted in the bars.
-- `grouping` contains the column name that has the categorical groupings. In most slope charts, this parameter refers to the year or time variable.
-- `colors` contains the column name that will distinguish the different colors in the slope chart.
-- `cvec` contains a named vector linking values to specific color codes.
-- `labels` contains the column name that has the value labels to be displayed, if any.
-- `ngroups` refers to the number of lines to be plotted. If only one, please pass "1" if more than 1 line is to be plotted, then pass the column with the groups as a vector.
-- `repel` activates the ggrepel feature to avoid label overlapping.
+- `target`: Specifies the column containing the values to be plotted on the Y-axis.
+- `grouping`: Specifies the column containing the categorical groupings. For slope charts, this usually refers to the time variable or year.
+- `colors`: Specifies the column used to distinguish different colors in the slope chart.
+- `cvec`: Contains a named vector mapping specific values to their corresponding color codes.
+- `labels`: Specifies the column containing value labels to display, if any.
+- `ngroups`: Defines the number of lines to be plotted. For a single line, set `ngroups = 1`. For multiple lines, pass the column containing the group identifiers.
+- `repel`: Activates the `ggrepel` feature to prevent overlapping labels. Note that the `ggrepel` package must be loaded for this feature to work.
+
+Using these parameters, you can create a slope chart that effectively highlights changes between two points in time while maintaining clarity and visual appeal.
 
 ```{r}
 wjp_slope(
@@ -504,11 +519,13 @@ wjp_slope(
 )
 ```
 
-## Dots Charts
+## Dots Chart
 
 ### Minimal Example
 
-When we need to plot multiple variables and show the results for multiple agents or regions, a dot chart comes very handy. The `wjp_dots()` functions helps you to chart the data as quickly as possible. Let's try to plot the percentage of people who had a lot or some trust in institutions A, B, C, and D in all three countries: Atlantis, Narnia, and Neverland. We begin by preparing our data for a minimal example as follows:
+Dot charts are an excellent option for displaying multiple variables and comparing results across different agents, regions, or categories. The `wjp_dots()` function allows you to create dot charts efficiently and effectively.
+
+Let’s walk through an example where we plot the percentage of people who have "a lot" or "some" trust in Institutions A, B, C, and D across three countries: Atlantis, Narnia, and Neverland. To start, we need to prepare our data for this minimal example as follows:
 
 ```{r}
 data4dots <- gpp_data %>%
@@ -546,12 +563,12 @@ data4dots <- gpp_data %>%
 kbl(data4dots)
 ```
 
-Once we have the data ready for our slopes, we proceed to use the `wjp_dots()` function. All the required parameters for this function have been covered in previous examples:
+Once the data is prepared, we can use the `wjp_dots()` function to create the dot chart. The required parameters for this function are consistent with those explained in earlier sections:
 
-- `target` contains the column name that has the values to be plotted in the bars.
-- `grouping` contains the column name that has the categorical groupings. In most slope charts, this parameter refers to the year or time variable.
-- `colors` contains the column name that will distinguish the different colors in the slope chart.
-- `cvec` contains a named vector linking values to specific color codes.
+- `target`: The column name containing the values to be plotted as dots.
+- `grouping`: The column name containing the categorical groupings (e.g., institutions or categories being compared).
+- `colors`: The column name used to assign different colors to the dots.
+- `cvec`: A named vector linking specific values to their corresponding color codes.
 
 ```{r}
 wjp_dots(
@@ -666,6 +683,54 @@ wjp_dots(
 )
 ```
 
+## Dumbbells
+
+Dumbbells are a good option when we want to focus on two different points in time for multiple variables. The `wjp_dumbbells` function is used to plot dumbbells for this purpose. We can use the data that we used for plotting our line chart above and just filtering for two points in time. Once we have the data we can apply the `wjp_dumbbells()` function as usual with the parameters that we have reviewed in previous sections:
+
+```{r}
+data4dumbbells <- data4lines %>% 
+  filter(year %in% c("2017", "2022")) 
+
+wjp_dumbbells(
+    data = data4dumbbells,
+    target    = "percentage",
+    grouping  = "institution",
+    color     = "year",
+    cvec      = c("2017" = "#08605F",
+                  "2022" = "#9E6240"),
+    cgroups   = c("2017", "2022")
+)
+```
+
+Adding value labels to a dumbbell chart is as easy as specifying the column names that have the value label (`labels`) and the label position (`labpos`) to the plotting function.
+
+```{r}
+data4dumbbells <- data4dumbbells %>% 
+  mutate(
+    lab_position = if_else(year == "2022", percentage-5, percentage+5)
+  )
+
+wjp_dumbbells(
+    data = data4dumbbells,
+    target    = "percentage",
+    grouping  = "institution",
+    color     = "year",
+    cgroups   = c("2017", "2022"),
+    cvec      = c("2017" = "#08605F",
+                  "2022" = "#9E6240"),
+    labels    = "value_label",
+    labpos    = "lab_position"
+)
+```
+
+## Radar Chart
+
+## Rose Chart
+
+## Edgebars Chart
+
+## Gauge Chart
+
 ## Controlling the order of elements
 
 Sometimes, we might want to control the order in which we show some elements in our charts. Some of the plotting functions in our WJPr package include the a `custom_order` and an `order` parameter. Let's say that we want to further customize the diverging bars that we showed above and present the bars following in a specific order: Neverland (1), Atlantis (2), and Narnia (3). For this, we begin by setting the `custom_order` to TRUE and adding a new column to our data that has the specific order of the elements:
@@ -718,8 +783,6 @@ wjp_dots(
     order       = "order_no"
 )
 ```
-
-
 
 ## Adding more customizations
 

@@ -7,9 +7,9 @@
 wjp_dumbbells(
   data,
   target,
-  rows,
-  color,
+  grouping,
   cgroups,
+  color,
   labels = NULL,
   labpos = NULL,
   cvec = NULL,
@@ -22,13 +22,13 @@ wjp_dumbbells(
 
 \item{target}{A string specifying the variable in the data frame that contains the numeric values to be plotted.}
 
-\item{rows}{A string specifying the variable in the data frame that contains the categories for the rows.}
-
-\item{color}{A string specifying the variable in the data frame that indicates the groups for start and end points.}
+\item{grouping}{A string specifying the variable in the data frame that contains the categories for the rows.}
 
 \item{cgroups}{A vector of two strings specifying the groups to be compared in the dumbbell plot.}
 
-\item{labels}{A string specifying the variable in the data frame that contains the text labels to display.}
+\item{color}{A string specifying the variable in the data frame that indicates the groups for start and end points.}
+
+\item{labels}{A string specifying the variable in the data frame that contains the text labels to display. Default is NULL.}
 
 \item{labpos}{A string specifying the variable in the data frame that contains the label positions.}
 
@@ -46,16 +46,75 @@ A ggplot object representing the dumbbell plot.
 object with a dumbbell chart following WJP style guidelines.
 }
 \examples{
-\dontrun{
-data <- data.frame(
-  group = c("A", "B", "C", "A", "B", "C"),
-  target = c(30, 50, 20, 40, 60, 30),
-  color = c("start", "start", "start", "end", "end", "end")
-)
-cgroups <- c("start", "end")
-cvec <- c("#2a2a94", "#d1cfd1")
+# Always load the WJP fonts (optional)
+wjp_fonts()
 
-wjp_dumbbells(data, "target", "group", "color", cgroups, cvec)
-}
+# Preparing data
+gpp_data <- WJPr::gpp
 
+data4lines <- gpp_data \%>\%
+filter(
+  country == "Atlantis" & year \%in\% c(2017, 2022)
+) \%>\%
+  select(year, q1a, q1b, q1c) \%>\%
+  mutate(
+    across(
+      !year,
+      \(x) as.double(x)
+    ),
+    across(
+      !year,
+      ~case_when(
+        .x <= 2  ~ 1,
+        .x <= 4  ~ 0,
+        .x == 99 ~ NA_real_
+      )
+    ),
+    year = as.character(year)
+  ) \%>\%
+  group_by(year) \%>\%
+  summarise(
+    across(
+      everything(),
+      \(x) mean(x, na.rm = TRUE)
+    ),
+    .groups = "keep"
+  ) \%>\%
+  mutate(
+    across(
+      everything(),
+      \(x) x*100
+    )
+  ) \%>\%
+  pivot_longer(
+    !year,
+    names_to  = "variable",
+    values_to = "percentage" 
+  ) \%>\%
+  mutate(
+    institution = case_when(
+      variable == "q1a" ~ "Institution A",
+      variable == "q1b" ~ "Institution B",
+      variable == "q1c" ~ "Institution C"
+    ),
+    value_label = paste0(
+      format(
+        round(percentage, 0),
+        nsmall = 0
+      ),
+      "\%"
+    )
+  )
+  
+  # Plotting chart
+  wjp_dumbbells(
+    data = data4dumbbells,
+    target    = "percentage",
+    grouping  = "institution",
+    color     = "year",
+    cvec      = c("2017" = "#08605F",
+                  "2022" = "#9E6240"),
+    cgroups   = c("2017", "2022")
+ )
+ 
 }

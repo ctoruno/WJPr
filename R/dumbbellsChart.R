@@ -6,42 +6,97 @@
 #'
 #' @param data A data frame containing the data to be plotted.
 #' @param target A string specifying the variable in the data frame that contains the numeric values to be plotted.
-#' @param rows A string specifying the variable in the data frame that contains the categories for the rows.
+#' @param grouping A string specifying the variable in the data frame that contains the categories for the rows.
 #' @param color A string specifying the variable in the data frame that indicates the groups for start and end points.
 #' @param cgroups A vector of two strings specifying the groups to be compared in the dumbbell plot.
-#' @param labels A string specifying the variable in the data frame that contains the text labels to display.
+#' @param labels A string specifying the variable in the data frame that contains the text labels to display. Default is NULL. 
 #' @param labpos A string specifying the variable in the data frame that contains the label positions.
 #' @param cvec A vector of colors to apply to the points and lines. Default is NULL.
 #' @param order A named vector specifying the order of the categories. Default is NULL.
 #' @param ptheme A ggplot2 theme object to be applied to the plot. Default is WJP_theme().
 #'
 #' @return A ggplot object representing the dumbbell plot.
+#' @export
 #'
 #' @examples
-#' \dontrun{
-#' data <- data.frame(
-#'   group = c("A", "B", "C", "A", "B", "C"),
-#'   target = c(30, 50, 20, 40, 60, 30),
-#'   color = c("start", "start", "start", "end", "end", "end")
-#' )
-#' cgroups <- c("start", "end")
-#' cvec <- c("#2a2a94", "#d1cfd1")
+#' # Always load the WJP fonts (optional)
+#' wjp_fonts()
 #' 
-#' wjp_dumbbells(data, "target", "group", "color", cgroups, cvec)
-#' }
-#'
-#' @import dplyr
-#' @import ggplot2
-#' @import tidyr
-#'
-#' @export
+#' # Preparing data
+#' gpp_data <- WJPr::gpp
+#' 
+#' data4lines <- gpp_data %>%
+#' filter(
+#'   country == "Atlantis" & year %in% c(2017, 2022)
+#' ) %>%
+#'   select(year, q1a, q1b, q1c) %>%
+#'   mutate(
+#'     across(
+#'       !year,
+#'       \(x) as.double(x)
+#'     ),
+#'     across(
+#'       !year,
+#'       ~case_when(
+#'         .x <= 2  ~ 1,
+#'         .x <= 4  ~ 0,
+#'         .x == 99 ~ NA_real_
+#'       )
+#'     ),
+#'     year = as.character(year)
+#'   ) %>%
+#'   group_by(year) %>%
+#'   summarise(
+#'     across(
+#'       everything(),
+#'       \(x) mean(x, na.rm = TRUE)
+#'     ),
+#'     .groups = "keep"
+#'   ) %>%
+#'   mutate(
+#'     across(
+#'       everything(),
+#'       \(x) x*100
+#'     )
+#'   ) %>%
+#'   pivot_longer(
+#'     !year,
+#'     names_to  = "variable",
+#'     values_to = "percentage" 
+#'   ) %>%
+#'   mutate(
+#'     institution = case_when(
+#'       variable == "q1a" ~ "Institution A",
+#'       variable == "q1b" ~ "Institution B",
+#'       variable == "q1c" ~ "Institution C"
+#'     ),
+#'     value_label = paste0(
+#'       format(
+#'         round(percentage, 0),
+#'         nsmall = 0
+#'       ),
+#'       "%"
+#'     )
+#'   )
+#'   
+#'   # Plotting chart
+#'   wjp_dumbbells(
+#'     data = data4dumbbells,
+#'     target    = "percentage",
+#'     grouping  = "institution",
+#'     color     = "year",
+#'     cvec      = c("2017" = "#08605F",
+#'                   "2022" = "#9E6240"),
+#'     cgroups   = c("2017", "2022")
+#'  )
+#'  
 
 wjp_dumbbells <- function(
     data,             
     target, 
-    rows,
-    color,
+    grouping,
     cgroups,  
+    color,
     labels    = NULL,
     labpos    = NULL,
     cvec      = NULL, 
@@ -49,15 +104,20 @@ wjp_dumbbells <- function(
     ptheme    = WJP_theme()
 ){
   
+  # Default colors
+  if (is.null(cvec)){
+    cvec   <- c("#1D4E89", "#FBD1A2")
+  }
+  
   # Renaming variables in the data frame to match the function naming
   data_wider <- data %>%
     pivot_wider(
-      id_cols     = all_of(rows),
+      id_cols     = all_of(grouping),
       names_from  = color,
       values_from = target
     ) %>%
     rename(
-      group = all_of(rows),
+      group = all_of(grouping),
       start = all_of(cgroups[1]),
       end   = all_of(cgroups[2])
     )
@@ -67,14 +127,14 @@ wjp_dumbbells <- function(
       left_join(
         data %>%
           pivot_wider(
-            id_cols     = all_of(rows),
+            id_cols     = all_of(grouping),
             names_from  = color,
             values_from = labels
           ) %>%
           rename(
-            group = all_of(rows),
-            lab0  = all_of(names(cvec[1])),
-            lab1  = all_of(names(cvec[2]))
+            group = all_of(grouping),
+            lab0  = all_of(cgroups[1]),
+            lab1  = all_of(cgroups[2])
           ),
         by = "group"
       )
@@ -83,14 +143,14 @@ wjp_dumbbells <- function(
       left_join(
         data %>%
           pivot_wider(
-            id_cols     = all_of(rows),
+            id_cols     = all_of(grouping),
             names_from  = color,
             values_from = labpos
           ) %>%
           rename(
-            group = all_of(rows),
-            labp0 = all_of(names(cvec[1])),
-            labp1 = all_of(names(cvec[2]))
+            group = all_of(grouping),
+            labp0 = all_of(cgroups[1]),
+            labp1 = all_of(cgroups[2])
           ),
         by = "group"
       )
@@ -124,26 +184,10 @@ wjp_dumbbells <- function(
     pivot_longer(c(xmin, xmax),
                  names_to  = "cat",
                  values_to = "x") %>%
-    select(-cat) %>%
-    filter(fill != "white")
+    select(-cat) 
   
   # Drawing plot
   plt <- ggplot() +
-    # geom_blank(data      = data_wider,
-    #            aes(x     = reorder(group, -order),
-    #                y     = end)) +
-    # geom_ribbon(data      = strips,
-    #             aes(x     = x,
-    #                 ymin  = ymin,
-    #                 ymax  = ymax,
-    #                 group = xposition,
-    #                 fill  = fill),
-    #             show.legend = F) +
-    # scale_fill_manual(
-    #   values   = c("grey"  = "#EBEBEB",
-    #                "white" = "#FFFFFF"),
-    #   na.value = NULL
-    # ) +
     geom_segment(
       data = data_wider,
       aes(
@@ -152,8 +196,8 @@ wjp_dumbbells <- function(
         y    = start,
         yend = end
       ),
-      color = cvec[2],
-      size  = 1.5 
+      color  = cvec[2],
+      linewidth = 1.5 
     ) +
     geom_point(
       data = data_wider,
@@ -201,7 +245,6 @@ wjp_dumbbells <- function(
   }
   
   plt <- plt +
-    # scale_color_manual(values = cvec) +
     scale_y_continuous(limits = c(0,100),
                        breaks = seq(0,100,20),
                        labels = paste0(seq(0,100,20),
@@ -216,7 +259,7 @@ wjp_dumbbells <- function(
           panel.ontop = T,
           axis.text.y = element_text(color = "#222221",
                                      hjust = 0))
-    
   
+  return(plt)
 }
 
