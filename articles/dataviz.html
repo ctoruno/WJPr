@@ -65,20 +65,22 @@
 
     
     
-<p>This vignette describes the use of the data visualization functions
-included in the <code>WJPr</code> package on a fictional
-<code>GPP</code> dataset that is included as part of the package. Until
-version 1.0.0, there are eight data viz functions included in the base
-package:</p>
+<p>This vignette demonstrates how to use the data visualization
+functions included in the <code>WJPr</code> package with a fictional
+dataset called <code>GPP</code>, which is bundled with the package.
+Version 1.0.0 of <code>WJPr</code> comes with ten plotting functions,
+enabling the creation of the following chart types:</p>
 <ol style="list-style-type: decimal">
-<li>Bars (Horizontal/Vertical/Stacked)</li>
-<li>Diverging Horizontal Bars</li>
+<li>Bar (Horizontal/Vertical/Stacked)</li>
+<li>Diverging Bars</li>
 <li>Lines</li>
 <li>Slopes</li>
-<li>Dots</li>
+<li>Dots (with error bars)</li>
 <li>Dumbbells</li>
 <li>Radar</li>
+<li>Rose</li>
 <li>Edgebars</li>
+<li>Gauge</li>
 </ol>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
@@ -96,18 +98,18 @@ package:</p>
 <span><span class="co"># Loading data</span></span>
 <span><span class="va">gpp_data</span> <span class="op">&lt;-</span> <span class="fu">WJPr</span><span class="fu">::</span><span class="va"><a href="../reference/gpp.html">gpp</a></span></span></code></pre></div>
 <div class="section level2">
-<h2 id="bar-charts">Bar Charts<a class="anchor" aria-label="anchor" href="#bar-charts"></a>
+<h2 id="bar-chart">Bar Chart<a class="anchor" aria-label="anchor" href="#bar-chart"></a>
 </h2>
 <div class="section level3">
 <h3 id="preparing-the-data">Preparing the data<a class="anchor" aria-label="anchor" href="#preparing-the-data"></a>
 </h3>
-<p>We will begin by plotting a simple vertical chart. When it comes to
-GPP data, we usually plot percentages of response between groups of
-respondents. For this task, we will try to plot the percentage of
-respondents in each country in our GPP dataset that have a lot or some
-trust in Institution A. This is given by the percentage of people who
-answered 1 o 2 for question Q1A. Therefore, we proceed to wrangle our
-data to reflect this:</p>
+<p>To begin, we will plot a simple vertical bar chart. For the
+<code>GPP</code> dataset, a common use case involves visualizing the
+percentage of responses across different groups of respondents. In this
+example, we will plot the percentage of respondents in each country who
+have “a lot” or “some” trust in Institution A. This is calculated as the
+percentage of people who answered 1 or 2 to question Q1A. The first step
+is to wrangle the data accordingly:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data4bars</span> <span class="op">&lt;-</span> <span class="va">gpp_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">country</span>, <span class="va">year</span>, <span class="va">q1a</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
@@ -183,11 +185,11 @@ Neverland
 <div class="section level3">
 <h3 id="simple-vertical-chart">Simple vertical chart<a class="anchor" aria-label="anchor" href="#simple-vertical-chart"></a>
 </h3>
-<p>Once that we have our data ready, we begin by plotting a very simple
-vertical chart with our GPP data. We just need to specify the names of
-the columns that contain the values to be plotted in the Y-Axis
-(<code>target</code>) and the variable containing the categories to be
-displayed in the X-Axis (<code>grouping</code>).</p>
+<p>Once the data is prepared, we can create a basic vertical bar chart
+using the <code><a href="../reference/wjp_bars.html">wjp_bars()</a></code> function. You only need to specify the
+names of the columns that contain the values to be plotted on the Y-axis
+(<code>target</code>) and the categories to be displayed on the X-axis
+(<code>grouping</code>).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/wjp_bars.html">wjp_bars</a></span><span class="op">(</span></span>
 <span>    <span class="va">data4bars</span>,              </span>
@@ -199,15 +201,13 @@ displayed in the X-Axis (<code>grouping</code>).</p>
 <div class="section level3">
 <h3 id="controlling-color">Controlling color<a class="anchor" aria-label="anchor" href="#controlling-color"></a>
 </h3>
-<p>We can specify the colors to be used using the <code>colors</code>
-and the <code>cvec</code> parameters. The <code>colors</code> parameter
-contain the name of the column that will distinguish the different
-colors, and then, the <code>cvec</code> parameter will pass a named
-vector linking specific values to specific colors. In the following
-example, we want all the bars to have a cool gray color, therefore, we
-use the column “year” as the <code>color</code> parameter and we pass a
-named vector in which we specify that values associated to year “2002”
-will have a color code equal to “#8789C0”.</p>
+<p>Colors can be customized using the <code>colors</code> and
+<code>cvec</code> parameters. The <code>colors</code> parameter
+specifies the column used to distinguish color groups, while
+<code>cvec</code> is a named vector that maps specific values to
+specific colors. For example, to give all bars a consistent cool gray
+color, we can use the “year” column for <code>colors</code> and map the
+year “2002” to the color code “#8789C0”.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/wjp_bars.html">wjp_bars</a></span><span class="op">(</span></span>
 <span>    <span class="va">data4bars</span>,              </span>
@@ -217,11 +217,11 @@ will have a color code equal to “#8789C0”.</p>
 <span>    cvec      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2022"</span> <span class="op">=</span> <span class="st">"#8789C0"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="dataviz_files/figure-html/unnamed-chunk-5-1.png" width="150%"></p>
-<p>If we would prefer to have a different color per country, we need to
-create a new column given that we are already using that same column as
-the grouping var. In the following example, we first create a new column
-called “color_variable” containing the same values as the columns
-“country”</p>
+<p>If you prefer to assign a unique color to each country, you’ll need
+to create a new column because the <code>grouping</code> parameter is
+already using the “country” column. In the example below, we create a
+new column called “color_variable” with the same values as the “country”
+column:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data4bars</span> <span class="op">&lt;-</span> <span class="va">data4bars</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
@@ -242,16 +242,15 @@ called “color_variable” containing the same values as the columns
 <div class="section level3">
 <h3 id="adding-value-labels">Adding value labels<a class="anchor" aria-label="anchor" href="#adding-value-labels"></a>
 </h3>
-<p>If we want to add value labels to our chart, we can then make use of
-our <code>labels</code> and <code>lab_pos</code> parameters. The first
-one contains the name of the column that contains the specific labels to
-be displayed. Given that the <code>target</code> parameter might have a
-lot of decimals, we usually create a string label rounding the values
-plotted in the Y-Axis. Once you have the specific value labels, you
-might also need to specify where specifically you would like the labels
-to be displayed. In the following example, we create two columns:
-“value_label” and “label_position”, we will place the labels 5
-percentage points above the top limit of the bars:</p>
+<p>To add value labels to the bars, use the <code>labels</code> and
+<code>lab_pos</code> parameters. The <code>labels</code> parameter
+specifies the column containing the label values, while
+<code>lab_pos</code> determines the position of the labels. Since the
+<code>target</code> column may contain values with many decimals, it’s
+common to create a separate column for rounded labels. In this example,
+we create two new columns, <code>value_label</code> and
+<code>label_position</code>, placing the labels 5 percentage points
+above the tops of the bars:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data4bars</span> <span class="op">&lt;-</span> <span class="va">data4bars</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
@@ -281,8 +280,8 @@ percentage points above the top limit of the bars:</p>
 <div class="section level3">
 <h3 id="switch-to-horizontal-bars">Switch to horizontal bars<a class="anchor" aria-label="anchor" href="#switch-to-horizontal-bars"></a>
 </h3>
-<p>By default, the plotted bars are vertical. However, making a
-horizontal bars plot is as easy as setting the <code>direction</code>
+<p>By default, the bars are plotted vertically. However, switching to
+horizontal bars is as simple as setting the <code>direction</code>
 parameter to “horizontal”.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/wjp_bars.html">wjp_bars</a></span><span class="op">(</span></span>
@@ -301,14 +300,13 @@ parameter to “horizontal”.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="stacked-bars">Stacked Bars<a class="anchor" aria-label="anchor" href="#stacked-bars"></a>
+<h2 id="stacked-bars-chart">Stacked Bars Chart<a class="anchor" aria-label="anchor" href="#stacked-bars-chart"></a>
 </h2>
-<p>You can also use the <code><a href="../reference/wjp_bars.html">wjp_bars()</a></code> function to plot stacked
-bars. Let’s assume that, instead of plotting the percentage of people
-who stated that had “A lot” or “Some” trust in Institution A, we prefer
-to plot the percentage of people that selected every possible answer in
-each country. First, we need to modify our data to reflect this changes
-as follows:</p>
+<p>The <code><a href="../reference/wjp_bars.html">wjp_bars()</a></code> function can also be used to create
+stacked bar charts. For instance, instead of plotting the percentage of
+respondents who have “a lot” or “some” trust in Institution A, we can
+visualize the percentage distribution for all possible responses in each
+country. First, we modify the data to reflect this new design:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data4bars</span> <span class="op">&lt;-</span> <span class="va">gpp_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span>
@@ -609,16 +607,15 @@ A lot
 </tr>
 </tbody>
 </table>
-<p>Pay attention on how we transformed our “q1a” column into a factor
-variable and we defined the specific levels (order) of answers. By
-specifying the factor levels, we are taking control on how each answer
-will be plotted. If we don’t specify the factor levels, the answers will
-be plotted in alphabetical order, which is not what we want given that
-our variable of interest is a ordered categorical variable.</p>
-<p>Once that we have modified our data to fit the new design of our bar
-chart, we proceed to use the <code><a href="../reference/wjp_bars.html">wjp_bars()</a></code> function as showed
-above but this time, we set the <code>stacked</code> parameter to
-TRUE:</p>
+<p>Notice that we transform the q1a column into a factor variable and
+define the specific levels (order) of responses. Specifying factor
+levels allows us to control how the answers are displayed in the chart.
+If we don’t define the factor levels, the responses will default to
+alphabetical order, which may not align with the intended order of this
+ordinal variable.</p>
+<p>Once the data is ready, we can use the <code><a href="../reference/wjp_bars.html">wjp_bars()</a></code>
+function again, this time setting the <code>stacked</code> parameter to
+“TRUE”:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">stacked_bar</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wjp_bars.html">wjp_bars</a></span><span class="op">(</span></span>
 <span>    <span class="va">data4bars</span>,              </span>
@@ -640,16 +637,16 @@ TRUE:</p>
 <p><img src="dataviz_files/figure-html/unnamed-chunk-10-1.png" width="150%"></p>
 </div>
 <div class="section level2">
-<h2 id="diverging-bars-charts">Diverging Bars Charts<a class="anchor" aria-label="anchor" href="#diverging-bars-charts"></a>
+<h2 id="diverging-bars-chart">Diverging Bars Chart<a class="anchor" aria-label="anchor" href="#diverging-bars-chart"></a>
 </h2>
-<p>Diverging bars are a specific type of bar chart. However, they use
-the negative part of the cartesian plane to plot additional information.
-Let’s go back to our prior example where we were displaying the levels
-of trust that people in our sample had in Institution A. We could use
-diverging bars to plot the percentage of people who answered “A lot” and
-“Some” on one side, and the percentage of people who answered “Little”
-and “None” on the other. For this, we need to wrangle our data a little
-bit different:</p>
+<p>Diverging bar charts are a variation of standard bar charts that use
+both the positive and negative sides of the Cartesian plane to display
+information. For example, let’s revisit our earlier case where we
+plotted levels of trust in Institution A. With diverging bars, we can
+plot the percentage of respondents who answered “A lot” and “Some” on
+one side, and the percentage of respondents who answered “Little” and
+“None” on the other. To achieve this, we first need to wrangle the data
+slightly differently:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data4divbars</span> <span class="op">&lt;-</span> <span class="va">gpp_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span>
@@ -838,34 +835,49 @@ positive
 </tr>
 </tbody>
 </table>
-<p>Please pay attention on how we create a variable called “direction”
-to distinguish the direction in which these values will be plotted.
-Values associated with a “negative” direction are turned into negative
-numbers.</p>
-<p>Once that we have the data we proceed use the
-<code><a href="../reference/wjp_divbars.html">wjp_divbars()</a></code> function. Some parameters are used the same
-way:</p>
+<p>Diverging bar charts are a variation of standard bar charts that use
+both the positive and negative sides of the Cartesian plane to display
+information. For example, let’s revisit our earlier case where we
+plotted levels of trust in Institution A. With diverging bars, we can
+plot the percentage of respondents who answered “A lot” and “Some” on
+one side, and the percentage of respondents who answered “Little” and
+“None” on the other. To achieve this, we first need to wrangle the data
+slightly differently:</p>
+<p>Pay close attention to how we create a new variable,
+<code>direction</code>, to specify the direction in which the values
+should be plotted. Values associated with a “negative” direction are
+converted into negative numbers.</p>
+<p>Once the data is prepared, we can use the <code><a href="../reference/wjp_divbars.html">wjp_divbars()</a></code>
+function to create the chart. Several parameters are used in the same
+way as in the wjp_bars() function:</p>
 <ul>
 <li>
-<code>target</code> contains the column name that has the values to
-be plotted in the bars.</li>
+<code>target</code>: Specifies the column containing the values to
+be plotted.</li>
 <li>
-<code>grouping</code> contains the column name that has the
+<code>grouping</code>: Specifies the column containing the
 categorical groupings.</li>
 <li>
-<code>cvec</code> contains a named vector linking values to specific
-color codes.</li>
+<code>cvec</code>: Contains a named vector that links specific
+values to color codes.</li>
 <li>
-<code>labels</code> contains the column name that has the value
-labels to be displayed, if any.</li>
+<code>labels</code>: Specifies the column containing the value
+labels to display (optional).</li>
 </ul>
-<p>Besides these familiar parameters, <code><a href="../reference/wjp_divbars.html">wjp_divbars()</a></code> has two
-unique ones that are required for this function to work. First, we need
-to set a <code>diverging</code> parameter that will contain the column
-name used to distinguish the direction of the values, as well as the
-<code>negative</code> parameter, which contains the exact value that
-distinguishes the negative values from the positive values within the
-<code>diverging</code> variable.</p>
+<p>In addition to these familiar parameters, the
+<code><a href="../reference/wjp_divbars.html">wjp_divbars()</a></code> function has two unique parameters essential
+for diverging bar charts:</p>
+<ul>
+<li>
+<code>diverging</code>: Specifies the column name that identifies
+the direction of the values (positive or negative).</li>
+<li>
+<code>negative</code>: Specifies the value in the diverging column
+that indicates negative values.</li>
+</ul>
+<p>By combining these parameters, the <code><a href="../reference/wjp_divbars.html">wjp_divbars()</a></code>
+function allows for clear and effective visualization of contrasting
+groups within the data.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/wjp_divbars.html">wjp_divbars</a></span><span class="op">(</span></span>
 <span>    <span class="va">data4divbars</span>,             </span>
@@ -880,14 +892,14 @@ distinguishes the negative values from the positive values within the
 <p><img src="dataviz_files/figure-html/unnamed-chunk-12-1.png" width="150%"></p>
 </div>
 <div class="section level2">
-<h2 id="line-charts">Line Charts<a class="anchor" aria-label="anchor" href="#line-charts"></a>
+<h2 id="line-chart">Line Chart<a class="anchor" aria-label="anchor" href="#line-chart"></a>
 </h2>
-<p>Line charts are an excellent choice to display the evolution of
-values over time. You can use the <code><a href="../reference/wjp_lines.html">wjp_lines()</a></code> function to
-draw a line chart. Let’s assume that we now want to focus on the
-evolution over time of the percentage of people who has “a lot” or
-“some” trust in Institution A in Atlantis. First, we need to wrangle the
-data to fit our new design:</p>
+<p>Line charts are a great way to display the evolution of values over
+time. The <code><a href="../reference/wjp_lines.html">wjp_lines()</a></code> function allows you to create line
+charts with ease. Let’s assume we want to examine the percentage of
+people who have “a lot” or “some” trust in Institution A in Atlantis
+over time. To begin, we need to wrangle the data to match this
+design:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data4lines</span> <span class="op">&lt;-</span> <span class="va">gpp_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span>
@@ -1118,34 +1130,37 @@ Institution C
 </tr>
 </tbody>
 </table>
-<p>Be aware that I’m also leaving trust in Institution B and Institution
-C and pivoting the data frame to a long format. However, we will start
-by plotting only the percentage of people who trust in Institution A
-over time. For this, we proceed to use the <code><a href="../reference/wjp_lines.html">wjp_lines()</a></code>
-function. Some parameters are used the same way:</p>
+<p>Note that we are also retaining data on trust in Institution B and
+Institution C, and we are pivoting the dataset to a long format.
+However, for simplicity, we will start by plotting only the percentage
+of people who trust Institution A over time. We can achieve this with
+the <code><a href="../reference/wjp_lines.html">wjp_lines()</a></code> function. Many of the parameters work
+similarly to those in other functions:</p>
 <ul>
 <li>
-<code>target</code> contains the column name that has the values to
-be plotted in the bars.</li>
+<code>target</code>: Specifies the column containing the values to
+be plotted on the Y-axis.</li>
 <li>
-<code>grouping</code> contains the column name that has the
-categorical groupings. In most line charts, this parameter refers to the
-year or time variable.</li>
+<code>grouping</code>: Specifies the column containing the
+categorical groupings. For most line charts, this is the year or time
+variable.</li>
 <li>
-<code>colors</code> contains the column name that will distinguish
-the different colors in the line chart.</li>
+<code>colors</code>: Specifies the column used to distinguish
+different colors for the lines.</li>
 <li>
-<code>cvec</code> contains a named vector linking values to specific
-color codes.</li>
+<code>cvec</code>: Contains a named vector mapping specific values
+to their corresponding color codes.</li>
 <li>
-<code>labels</code> contains the column name that has the value
-labels to be displayed, if any.</li>
+<code>labels</code>: Specifies the column containing value labels to
+display, if any.</li>
 </ul>
-<p>Besides these parameters, the <code><a href="../reference/wjp_lines.html">wjp_lines()</a></code> function also
-requires to set a <code>ngroups</code> parameter. The way we are setting
-this parameter depends on the number of groups. If we are just plotting
-a single line just like in the example bellow, we input
-<code>ngroups = 1</code>:</p>
+<p>Additionally, the <code><a href="../reference/wjp_lines.html">wjp_lines()</a></code> function requires the
+ngroups parameter to define the number of groups. Here’s how to set
+it:</p>
+<ol style="list-style-type: decimal">
+<li>For a single line: If plotting only one line, as in the example
+below, set ngroups = 1.</li>
+</ol>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/wjp_lines.html">wjp_lines</a></span><span class="op">(</span></span>
 <span>    <span class="va">data4lines</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">institution</span> <span class="op">==</span> <span class="st">"Institution A"</span><span class="op">)</span>,                    </span>
@@ -1157,11 +1172,12 @@ a single line just like in the example bellow, we input
 <span>    labels         <span class="op">=</span> <span class="st">"value_label"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="dataviz_files/figure-html/unnamed-chunk-14-1.png" width="150%"></p>
-<p>Iif we are plotting multiple lines, we need to specify the full
-column that contains the groups as in the example bellow. Please also
-notice how we are setting <code>repel = TRUE</code> so the value labels
-do not overlap between each other. However, you need to have the
-<code>ggrepel</code> package loaded in memory.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>For multiple lines: When plotting multiple lines, specify the column
+containing the group identifiers. In this case, also consider setting
+repel = TRUE to prevent overlapping value labels. Note that the ggrepel
+package must be loaded for this feature to work.</li>
+</ol>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggrepel.slowkow.com/" class="external-link">ggrepel</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/wjp_lines.html">wjp_lines</a></span><span class="op">(</span></span>
@@ -1180,15 +1196,14 @@ do not overlap between each other. However, you need to have the
 <div class="section level3">
 <h3 id="controlling-opacities">Controlling opacities<a class="anchor" aria-label="anchor" href="#controlling-opacities"></a>
 </h3>
-<p>The <code><a href="../reference/wjp_lines.html">wjp_lines()</a></code> function has a special feature in which
-you can add a special highlight to certain lines by assigning different
-levels of opacity to different lines. Let’s say that we want to
-highlight the line representing the trust levels in Institution A. We
-start by setting <code>transparency = TRUE</code> and we pass a named
-vector with the opacity levels that we want to assign to different lines
-to the <code>transparencies</code> parameter. Please note that the named
-vector needs to be based using the same values that were used for the
-color vector.</p>
+<p>The <code><a href="../reference/wjp_lines.html">wjp_lines()</a></code> function includes a special feature that
+allows you to highlight specific lines by adjusting their opacity. For
+instance, if you want to highlight the line representing trust levels in
+Institution A, start by setting <code>transparency = TRUE</code>. Then,
+use the <code>transparencies</code> parameter to pass a named vector
+specifying the opacity levels for each line. Ensure the named vector
+uses the same values as the color vector (<code>cvec</code>) to align
+opacities with the corresponding lines.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/wjp_lines.html">wjp_lines</a></span><span class="op">(</span></span>
 <span>    <span class="va">data4lines</span>,                    </span>
@@ -1210,15 +1225,15 @@ color vector.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="slope-charts">Slope Charts<a class="anchor" aria-label="anchor" href="#slope-charts"></a>
+<h2 id="slope-chart">Slope Chart<a class="anchor" aria-label="anchor" href="#slope-chart"></a>
 </h2>
-<p>Sometimes, you want to track the evolution of some variables over
-time but you want to focus only in two points in time. For this specific
-cases a slope chart is a better option in aesthetic terms than a line
-chart. The <code><a href="../reference/wjp_slope.html">wjp_slope()</a></code> function can help you in that. I
-will exemplify the use of this chart when we want to disaggregate the
-evolution of trust in Institution A between 2017 and 2022 in all three
-countries. We start by preparing the data for our new design:</p>
+<p>Slope charts are a great choice for visualizing the evolution of
+variables between two specific points in time. They provide a more
+aesthetically pleasing alternative to line charts in such cases. The
+<code><a href="../reference/wjp_slope.html">wjp_slope()</a></code> function is designed for this purpose.</p>
+<p>Let’s use an example where we disaggregate the evolution of trust in
+Institution A between 2017 and 2022 across three countries. We begin by
+preparing the data to fit this design:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data4slopes</span> <span class="op">&lt;-</span> <span class="va">gpp_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">gend</span>, <span class="va">q1a</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
@@ -1326,34 +1341,38 @@ Male
 </tr>
 </tbody>
 </table>
-<p>Once we have the data ready for our slopes, we proceed to use the
-<code><a href="../reference/wjp_slope.html">wjp_slope()</a></code> function. All the required parameters for this
-function have been covered in previous examples:</p>
+<p>Once the data is ready, we can use the wjp_slope() function. This
+function relies on parameters that have been covered in previous
+examples:</p>
 <ul>
 <li>
-<code>target</code> contains the column name that has the values to
-be plotted in the bars.</li>
+<code>target</code>: Specifies the column containing the values to
+be plotted on the Y-axis.</li>
 <li>
-<code>grouping</code> contains the column name that has the
-categorical groupings. In most slope charts, this parameter refers to
-the year or time variable.</li>
+<code>grouping</code>: Specifies the column containing the
+categorical groupings. For slope charts, this usually refers to the time
+variable or year.</li>
 <li>
-<code>colors</code> contains the column name that will distinguish
-the different colors in the slope chart.</li>
+<code>colors</code>: Specifies the column used to distinguish
+different colors in the slope chart.</li>
 <li>
-<code>cvec</code> contains a named vector linking values to specific
-color codes.</li>
+<code>cvec</code>: Contains a named vector mapping specific values
+to their corresponding color codes.</li>
 <li>
-<code>labels</code> contains the column name that has the value
-labels to be displayed, if any.</li>
+<code>labels</code>: Specifies the column containing value labels to
+display, if any.</li>
 <li>
-<code>ngroups</code> refers to the number of lines to be plotted. If
-only one, please pass “1” if more than 1 line is to be plotted, then
-pass the column with the groups as a vector.</li>
+<code>ngroups</code>: Defines the number of lines to be plotted. For
+a single line, set <code>ngroups = 1</code>. For multiple lines, pass
+the column containing the group identifiers.</li>
 <li>
-<code>repel</code> activates the ggrepel feature to avoid label
-overlapping.</li>
+<code>repel</code>: Activates the <code>ggrepel</code> feature to
+prevent overlapping labels. Note that the <code>ggrepel</code> package
+must be loaded for this feature to work.</li>
 </ul>
+<p>Using these parameters, you can create a slope chart that effectively
+highlights changes between two points in time while maintaining clarity
+and visual appeal.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/wjp_slope.html">wjp_slope</a></span><span class="op">(</span></span>
 <span>    <span class="va">data4slopes</span>,                    </span>
@@ -1369,18 +1388,19 @@ overlapping.</li>
 <p><img src="dataviz_files/figure-html/unnamed-chunk-18-1.png" width="150%"></p>
 </div>
 <div class="section level2">
-<h2 id="dots-charts">Dots Charts<a class="anchor" aria-label="anchor" href="#dots-charts"></a>
+<h2 id="dots-chart">Dots Chart<a class="anchor" aria-label="anchor" href="#dots-chart"></a>
 </h2>
 <div class="section level3">
 <h3 id="minimal-example">Minimal Example<a class="anchor" aria-label="anchor" href="#minimal-example"></a>
 </h3>
-<p>When we need to plot multiple variables and show the results for
-multiple agents or regions, a dot chart comes very handy. The
-<code><a href="../reference/wjp_dots.html">wjp_dots()</a></code> functions helps you to chart the data as quickly
-as possible. Let’s try to plot the percentage of people who had a lot or
-some trust in institutions A, B, C, and D in all three countries:
-Atlantis, Narnia, and Neverland. We begin by preparing our data for a
-minimal example as follows:</p>
+<p>Dot charts are an excellent option for displaying multiple variables
+and comparing results across different agents, regions, or categories.
+The <code><a href="../reference/wjp_dots.html">wjp_dots()</a></code> function allows you to create dot charts
+efficiently and effectively.</p>
+<p>Let’s walk through an example where we plot the percentage of people
+who have “a lot” or “some” trust in Institutions A, B, C, and D across
+three countries: Atlantis, Narnia, and Neverland. To start, we need to
+prepare our data for this minimal example as follows:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data4dots</span> <span class="op">&lt;-</span> <span class="va">gpp_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">country</span>, <span class="va">q1a</span>, <span class="va">q1b</span>, <span class="va">q1c</span>, <span class="va">q1d</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
@@ -1601,23 +1621,22 @@ Institution D
 </tr>
 </tbody>
 </table>
-<p>Once we have the data ready for our slopes, we proceed to use the
-<code><a href="../reference/wjp_dots.html">wjp_dots()</a></code> function. All the required parameters for this
-function have been covered in previous examples:</p>
+<p>Once the data is prepared, we can use the <code><a href="../reference/wjp_dots.html">wjp_dots()</a></code>
+function to create the dot chart. The required parameters for this
+function are consistent with those explained in earlier sections:</p>
 <ul>
 <li>
-<code>target</code> contains the column name that has the values to
-be plotted in the bars.</li>
+<code>target</code>: The column name containing the values to be
+plotted as dots.</li>
 <li>
-<code>grouping</code> contains the column name that has the
-categorical groupings. In most slope charts, this parameter refers to
-the year or time variable.</li>
+<code>grouping</code>: The column name containing the categorical
+groupings (e.g., institutions or categories being compared).</li>
 <li>
-<code>colors</code> contains the column name that will distinguish
-the different colors in the slope chart.</li>
+<code>colors</code>: The column name used to assign different colors
+to the dots.</li>
 <li>
-<code>cvec</code> contains a named vector linking values to specific
-color codes.</li>
+<code>cvec</code>: A named vector linking specific values to their
+corresponding color codes.</li>
 </ul>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/wjp_dots.html">wjp_dots</a></span><span class="op">(</span></span>
@@ -1937,6 +1956,68 @@ each variable and group.</p>
 </div>
 </div>
 <div class="section level2">
+<h2 id="dumbbells">Dumbbells<a class="anchor" aria-label="anchor" href="#dumbbells"></a>
+</h2>
+<p>Dumbbells are a good option when we want to focus on two different
+points in time for multiple variables. The <code>wjp_dumbbells</code>
+function is used to plot dumbbells for this purpose. We can use the data
+that we used for plotting our line chart above and just filtering for
+two points in time. Once we have the data we can apply the
+<code><a href="../reference/wjp_dumbbells.html">wjp_dumbbells()</a></code> function as usual with the parameters that
+we have reviewed in previous sections:</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data4dumbbells</span> <span class="op">&lt;-</span> <span class="va">data4lines</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">year</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2017"</span>, <span class="st">"2022"</span><span class="op">)</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="fu"><a href="../reference/wjp_dumbbells.html">wjp_dumbbells</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">data4dumbbells</span>,</span>
+<span>    target    <span class="op">=</span> <span class="st">"percentage"</span>,</span>
+<span>    grouping  <span class="op">=</span> <span class="st">"institution"</span>,</span>
+<span>    color     <span class="op">=</span> <span class="st">"year"</span>,</span>
+<span>    cvec      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2017"</span> <span class="op">=</span> <span class="st">"#08605F"</span>,</span>
+<span>                  <span class="st">"2022"</span> <span class="op">=</span> <span class="st">"#9E6240"</span><span class="op">)</span>,</span>
+<span>    cgroups   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2017"</span>, <span class="st">"2022"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-24-1.png" width="150%"></p>
+<p>Adding value labels to a dumbbell chart is as easy as specifying the
+column names that have the value label (<code>labels</code>) and the
+label position (<code>labpos</code>) to the plotting function.</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data4dumbbells</span> <span class="op">&lt;-</span> <span class="va">data4dumbbells</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    lab_position <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="va">year</span> <span class="op">==</span> <span class="st">"2022"</span>, <span class="va">percentage</span><span class="op">-</span><span class="fl">5</span>, <span class="va">percentage</span><span class="op">+</span><span class="fl">5</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/wjp_dumbbells.html">wjp_dumbbells</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">data4dumbbells</span>,</span>
+<span>    target    <span class="op">=</span> <span class="st">"percentage"</span>,</span>
+<span>    grouping  <span class="op">=</span> <span class="st">"institution"</span>,</span>
+<span>    color     <span class="op">=</span> <span class="st">"year"</span>,</span>
+<span>    cgroups   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2017"</span>, <span class="st">"2022"</span><span class="op">)</span>,</span>
+<span>    cvec      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2017"</span> <span class="op">=</span> <span class="st">"#08605F"</span>,</span>
+<span>                  <span class="st">"2022"</span> <span class="op">=</span> <span class="st">"#9E6240"</span><span class="op">)</span>,</span>
+<span>    labels    <span class="op">=</span> <span class="st">"value_label"</span>,</span>
+<span>    labpos    <span class="op">=</span> <span class="st">"lab_position"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-25-1.png" width="150%"></p>
+</div>
+<div class="section level2">
+<h2 id="radar-chart">Radar Chart<a class="anchor" aria-label="anchor" href="#radar-chart"></a>
+</h2>
+</div>
+<div class="section level2">
+<h2 id="rose-chart">Rose Chart<a class="anchor" aria-label="anchor" href="#rose-chart"></a>
+</h2>
+</div>
+<div class="section level2">
+<h2 id="edgebars-chart">Edgebars Chart<a class="anchor" aria-label="anchor" href="#edgebars-chart"></a>
+</h2>
+</div>
+<div class="section level2">
+<h2 id="gauge-chart">Gauge Chart<a class="anchor" aria-label="anchor" href="#gauge-chart"></a>
+</h2>
+</div>
+<div class="section level2">
 <h2 id="controlling-the-order-of-elements">Controlling the order of elements<a class="anchor" aria-label="anchor" href="#controlling-the-order-of-elements"></a>
 </h2>
 <p>Sometimes, we might want to control the order in which we show some
@@ -1948,7 +2029,7 @@ following in a specific order: Neverland (1), Atlantis (2), and Narnia
 (3). For this, we begin by setting the <code>custom_order</code> to TRUE
 and adding a new column to our data that has the specific order of the
 elements:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data4divbars</span> <span class="op">&lt;-</span> <span class="va">data4divbars</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    order_no <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
@@ -1970,9 +2051,9 @@ elements:</p>
 <span>    custom_order <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>    order        <span class="op">=</span> <span class="st">"order_no"</span> </span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="dataviz_files/figure-html/unnamed-chunk-24-1.png" width="150%"></p>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-26-1.png" width="150%"></p>
 <p>Same can be done when working with dot charts:</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data4dots</span> <span class="op">&lt;-</span> <span class="va">data4dots</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    order_no <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
@@ -1993,7 +2074,7 @@ elements:</p>
 <span>                    <span class="st">"Neverland"</span> <span class="op">=</span> <span class="st">"#2E0E02"</span><span class="op">)</span>,</span>
 <span>    order       <span class="op">=</span> <span class="st">"order_no"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="dataviz_files/figure-html/unnamed-chunk-25-1.png" width="150%"></p>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-27-1.png" width="150%"></p>
 </div>
 <div class="section level2">
 <h2 id="adding-more-customizations">Adding more customizations<a class="anchor" aria-label="anchor" href="#adding-more-customizations"></a>
@@ -2006,7 +2087,7 @@ from before and completely remove the panel grid and add some title and
 subtitle to it. We can do it by using the <code><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs()</a></code> and
 <code><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme()</a></code> functions from the ggplot2 package as shown
 bellow:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">stacked_bar</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
 <span>    title    <span class="op">=</span> <span class="st">"Trust in Institution A"</span>,</span>
@@ -2018,7 +2099,7 @@ bellow:</p>
 <span>    plot.title.position <span class="op">=</span> <span class="st">"plot"</span>,</span>
 <span>    plot.subtitle       <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>face <span class="op">=</span> <span class="st">"italic"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> </span></code></pre></div>
-<p><img src="dataviz_files/figure-html/unnamed-chunk-26-1.png" width="150%"></p>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-28-1.png" width="150%"></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
