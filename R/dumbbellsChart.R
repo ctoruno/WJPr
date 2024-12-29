@@ -26,6 +26,8 @@
 #' gpp_data <- WJPr::gpp
 #' 
 #' library(dplyr)
+#' library(tidyr)
+#' 
 #' data4lines <- gpp_data %>%
 #' filter(
 #'   country == "Atlantis" & year %in% c(2017, 2022)
