@@ -132,27 +132,39 @@ object with a bar chart following WJP style guidelines.</p>
 <span class="r-in"><span><span class="co"># Preparing data</span></span></span>
 <span class="r-in"><span><span class="va">gpp_data</span> <span class="op">&lt;-</span> <span class="fu">WJPr</span><span class="fu">::</span><span class="va"><a href="gpp.html">gpp</a></span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘dplyr’</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:stats’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     filter, lag</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:base’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     intersect, setdiff, setequal, union</span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://haven.tidyverse.org" class="external-link">haven</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">data4bars</span> <span class="op">&lt;-</span> <span class="va">gpp_data</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu">select</span><span class="op">(</span><span class="va">country</span>, <span class="va">year</span>, <span class="va">q1a</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">country</span>, <span class="va">year</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu">mutate</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">country</span>, <span class="va">year</span>, <span class="va">q1a</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">country</span>, <span class="va">year</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    q1a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">as.double</a></span><span class="op">(</span><span class="va">q1a</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    trust <span class="op">=</span> <span class="fu">case_when</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    trust <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>      <span class="va">q1a</span> <span class="op">&lt;=</span> <span class="fl">2</span>  <span class="op">~</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>      <span class="va">q1a</span> <span class="op">&lt;=</span> <span class="fl">4</span>  <span class="op">~</span> <span class="fl">0</span>,</span></span>
 <span class="r-in"><span>      <span class="va">q1a</span> <span class="op">==</span> <span class="fl">99</span> <span class="op">~</span> <span class="cn">NA_real_</span></span></span>
 <span class="r-in"><span>    <span class="op">)</span>,</span></span>
 <span class="r-in"><span>    year <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">year</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu">summarise</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    trust   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">trust</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    .groups <span class="op">=</span> <span class="st">"keep"</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu">mutate</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    trust <span class="op">=</span> <span class="va">trust</span><span class="op">*</span><span class="fl">100</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">year</span> <span class="op">==</span> <span class="st">"2022"</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu">mutate</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">year</span> <span class="op">==</span> <span class="st">"2022"</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    color_variable <span class="op">=</span> <span class="va">country</span>,</span></span>
 <span class="r-in"><span>    value_label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span></span></span>
@@ -163,7 +175,6 @@ object with a bar chart following WJP style guidelines.</p>
 <span class="r-in"><span>    <span class="op">)</span>,</span></span>
 <span class="r-in"><span>    label_position <span class="op">=</span> <span class="va">trust</span> <span class="op">+</span> <span class="fl">5</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in gpp_data %&gt;% select(country, year, q1a) %&gt;% group_by(country,     year) %&gt;% mutate(q1a = as.double(q1a), trust = case_when(q1a &lt;=     2 ~ 1, q1a &lt;= 4 ~ 0, q1a == 99 ~ NA_real_), year = as.character(year)) %&gt;%     summarise(trust = mean(trust, na.rm = TRUE), .groups = "keep") %&gt;%     mutate(trust = trust * 100) %&gt;% filter(year == "2022") %&gt;%     mutate(color_variable = country, value_label = paste0(format(round(trust,         0), nsmall = 0), "%"), label_position = trust + 5):</span> could not find function "%&gt;%"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plotting chart</span></span></span>
 <span class="r-in"><span><span class="fu">wjp_bars</span><span class="op">(</span></span></span>
@@ -177,7 +188,7 @@ object with a bar chart following WJP style guidelines.</p>
 <span class="r-in"><span>                <span class="st">"Narnia"</span>    <span class="op">=</span> <span class="st">"#083D77"</span>,</span></span>
 <span class="r-in"><span>                <span class="st">"Neverland"</span> <span class="op">=</span> <span class="st">"#F4D35E"</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in data %&gt;% dplyr::rename(target_var = all_of(target), grouping_var = all_of(grouping),     labels_var = all_of(labels), colors_var = all_of(colors),     order_var = all_of(order)):</span> could not find function "%&gt;%"</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in aes(x = grouping_var, y = target_var, label = labels_var, fill = colors_var):</span> could not find function "aes"</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

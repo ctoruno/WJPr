@@ -140,39 +140,45 @@ object with a dots chart following WJP style guidelines.</p>
 <span class="r-in"><span><span class="fu">wjp_fonts</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Preparing data</span></span></span>
+<span class="r-in"><span><span class="va">gpp_data</span> <span class="op">&lt;-</span> <span class="fu">WJPr</span><span class="fu">::</span><span class="va"><a href="gpp.html">gpp</a></span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://haven.tidyverse.org" class="external-link">haven</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Preparing data</span></span></span>
 <span class="r-in"><span><span class="va">data4dots</span> <span class="op">&lt;-</span> <span class="va">gpp_data</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu">select</span><span class="op">(</span><span class="va">country</span>, <span class="va">q1a</span>, <span class="va">q1b</span>, <span class="va">q1c</span>, <span class="va">q1d</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu">mutate</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="fu">across</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">country</span>, <span class="va">q1a</span>, <span class="va">q1b</span>, <span class="va">q1c</span>, <span class="va">q1d</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>      <span class="op">!</span><span class="va">country</span>,</span></span>
-<span class="r-in"><span>      \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">case_when</span><span class="op">(</span></span></span>
+<span class="r-in"><span>      \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>        <span class="va">x</span> <span class="op">&lt;=</span> <span class="fl">2</span> <span class="op">~</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>        <span class="va">x</span> <span class="op">&lt;=</span> <span class="fl">4</span> <span class="op">~</span> <span class="fl">0</span></span></span>
 <span class="r-in"><span>      <span class="op">)</span></span></span>
 <span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">country</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu">summarise</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="fu">across</span><span class="op">(</span></span></span>
-<span class="r-in"><span>      <span class="fu">everything</span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">country</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>      <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>      \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">*</span><span class="fl">100</span></span></span>
 <span class="r-in"><span>    <span class="op">)</span>,</span></span>
 <span class="r-in"><span>    .groups <span class="op">=</span> <span class="st">"keep"</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu">pivot_longer</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="op">!</span><span class="va">country</span>,</span></span>
 <span class="r-in"><span>    names_to  <span class="op">=</span> <span class="st">"variable"</span>,</span></span>
 <span class="r-in"><span>    values_to <span class="op">=</span> <span class="st">"percentage"</span> </span></span>
 <span class="r-in"><span>  <span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu">mutate</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    institution <span class="op">=</span> <span class="fu">case_when</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    institution <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>      <span class="va">variable</span> <span class="op">==</span> <span class="st">"q1a"</span> <span class="op">~</span> <span class="st">"Institution A"</span>,</span></span>
 <span class="r-in"><span>      <span class="va">variable</span> <span class="op">==</span> <span class="st">"q1b"</span> <span class="op">~</span> <span class="st">"Institution B"</span>,</span></span>
 <span class="r-in"><span>      <span class="va">variable</span> <span class="op">==</span> <span class="st">"q1c"</span> <span class="op">~</span> <span class="st">"Institution C"</span>,</span></span>
 <span class="r-in"><span>      <span class="va">variable</span> <span class="op">==</span> <span class="st">"q1d"</span> <span class="op">~</span> <span class="st">"Institution D"</span>,</span></span>
 <span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in gpp_data %&gt;% select(country, q1a, q1b, q1c, q1d) %&gt;% mutate(across(!country,     function(x) case_when(x &lt;= 2 ~ 1, x &lt;= 4 ~ 0))) %&gt;% group_by(country) %&gt;%     summarise(across(everything(), function(x) mean(x, na.rm = T) *         100), .groups = "keep") %&gt;% pivot_longer(!country, names_to = "variable",     values_to = "percentage") %&gt;% mutate(institution = case_when(variable ==     "q1a" ~ "Institution A", variable == "q1b" ~ "Institution B",     variable == "q1c" ~ "Institution C", variable == "q1d" ~         "Institution D", )):</span> could not find function "%&gt;%"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plotting chart</span></span></span>
 <span class="r-in"><span><span class="fu">wjp_dots</span><span class="op">(</span></span></span>
@@ -184,7 +190,7 @@ object with a dots chart following WJP style guidelines.</p>
 <span class="r-in"><span>                  <span class="st">"Narnia"</span>    <span class="op">=</span> <span class="st">"#9E6240"</span>,</span></span>
 <span class="r-in"><span>                  <span class="st">"Neverland"</span> <span class="op">=</span> <span class="st">"#2E0E02"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in data %&gt;% rename(target_var = all_of(target), colors_var = all_of(colors),     grouping_var = all_of(grouping)) %&gt;% mutate(target_var = as.numeric(target_var)):</span> could not find function "%&gt;%"</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in ggplot():</span> could not find function "ggplot"</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

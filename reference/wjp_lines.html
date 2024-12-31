@@ -143,6 +143,10 @@ object with a line chart following WJP style guidelines.</p>
 <span class="r-in"><span><span class="co"># Preparing data</span></span></span>
 <span class="r-in"><span><span class="va">gpp_data</span> <span class="op">&lt;-</span> <span class="fu">WJPr</span><span class="fu">::</span><span class="va"><a href="gpp.html">gpp</a></span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://haven.tidyverse.org" class="external-link">haven</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">data4lines</span> <span class="op">&lt;-</span> <span class="va">gpp_data</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">country</span> <span class="op">==</span> <span class="st">"Atlantis"</span></span></span>
@@ -196,11 +200,6 @@ object with a line chart following WJP style guidelines.</p>
 <span class="r-in"><span>      <span class="st">"%"</span></span></span>
 <span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in mutate(., across(!year, function(x) as.double(x)), across(!year,     ~case_when(.x &lt;= 2 ~ 1, .x &lt;= 4 ~ 0, .x == 99 ~ NA_real_)),     year = as.character(year)):</span> <span style="color: #00BBBB;">ℹ</span> In argument: `across(!year, function(x) as.double(x))`.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error in `across()`:</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Can't compute column `q1a`.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error in `as.double()`:</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Can't convert `x` &lt;haven_labelled&gt; to &lt;double&gt;.</span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span> <span class="co"># Plotting chart</span></span></span>
 <span class="r-in"><span> <span class="fu">wjp_lines</span><span class="op">(</span></span></span>
@@ -212,7 +211,7 @@ object with a line chart following WJP style guidelines.</p>
 <span class="r-in"><span>  cvec           <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Institution A"</span> <span class="op">=</span> <span class="st">"#08605F"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  labels         <span class="op">=</span> <span class="st">"value_label"</span></span></span>
 <span class="r-in"><span> <span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'data4lines' not found</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in ggplot(data, aes(x = grouping_var, y = target_var, color = colors_var,     label = labels_var, group = ngroups)):</span> could not find function "ggplot"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

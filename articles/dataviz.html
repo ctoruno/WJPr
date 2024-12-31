@@ -88,7 +88,9 @@ enabling the creation of the following chart types:</p>
 <span><span class="co">#&gt;   object 'type_sum.accel' not found</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://purrr.tidyverse.org/" class="external-link">purrr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://haven.tidyverse.org" class="external-link">haven</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/ggtext/" class="external-link">ggtext</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://haozhu233.github.io/kableExtra/" class="external-link">kableExtra</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ctoruno/WJPr" class="external-link">WJPr</a></span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -2004,6 +2006,414 @@ label position (<code>labpos</code>) to the plotting function.</p>
 <div class="section level2">
 <h2 id="radar-chart">Radar Chart<a class="anchor" aria-label="anchor" href="#radar-chart"></a>
 </h2>
+<div class="section level3">
+<h3 id="minimal-example-1">Minimal example<a class="anchor" aria-label="anchor" href="#minimal-example-1"></a>
+</h3>
+<p>An alternative when trying to compare data points in multiple
+dimensions across groups is to use a radar chart. The
+<code><a href="../reference/wjp_radar.html">wjp_radar()</a></code> function can help you to quickly display a
+radar chart given a specific set of variables. Let’s assume that we want
+to plot the data points for a given set of variables that measure the
+performance of the justice system and we want to see disaggregated
+results per gender. We begin by wrangling the data accordingly:</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data4radar</span> <span class="op">&lt;-</span> <span class="va">gpp_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">gend</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"q49"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    gender <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
+<span>      <span class="va">gend</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">~</span> <span class="st">"Male"</span>,</span>
+<span>      <span class="va">gend</span> <span class="op">==</span> <span class="fl">2</span> <span class="op">~</span> <span class="st">"Female"</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across</a></span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"q49"</span><span class="op">)</span>,</span>
+<span>      \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
+<span>        <span class="va">x</span> <span class="op">&lt;=</span> <span class="fl">2</span>  <span class="op">~</span> <span class="fl">1</span>,</span>
+<span>        <span class="va">x</span> <span class="op">&lt;=</span> <span class="fl">99</span> <span class="op">~</span> <span class="fl">0</span></span>
+<span>      <span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">gender</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across</a></span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"q49"</span><span class="op">)</span>,</span>
+<span>      \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">*</span><span class="fl">100</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span></span>
+<span>    <span class="op">!</span><span class="va">gender</span>,</span>
+<span>    names_to  <span class="op">=</span> <span class="st">"category"</span>,</span>
+<span>    values_to <span class="op">=</span> <span class="st">"percentage"</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    axis_label <span class="op">=</span> <span class="va">category</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kbl.html" class="external-link">kbl</a></span><span class="op">(</span><span class="va">data4radar</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<thead><tr>
+<th style="text-align:left;">
+gender
+</th>
+<th style="text-align:left;">
+category
+</th>
+<th style="text-align:right;">
+percentage
+</th>
+<th style="text-align:left;">
+axis_label
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+q49a
+</td>
+<td style="text-align:right;">
+51.57480
+</td>
+<td style="text-align:left;">
+q49a
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+q49b_G1
+</td>
+<td style="text-align:right;">
+42.33577
+</td>
+<td style="text-align:left;">
+q49b_G1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+q49b_G2
+</td>
+<td style="text-align:right;">
+48.36601
+</td>
+<td style="text-align:left;">
+q49b_G2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+q49c_G1
+</td>
+<td style="text-align:right;">
+48.90511
+</td>
+<td style="text-align:left;">
+q49c_G1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+q49c_G2
+</td>
+<td style="text-align:right;">
+48.36601
+</td>
+<td style="text-align:left;">
+q49c_G2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+q49d_G1
+</td>
+<td style="text-align:right;">
+48.00000
+</td>
+<td style="text-align:left;">
+q49d_G1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+q49d_G2
+</td>
+<td style="text-align:right;">
+45.32374
+</td>
+<td style="text-align:left;">
+q49d_G2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+q49e_G1
+</td>
+<td style="text-align:right;">
+41.30435
+</td>
+<td style="text-align:left;">
+q49e_G1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+q49e_G2
+</td>
+<td style="text-align:right;">
+46.40523
+</td>
+<td style="text-align:left;">
+q49e_G2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+q49a
+</td>
+<td style="text-align:right;">
+51.64319
+</td>
+<td style="text-align:left;">
+q49a
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+q49b_G1
+</td>
+<td style="text-align:right;">
+45.66929
+</td>
+<td style="text-align:left;">
+q49b_G1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+q49b_G2
+</td>
+<td style="text-align:right;">
+50.86207
+</td>
+<td style="text-align:left;">
+q49b_G2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+q49c_G1
+</td>
+<td style="text-align:right;">
+58.59375
+</td>
+<td style="text-align:left;">
+q49c_G1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+q49c_G2
+</td>
+<td style="text-align:right;">
+49.57265
+</td>
+<td style="text-align:left;">
+q49c_G2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+q49d_G1
+</td>
+<td style="text-align:right;">
+60.20408
+</td>
+<td style="text-align:left;">
+q49d_G1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+q49d_G2
+</td>
+<td style="text-align:right;">
+51.81818
+</td>
+<td style="text-align:left;">
+q49d_G2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+q49e_G1
+</td>
+<td style="text-align:right;">
+50.00000
+</td>
+<td style="text-align:left;">
+q49e_G1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+q49e_G2
+</td>
+<td style="text-align:right;">
+53.98230
+</td>
+<td style="text-align:left;">
+q49e_G2
+</td>
+</tr>
+</tbody>
+</table>
+<p>Once that we have the data ready, we can proceed by applying the
+<code><a href="../reference/wjp_radar.html">wjp_radar()</a></code> function. Several parameters are used in the
+same way as in the previous functions:</p>
+<ul>
+<li>
+<code>target</code>: Specifies the column containing the values to
+be plotted.</li>
+<li>
+<code>axis_var</code>: Equivalent to what is called
+<code>grouping</code> in other functions. It specifies the column
+containing the categorical groupings or variables.</li>
+<li>
+<code>color_var</code>: The column name used to assign different
+data points to different lines. Each line will have a different
+color.</li>
+<li>
+<code>cvec</code>: Contains a named vector that links specific
+values to color codes.</li>
+<li>
+<code>label_var</code>: Specifies the column containing the value
+labels to display.</li>
+</ul>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/wjp_radar.html">wjp_radar</a></span><span class="op">(</span></span>
+<span>    <span class="va">data4radar</span>,             </span>
+<span>    axis_var    <span class="op">=</span> <span class="st">"category"</span>,         </span>
+<span>    target_var  <span class="op">=</span> <span class="st">"percentage"</span>,       </span>
+<span>    label_var   <span class="op">=</span> <span class="st">"axis_label"</span>,        </span>
+<span>    color_var   <span class="op">=</span> <span class="st">"gender"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Using one column matrices in `filter()` was deprecated in dplyr 1.1.0.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use one dimensional logical vectors instead.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">WJPr</span> package.</span></span>
+<span><span class="co">#&gt;   Please report the issue at <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/ctoruno/WJPr/issues&gt;</span>.</span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-27-1.png" width="150%"></p>
+</div>
+<div class="section level3">
+<h3 id="markdown-support">Markdown support<a class="anchor" aria-label="anchor" href="#markdown-support"></a>
+</h3>
+<p>One unique feature of the <code><a href="../reference/wjp_radar.html">wjp_radar()</a></code> function is its
+ability to support markdown and HTML aesthetics for the axis labels.
+Let’s assume that we want to extend the previous plot by displaying some
+explanatory text along with the specific value labels for both lines we
+can do this by creating a new column called “axis_label” that will have
+bolded text using markdown syntax as well as the value labels displayed
+using some HTML and CSS styles:</p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data4radar</span> <span class="op">&lt;-</span> <span class="va">data4radar</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">category</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    axis_label <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
+<span>      <span class="va">category</span> <span class="op">==</span> <span class="st">"q49a"</span>    <span class="op">~</span> <span class="st">"**System is reliable**"</span>,</span>
+<span>      <span class="va">category</span> <span class="op">==</span> <span class="st">"q49e_G2"</span> <span class="op">~</span> <span class="st">"**System is trustworthy**"</span>,</span>
+<span>      <span class="va">category</span> <span class="op">==</span> <span class="st">"q49e_G1"</span> <span class="op">~</span> <span class="st">"**System is effective**"</span>,</span>
+<span>      <span class="va">category</span> <span class="op">==</span> <span class="st">"q49d_G2"</span> <span class="op">~</span> <span class="st">"**System is fast**"</span>,</span>
+<span>      <span class="va">category</span> <span class="op">==</span> <span class="st">"q49d_G1"</span> <span class="op">~</span> <span class="st">"**System is efficient**"</span>,</span>
+<span>      <span class="va">category</span> <span class="op">==</span> <span class="st">"q49c_G2"</span> <span class="op">~</span> <span class="st">"**System is stable**"</span>,</span>
+<span>      <span class="va">category</span> <span class="op">==</span> <span class="st">"q49c_G1"</span> <span class="op">~</span> <span class="st">"**System has no breaks**"</span>,</span>
+<span>      <span class="va">category</span> <span class="op">==</span> <span class="st">"q49b_G2"</span> <span class="op">~</span> <span class="st">"**System has plenty of&lt;br&gt;channels**"</span>,</span>
+<span>      <span class="va">category</span> <span class="op">==</span> <span class="st">"q49b_G1"</span> <span class="op">~</span> <span class="st">"**System has no loopholes**"</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    </span>
+<span>    male_value   <span class="op">=</span> <span class="va">percentage</span>,</span>
+<span>    male_value   <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="va">gender</span> <span class="op">==</span> <span class="st">"Male"</span>, <span class="va">male_value</span>, <span class="cn">NA_real_</span><span class="op">)</span>,</span>
+<span>    male_value   <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/nth.html" class="external-link">first</a></span><span class="op">(</span><span class="va">male_value</span>, na_rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
+<span>    male_value   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">male_value</span>, <span class="fl">0</span><span class="op">)</span>, nsmall<span class="op">=</span><span class="fl">0</span><span class="op">)</span>, <span class="st">"%"</span><span class="op">)</span>,</span>
+<span>    </span>
+<span>    female_value <span class="op">=</span> <span class="va">percentage</span>,</span>
+<span>    female_value <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="va">gender</span> <span class="op">==</span> <span class="st">"Female"</span>, <span class="va">female_value</span>, <span class="cn">NA_real_</span><span class="op">)</span>,</span>
+<span>    female_value <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/nth.html" class="external-link">first</a></span><span class="op">(</span><span class="va">female_value</span>, na_rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
+<span>    female_value   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">female_value</span>, <span class="fl">0</span><span class="op">)</span>, nsmall<span class="op">=</span><span class="fl">0</span><span class="op">)</span>, <span class="st">"%"</span><span class="op">)</span>,</span>
+<span>    </span>
+<span>    axis_label_md <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
+<span>      <span class="st">"&lt;span style='color:#49178e;font-size:4.217518mm'&gt;"</span>,<span class="va">male_value</span>,<span class="st">"&lt;/span&gt;"</span>,</span>
+<span>      <span class="st">"&lt;span style='color:#524F4C;font-size:4.217518mm'&gt; | &lt;/span&gt;"</span>,</span>
+<span>      <span class="st">"&lt;span style='color:#dd58b1;font-size:4.217518mm'&gt;"</span>,<span class="va">female_value</span>,<span class="st">"&lt;/span&gt;&lt;br&gt;"</span>,</span>
+<span>      <span class="st">"&lt;span style='color:#524F4C;font-size:3.514598mm;font-weight:bold'&gt;"</span>,<span class="va">axis_label</span>,<span class="st">"&lt;/span&gt;"</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/wjp_radar.html">wjp_radar</a></span><span class="op">(</span></span>
+<span>    data        <span class="op">=</span> <span class="va">data4radar</span>,</span>
+<span>    axis_var    <span class="op">=</span> <span class="st">"category"</span>,</span>
+<span>    target_var  <span class="op">=</span> <span class="st">"percentage"</span>,</span>
+<span>    label_var   <span class="op">=</span> <span class="st">"axis_label_md"</span>,</span>
+<span>    color_var   <span class="op">=</span> <span class="st">"gender"</span>,</span>
+<span>    maincat     <span class="op">=</span> <span class="st">"Female"</span>,</span>
+<span>    cvec        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Male"</span>   <span class="op">=</span> <span class="st">"#141B41"</span>,</span>
+<span>                    <span class="st">"Female"</span> <span class="op">=</span> <span class="st">"#306BAC"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-28-1.png" width="150%"></p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="rose-chart">Rose Chart<a class="anchor" aria-label="anchor" href="#rose-chart"></a>
@@ -2029,7 +2439,7 @@ following in a specific order: Neverland (1), Atlantis (2), and Narnia
 (3). For this, we begin by setting the <code>custom_order</code> to TRUE
 and adding a new column to our data that has the specific order of the
 elements:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data4divbars</span> <span class="op">&lt;-</span> <span class="va">data4divbars</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    order_no <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
@@ -2051,9 +2461,9 @@ elements:</p>
 <span>    custom_order <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>    order        <span class="op">=</span> <span class="st">"order_no"</span> </span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="dataviz_files/figure-html/unnamed-chunk-26-1.png" width="150%"></p>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-29-1.png" width="150%"></p>
 <p>Same can be done when working with dot charts:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data4dots</span> <span class="op">&lt;-</span> <span class="va">data4dots</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    order_no <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
@@ -2074,7 +2484,7 @@ elements:</p>
 <span>                    <span class="st">"Neverland"</span> <span class="op">=</span> <span class="st">"#2E0E02"</span><span class="op">)</span>,</span>
 <span>    order       <span class="op">=</span> <span class="st">"order_no"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="dataviz_files/figure-html/unnamed-chunk-27-1.png" width="150%"></p>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-30-1.png" width="150%"></p>
 </div>
 <div class="section level2">
 <h2 id="adding-more-customizations">Adding more customizations<a class="anchor" aria-label="anchor" href="#adding-more-customizations"></a>
@@ -2087,7 +2497,7 @@ from before and completely remove the panel grid and add some title and
 subtitle to it. We can do it by using the <code><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs()</a></code> and
 <code><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme()</a></code> functions from the ggplot2 package as shown
 bellow:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">stacked_bar</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
 <span>    title    <span class="op">=</span> <span class="st">"Trust in Institution A"</span>,</span>
@@ -2099,7 +2509,7 @@ bellow:</p>
 <span>    plot.title.position <span class="op">=</span> <span class="st">"plot"</span>,</span>
 <span>    plot.subtitle       <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>face <span class="op">=</span> <span class="st">"italic"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> </span></code></pre></div>
-<p><img src="dataviz_files/figure-html/unnamed-chunk-28-1.png" width="150%"></p>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-31-1.png" width="150%"></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

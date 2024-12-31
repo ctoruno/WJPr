@@ -113,6 +113,10 @@ object with a slope chart following WJP style guidelines.</p>
 <span class="r-in"><span><span class="co"># Preparing data</span></span></span>
 <span class="r-in"><span><span class="va">gpp_data</span> <span class="op">&lt;-</span> <span class="fu">WJPr</span><span class="fu">::</span><span class="va"><a href="gpp.html">gpp</a></span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://haven.tidyverse.org" class="external-link">haven</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">data4slopes</span> <span class="op">&lt;-</span> <span class="va">gpp_data</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">gend</span>, <span class="va">q1a</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span></span>
@@ -143,9 +147,6 @@ object with a slope chart following WJP style guidelines.</p>
 <span class="r-in"><span>      <span class="st">"%"</span></span></span>
 <span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in mutate(., q1a = as.double(q1a), trust = case_when(q1a &lt;= 2 ~     1, q1a &lt;= 4 ~ 0), gender = case_when(gend == 1 ~ "Male",     gend == 2 ~ "Female")):</span> <span style="color: #00BBBB;">ℹ</span> In argument: `q1a = as.double(q1a)`.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error in `as.double()`:</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Can't convert `x` &lt;haven_labelled&gt; to &lt;double&gt;.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plotting chart</span></span></span>
 <span class="r-in"><span><span class="fu">wjp_slope</span><span class="op">(</span></span></span>
@@ -159,7 +160,7 @@ object with a slope chart following WJP style guidelines.</p>
 <span class="r-in"><span>                <span class="st">"Female"</span> <span class="op">=</span> <span class="st">"#9E6240"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  repel     <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'data4slopes' not found</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in ggplot(data, aes(x = grouping_var, y = target_var, color = colors_var,     label = labels_var, group = ngroups)):</span> could not find function "ggplot"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
