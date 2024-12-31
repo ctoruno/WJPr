@@ -22,6 +22,7 @@
 #' library(haven)
 #' library(ggplot2)
 #' library(purrr)
+#' library(ggtext)
 #' 
 #' # Always load the WJP fonts (optional)
 #' wjp_fonts()

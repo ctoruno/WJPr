@@ -56,7 +56,7 @@
 #'   data4rose,             
 #'   target    = "percentage",       
 #'   grouping  = "category",    
-#'   alabels   = "axis_label",
+#'   labels    = "axis_label",
 #'   cvec      = c("#FDF1E7", "#FBE2CF", "#F7C59F", 
 #'                 "#E7C1A3", "#759EB8", "#7498B8", 
 #'                 "#7392B7", "#4F6281", "#2A324B") 

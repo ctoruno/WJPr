@@ -241,8 +241,6 @@ stacked_bar <- wjp_bars(
     direction = "horizontal",
     stacked   = TRUE
 )
-
-stacked_bar
 ```
 
 ## Diverging Bars Chart
