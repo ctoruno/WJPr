@@ -61,15 +61,16 @@ A ggplot object
 object with a dots chart following WJP style guidelines.
 }
 \examples{
+library(dplyr)
+library(tidyr)
+library(haven)
+library(ggplot2)
+
 # Always load the WJP fonts if not passing a custom theme to function
 wjp_fonts()
 
 # Preparing data
 gpp_data <- WJPr::gpp
-
-library(dplyr)
-library(tidyr)
-library(haven)
 
 # Preparing data
 data4dots <- gpp_data \%>\%

@@ -55,15 +55,16 @@ A ggplot object
 object with a bar chart following WJP style guidelines.
 }
 \examples{
+library(dplyr)
+library(tidyr)
+library(haven)
+library(ggplot2)
+
 # Always load the WJP fonts (optional)
 wjp_fonts()
 
 # Preparing data
 gpp_data <- WJPr::gpp
-
-library(dplyr)
-library(tidyr)
-library(haven)
 
 data4bars <- gpp_data \%>\%
   select(country, year, q1a) \%>\%

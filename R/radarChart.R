@@ -17,15 +17,16 @@
 #' @return A ggplot object representing the radar plot.
 #'
 #' @examples
+#' library(dplyr)
+#' library(tidyr)
+#' library(haven)
+#' library(ggplot2)
+#' 
 #' # Always load the WJP fonts (optional)
 #' wjp_fonts()
 #' 
 #' # Preparing data
 #' gpp_data <- WJPr::gpp
-#' 
-#' library(dplyr)
-#' library(tidyr)
-#' library(haven)
 #' 
 #' data4radar <- gpp_data %>%
 #' select(gend, starts_with("q49")) %>%

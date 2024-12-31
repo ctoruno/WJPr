@@ -19,15 +19,16 @@
 #' @export
 #'
 #' @examples
+#' library(dplyr)
+#' library(tidyr)
+#' library(haven)
+#' library(ggplot2)
+#' 
 #' # Always load the WJP fonts (optional)
 #' wjp_fonts()
 #' 
 #' # Preparing data
 #' gpp_data <- WJPr::gpp
-#' 
-#' library(dplyr)
-#' library(tidyr)
-#' library(haven)
 #' 
 #' data4lines <- gpp_data %>%
 #' filter(

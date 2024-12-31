@@ -20,13 +20,13 @@
 #' @export
 #' 
 #' @examples
-#' 
-#' # Always load the WJP fonts (optional)
-#' wjp_fonts()
-#' 
 #' library(dplyr)
 #' library(tidyr)
 #' library(haven)
+#' library(ggplot2)
+#' 
+#' # Always load the WJP fonts (optional)
+#' wjp_fonts()
 #' 
 #' # Preparing data
 #' data4divbars <- WJPr::gpp %>%
