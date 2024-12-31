@@ -1,6 +1,8 @@
 #' Plot a Radar Chart following WJP style guidelines
 #'
-#'#' @description
+#' @description
+#' `r lifecycle::badge("experimental")`
+#' 
 #' `wjp_radar()` takes a data frame with a specific data structure (usually long shaped) and returns a ggplot
 #' object with a radar chart following WJP style guidelines.
 #'

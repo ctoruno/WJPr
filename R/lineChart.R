@@ -1,6 +1,8 @@
 #' Plot a Line Chart following WJP style guidelines
 #'
 #' @description
+#' `r lifecycle::badge("experimental")`
+#' 
 #' `wjp_lines()` takes a data frame with a specific data structure (usually long shaped) and returns a ggplot
 #' object with a line chart following WJP style guidelines.
 #'

@@ -23,7 +23,8 @@ wjp_rose(data, target, grouping, labels, cvec = NULL, order_var = NULL)
 A ggplot object representing the radar plot.
 }
 \description{
-#' @description
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 \code{wjp_rose()} takes a data frame with a specific data structure (usually long shaped) and returns a ggplot
 object with a rose chart following WJP style guidelines.
 }

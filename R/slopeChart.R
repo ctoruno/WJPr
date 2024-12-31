@@ -1,6 +1,8 @@
 #' Plot a Slope Chart following WJP style guidelines
 #'
 #' @description
+#' `r lifecycle::badge("experimental")`
+#' 
 #' `wjp_slope()` takes a data frame with a specific data structure (usually long shaped) and returns a ggplot
 #' object with a slope chart following WJP style guidelines.
 #'

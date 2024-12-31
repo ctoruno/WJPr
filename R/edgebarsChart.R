@@ -1,6 +1,8 @@
 #' Plot a Horizontal Edgebars Chart following WJP style guidelines
 #'
 #' @description
+#' `r lifecycle::badge("experimental")`
+#' 
 #' `wjp_edgebars()` takes a data frame with a specific data structure (usually long shaped) and returns a ggplot
 #' object with an edgebar chart following WJP style guidelines.
 #'

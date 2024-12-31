@@ -45,6 +45,8 @@ wjp_edgebars(
 A ggplot object representing the edge bars plot.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 \code{wjp_edgebars()} takes a data frame with a specific data structure (usually long shaped) and returns a ggplot
 object with an edgebar chart following WJP style guidelines.
 }

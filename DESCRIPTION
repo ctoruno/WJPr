@@ -23,6 +23,7 @@ Imports:
     ggtext (>= 0.1.2),
     glue (>= 1.8.0),
     haven (>= 2.5.4),
+    lifecycle,
     magrittr (>= 2.0.3),
     purrr (>= 1.0.2),
     rlang (>= 1.1.4),
@@ -35,7 +36,6 @@ Suggests:
     cli (>= 3.6.3),
     kableExtra (>= 1.4.0),
     knitr,
-    lifecycle (>= 1.0.4),
     rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

@@ -1,6 +1,8 @@
 #' Plot a Diverging Horizontal Bar Chart following WJP style guidelines
 #'
 #' @description
+#' `r lifecycle::badge("experimental")`
+#' 
 #' `wjp_divbars()` takes a data frame with a specific data structure (usually long shaped) and returns a ggplot
 #' object with a diverging horizontal bar chart following WJP style guidelines.
 #' 

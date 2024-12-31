@@ -57,6 +57,8 @@ wjp_dots(
 A ggplot object
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 \code{wjp_dots()} takes a data frame with a specific data structure (usually long shaped) and returns a ggplot
 object with a dots chart following WJP style guidelines.
 }

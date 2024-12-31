@@ -42,6 +42,8 @@ wjp_dumbbells(
 A ggplot object representing the dumbbell plot.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 \code{wjp_dumbbells()} takes a data frame with a specific data structure (usually long shaped) and returns a ggplot
 object with a dumbbell chart following WJP style guidelines.
 }

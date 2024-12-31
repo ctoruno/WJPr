@@ -1,6 +1,8 @@
 #' Plot a Rose Chart following WJP style guidelines
 #'
-#'#' @description
+#' @description
+#' `r lifecycle::badge("experimental")`
+#' 
 #' `wjp_rose()` takes a data frame with a specific data structure (usually long shaped) and returns a ggplot
 #' object with a rose chart following WJP style guidelines.
 #'

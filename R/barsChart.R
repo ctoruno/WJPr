@@ -1,6 +1,8 @@
 #' Plot a Bar Chart following WJP style guidelines
 #'
 #' @description
+#' `r lifecycle::badge("experimental")`
+#' 
 #' `wjp_bars()` takes a data frame with a specific data structure (usually long shaped) and returns a ggplot
 #' object with a bar chart following WJP style guidelines.
 #'
