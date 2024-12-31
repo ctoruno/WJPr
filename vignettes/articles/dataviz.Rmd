@@ -875,10 +875,6 @@ wjp_rose(
 )
 ```
 
-## Edgebars Chart
-
-## Gauge Chart
-
 ## Controlling the order of elements
 
 Sometimes, we might want to control the order in which we show some elements in our charts. Some of the plotting functions in our WJPr package include the a `custom_order` and an `order` parameter. Let's say that we want to further customize the diverging bars that we showed above and present the bars following in a specific order: Neverland (1), Atlantis (2), and Narnia (3). For this, we begin by setting the `custom_order` to TRUE and adding a new column to our data that has the specific order of the elements:
