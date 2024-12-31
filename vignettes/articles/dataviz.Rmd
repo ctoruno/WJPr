@@ -824,7 +824,7 @@ data4radar <- data4radar %>%
   )
 
 wjp_radar(
-    data        = data4radar_extended,
+    data        = data4radar,
     axis_var    = "category",
     target_var  = "percentage",
     label_var   = "axis_label_md",
@@ -834,7 +834,6 @@ wjp_radar(
                     "Female" = "#306BAC")
 )
 ```
-
 
 ## Rose Chart
 
