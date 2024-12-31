@@ -114,6 +114,7 @@ object with a radar chart following WJP style guidelines.</p>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://haven.tidyverse.org" class="external-link">haven</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://purrr.tidyverse.org/" class="external-link">purrr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/ggtext/" class="external-link">ggtext</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Always load the WJP fonts (optional)</span></span></span>
 <span class="r-in"><span><span class="fu">wjp_fonts</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -160,7 +161,11 @@ object with a radar chart following WJP style guidelines.</p>
 <span class="r-in"><span>  labels      <span class="op">=</span> <span class="st">"axis_label"</span>,        </span></span>
 <span class="r-in"><span>  colors      <span class="op">=</span> <span class="st">"gender"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in geom_richtext(data = text_coords() %&gt;% mutate(n = row_number()),     aes(x = x, y = y), label = data %&gt;% arrange(order_var) %&gt;%         filter(color_var == data %&gt;% ungroup() %&gt;% distinct(color_var) %&gt;%             slice_head(n = 1)) %&gt;% pull(label_var), family = "Lato Full",     fontface = "plain", fill = NA, label.color = NA):</span> could not find function "geom_richtext"</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Using one column matrices in `filter()` was deprecated in dplyr 1.1.0.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Please use one dimensional logical vectors instead.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">WJPr</span> package.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   Please report the issue at <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/ctoruno/WJPr/issues&gt;</span>.</span>
+<span class="r-plt img"><img src="wjp_radar-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
