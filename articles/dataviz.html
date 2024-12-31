@@ -310,7 +310,7 @@ respondents who have “a lot” or “some” trust in Institution A, we can
 visualize the percentage distribution for all possible responses in each
 country. First, we modify the data to reflect this new design:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data4bars</span> <span class="op">&lt;-</span> <span class="va">gpp_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<code class="sourceCode R"><span><span class="va">data4stackedbars</span> <span class="op">&lt;-</span> <span class="va">gpp_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span>
 <span>    <span class="va">year</span> <span class="op">==</span> <span class="fl">2022</span></span>
 <span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
@@ -356,10 +356,13 @@ country. First, we modify the data to reflect this new design:</p>
 country
 </th>
 <th style="text-align:left;">
-q1a
+year
 </th>
 <th style="text-align:right;">
-percentage
+trust
+</th>
+<th style="text-align:left;">
+color_variable
 </th>
 <th style="text-align:left;">
 value_label
@@ -374,84 +377,19 @@ label_position
 Atlantis
 </td>
 <td style="text-align:left;">
-No answer
+2022
 </td>
 <td style="text-align:right;">
-3.508772
+49.09091
 </td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1.7543860
-</td>
-</tr>
-<tr>
 <td style="text-align:left;">
 Atlantis
 </td>
 <td style="text-align:left;">
-None
+49%
 </td>
 <td style="text-align:right;">
-14.035088
-</td>
-<td style="text-align:left;">
-14.0%
-</td>
-<td style="text-align:right;">
-10.5263158
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Atlantis
-</td>
-<td style="text-align:left;">
-Little
-</td>
-<td style="text-align:right;">
-35.087719
-</td>
-<td style="text-align:left;">
-35.1%
-</td>
-<td style="text-align:right;">
-35.0877193
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Atlantis
-</td>
-<td style="text-align:left;">
-Some
-</td>
-<td style="text-align:right;">
-28.070175
-</td>
-<td style="text-align:left;">
-28.1%
-</td>
-<td style="text-align:right;">
-66.6666667
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Atlantis
-</td>
-<td style="text-align:left;">
-A lot
-</td>
-<td style="text-align:right;">
-19.298246
-</td>
-<td style="text-align:left;">
-19.3%
-</td>
-<td style="text-align:right;">
-90.3508772
+54.09091
 </td>
 </tr>
 <tr>
@@ -459,67 +397,19 @@ A lot
 Narnia
 </td>
 <td style="text-align:left;">
-None
+2022
 </td>
 <td style="text-align:right;">
-19.565217
+45.65217
 </td>
-<td style="text-align:left;">
-19.6%
-</td>
-<td style="text-align:right;">
-9.7826087
-</td>
-</tr>
-<tr>
 <td style="text-align:left;">
 Narnia
 </td>
 <td style="text-align:left;">
-Little
+46%
 </td>
 <td style="text-align:right;">
-34.782609
-</td>
-<td style="text-align:left;">
-34.8%
-</td>
-<td style="text-align:right;">
-36.9565217
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Narnia
-</td>
-<td style="text-align:left;">
-Some
-</td>
-<td style="text-align:right;">
-28.260870
-</td>
-<td style="text-align:left;">
-28.3%
-</td>
-<td style="text-align:right;">
-68.4782609
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Narnia
-</td>
-<td style="text-align:left;">
-A lot
-</td>
-<td style="text-align:right;">
-17.391304
-</td>
-<td style="text-align:left;">
-17.4%
-</td>
-<td style="text-align:right;">
-91.3043478
+50.65217
 </td>
 </tr>
 <tr>
@@ -527,84 +417,19 @@ A lot
 Neverland
 </td>
 <td style="text-align:left;">
-No answer
+2022
 </td>
 <td style="text-align:right;">
-1.785714
+63.63636
 </td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-0.8928571
-</td>
-</tr>
-<tr>
 <td style="text-align:left;">
 Neverland
 </td>
 <td style="text-align:left;">
-None
+64%
 </td>
 <td style="text-align:right;">
-12.500000
-</td>
-<td style="text-align:left;">
-12.5%
-</td>
-<td style="text-align:right;">
-8.0357143
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Neverland
-</td>
-<td style="text-align:left;">
-Little
-</td>
-<td style="text-align:right;">
-23.214286
-</td>
-<td style="text-align:left;">
-23.2%
-</td>
-<td style="text-align:right;">
-25.8928571
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Neverland
-</td>
-<td style="text-align:left;">
-Some
-</td>
-<td style="text-align:right;">
-42.857143
-</td>
-<td style="text-align:left;">
-42.9%
-</td>
-<td style="text-align:right;">
-58.9285714
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Neverland
-</td>
-<td style="text-align:left;">
-A lot
-</td>
-<td style="text-align:right;">
-19.642857
-</td>
-<td style="text-align:left;">
-19.6%
-</td>
-<td style="text-align:right;">
-90.1785714
+68.63636
 </td>
 </tr>
 </tbody>
@@ -620,7 +445,7 @@ function again, this time setting the <code>stacked</code> parameter to
 “TRUE”:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">stacked_bar</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wjp_bars.html">wjp_bars</a></span><span class="op">(</span></span>
-<span>    <span class="va">data4bars</span>,              </span>
+<span>    <span class="va">data4stackedbars</span>,              </span>
 <span>    target    <span class="op">=</span> <span class="st">"percentage"</span>,        </span>
 <span>    grouping  <span class="op">=</span> <span class="st">"country"</span>,</span>
 <span>    labels    <span class="op">=</span> <span class="st">"value_label"</span>,</span>
@@ -894,6 +719,25 @@ groups within the data.</p>
 <p><img src="dataviz_files/figure-html/unnamed-chunk-12-1.png" width="150%"></p>
 </div>
 <div class="section level2">
+<h2 id="edgebars">Edgebars<a class="anchor" aria-label="anchor" href="#edgebars"></a>
+</h2>
+<p>Edgebars is a specific type of horizontal bars that have the Y-Axis
+text on top of the bar instead that along the axis. This design
+modification is a good option when the dimensions of the plot are small
+(narrow) and the axis texts are expected to be long. Use the
+wjp_edgebars()` function to plot these bars in a similar way than
+previous examples.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/wjp_edgebars.html">wjp_edgebars</a></span><span class="op">(</span></span>
+<span>    <span class="va">data4bars</span>,              </span>
+<span>    target    <span class="op">=</span> <span class="st">"trust"</span>,        </span>
+<span>    grouping  <span class="op">=</span> <span class="st">"country"</span>,</span>
+<span>    labels    <span class="op">=</span> <span class="st">"color_variable"</span>,</span>
+<span>    cvec      <span class="op">=</span> <span class="st">"#F6D8AE"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-13-1.png" width="150%"></p>
+</div>
+<div class="section level2">
 <h2 id="line-chart">Line Chart<a class="anchor" aria-label="anchor" href="#line-chart"></a>
 </h2>
 <p>Line charts are a great way to display the evolution of values over
@@ -902,7 +746,7 @@ charts with ease. Let’s assume we want to examine the percentage of
 people who have “a lot” or “some” trust in Institution A in Atlantis
 over time. To begin, we need to wrangle the data to match this
 design:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data4lines</span> <span class="op">&lt;-</span> <span class="va">gpp_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span>
 <span>    <span class="va">country</span> <span class="op">==</span> <span class="st">"Atlantis"</span></span>
@@ -1163,7 +1007,7 @@ it:</p>
 <li>For a single line: If plotting only one line, as in the example
 below, set ngroups = 1.</li>
 </ol>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/wjp_lines.html">wjp_lines</a></span><span class="op">(</span></span>
 <span>    <span class="va">data4lines</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">institution</span> <span class="op">==</span> <span class="st">"Institution A"</span><span class="op">)</span>,                    </span>
 <span>    target         <span class="op">=</span> <span class="st">"percentage"</span>,             </span>
@@ -1173,14 +1017,14 @@ below, set ngroups = 1.</li>
 <span>    cvec           <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Institution A"</span> <span class="op">=</span> <span class="st">"#08605F"</span><span class="op">)</span>,</span>
 <span>    labels         <span class="op">=</span> <span class="st">"value_label"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="dataviz_files/figure-html/unnamed-chunk-14-1.png" width="150%"></p>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-15-1.png" width="150%"></p>
 <ol start="2" style="list-style-type: decimal">
 <li>For multiple lines: When plotting multiple lines, specify the column
 containing the group identifiers. In this case, also consider setting
 repel = TRUE to prevent overlapping value labels. Note that the ggrepel
 package must be loaded for this feature to work.</li>
 </ol>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggrepel.slowkow.com/" class="external-link">ggrepel</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/wjp_lines.html">wjp_lines</a></span><span class="op">(</span></span>
 <span>    <span class="va">data4lines</span>,                    </span>
@@ -1194,7 +1038,7 @@ package must be loaded for this feature to work.</li>
 <span>    labels         <span class="op">=</span> <span class="st">"value_label"</span>,</span>
 <span>    repel          <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="dataviz_files/figure-html/unnamed-chunk-15-1.png" width="150%"></p>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-16-1.png" width="150%"></p>
 <div class="section level3">
 <h3 id="controlling-opacities">Controlling opacities<a class="anchor" aria-label="anchor" href="#controlling-opacities"></a>
 </h3>
@@ -1206,7 +1050,7 @@ use the <code>transparencies</code> parameter to pass a named vector
 specifying the opacity levels for each line. Ensure the named vector
 uses the same values as the color vector (<code>cvec</code>) to align
 opacities with the corresponding lines.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/wjp_lines.html">wjp_lines</a></span><span class="op">(</span></span>
 <span>    <span class="va">data4lines</span>,                    </span>
 <span>    target         <span class="op">=</span> <span class="st">"percentage"</span>,             </span>
@@ -1223,7 +1067,7 @@ opacities with the corresponding lines.</p>
 <span>                       <span class="st">"Institution B"</span> <span class="op">=</span> <span class="fl">0.25</span>,</span>
 <span>                       <span class="st">"Institution C"</span> <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="dataviz_files/figure-html/unnamed-chunk-16-1.png" width="150%"></p>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-17-1.png" width="150%"></p>
 </div>
 </div>
 <div class="section level2">
@@ -1236,7 +1080,7 @@ aesthetically pleasing alternative to line charts in such cases. The
 <p>Let’s use an example where we disaggregate the evolution of trust in
 Institution A between 2017 and 2022 across three countries. We begin by
 preparing the data to fit this design:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data4slopes</span> <span class="op">&lt;-</span> <span class="va">gpp_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">gend</span>, <span class="va">q1a</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span>
@@ -1375,7 +1219,7 @@ must be loaded for this feature to work.</li>
 <p>Using these parameters, you can create a slope chart that effectively
 highlights changes between two points in time while maintaining clarity
 and visual appeal.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/wjp_slope.html">wjp_slope</a></span><span class="op">(</span></span>
 <span>    <span class="va">data4slopes</span>,                    </span>
 <span>    target    <span class="op">=</span> <span class="st">"trust"</span>,             </span>
@@ -1387,7 +1231,7 @@ and visual appeal.</p>
 <span>                  <span class="st">"Female"</span> <span class="op">=</span> <span class="st">"#9E6240"</span><span class="op">)</span>,</span>
 <span>    repel     <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="dataviz_files/figure-html/unnamed-chunk-18-1.png" width="150%"></p>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-19-1.png" width="150%"></p>
 </div>
 <div class="section level2">
 <h2 id="dots-chart">Dots Chart<a class="anchor" aria-label="anchor" href="#dots-chart"></a>
@@ -1403,7 +1247,7 @@ efficiently and effectively.</p>
 who have “a lot” or “some” trust in Institutions A, B, C, and D across
 three countries: Atlantis, Narnia, and Neverland. To start, we need to
 prepare our data for this minimal example as follows:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data4dots</span> <span class="op">&lt;-</span> <span class="va">gpp_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">country</span>, <span class="va">q1a</span>, <span class="va">q1b</span>, <span class="va">q1c</span>, <span class="va">q1d</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
@@ -1640,7 +1484,7 @@ to the dots.</li>
 <code>cvec</code>: A named vector linking specific values to their
 corresponding color codes.</li>
 </ul>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/wjp_dots.html">wjp_dots</a></span><span class="op">(</span></span>
 <span>    <span class="va">data4dots</span>,             </span>
 <span>    target      <span class="op">=</span> <span class="st">"percentage"</span>,</span>
@@ -1650,7 +1494,7 @@ corresponding color codes.</li>
 <span>                    <span class="st">"Narnia"</span>    <span class="op">=</span> <span class="st">"#9E6240"</span>,</span>
 <span>                    <span class="st">"Neverland"</span> <span class="op">=</span> <span class="st">"#2E0E02"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="dataviz_files/figure-html/unnamed-chunk-20-1.png" width="150%"></p>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-21-1.png" width="150%"></p>
 </div>
 <div class="section level3">
 <h3 id="controlling-opacities-and-shapes">Controlling opacities and shapes<a class="anchor" aria-label="anchor" href="#controlling-opacities-and-shapes"></a>
@@ -1665,7 +1509,7 @@ works on the same values passed as through the <code>colors</code> and
 <code>cvec</code> parameters. To check the symbol codes used in ggplot,
 you can read the <a href="https://ggplot2.tidyverse.org/articles/ggplot2-specs.html#sec:shape-spec" class="external-link">ggplot2
 documentation</a>.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/wjp_dots.html">wjp_dots</a></span><span class="op">(</span></span>
 <span>    <span class="va">data4dots</span>,             </span>
 <span>    target      <span class="op">=</span> <span class="st">"percentage"</span>,</span>
@@ -1683,7 +1527,7 @@ documentation</a>.</p>
 <span>                    <span class="st">"Narnia"</span>    <span class="op">=</span> <span class="fl">21</span>,</span>
 <span>                    <span class="st">"Neverland"</span> <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="dataviz_files/figure-html/unnamed-chunk-21-1.png" width="150%"></p>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-22-1.png" width="150%"></p>
 </div>
 <div class="section level3">
 <h3 id="adding-confidence-intervals">Adding confidence intervals<a class="anchor" aria-label="anchor" href="#adding-confidence-intervals"></a>
@@ -1697,7 +1541,7 @@ statistically different between males and females in our sample. For
 this, we first need to plot our data a little bit different given that,
 besides the data point (mean), we will also require the standard
 deviation and the sample size for each group and variable.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data4dots_errorbars</span> <span class="op">&lt;-</span> <span class="va">gpp_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">gend</span>, <span class="va">q1a</span>, <span class="va">q1b</span>, <span class="va">q1c</span>, <span class="va">q1d</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
@@ -1942,7 +1786,7 @@ inside the function call. Additionally, we also need to specify the
 <code>sd</code> and <code>sample_size</code> parameters, which are the
 column names that contain the standard deviation and the sample size for
 each variable and group.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/wjp_dots.html">wjp_dots</a></span><span class="op">(</span></span>
 <span>    <span class="va">data4dots_errorbars</span>,             </span>
 <span>    target      <span class="op">=</span> <span class="st">"mean"</span>,</span>
@@ -1954,7 +1798,7 @@ each variable and group.</p>
 <span>    sd          <span class="op">=</span> <span class="st">"sd"</span>,</span>
 <span>    sample_size <span class="op">=</span> <span class="st">"n"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="dataviz_files/figure-html/unnamed-chunk-23-1.png" width="150%"></p>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-24-1.png" width="150%"></p>
 </div>
 </div>
 <div class="section level2">
@@ -1967,7 +1811,7 @@ that we used for plotting our line chart above and just filtering for
 two points in time. Once we have the data we can apply the
 <code><a href="../reference/wjp_dumbbells.html">wjp_dumbbells()</a></code> function as usual with the parameters that
 we have reviewed in previous sections:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data4dumbbells</span> <span class="op">&lt;-</span> <span class="va">data4lines</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">year</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2017"</span>, <span class="st">"2022"</span><span class="op">)</span><span class="op">)</span> </span>
 <span></span>
@@ -1980,11 +1824,11 @@ we have reviewed in previous sections:</p>
 <span>                  <span class="st">"2022"</span> <span class="op">=</span> <span class="st">"#9E6240"</span><span class="op">)</span>,</span>
 <span>    cgroups   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2017"</span>, <span class="st">"2022"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="dataviz_files/figure-html/unnamed-chunk-24-1.png" width="150%"></p>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-25-1.png" width="150%"></p>
 <p>Adding value labels to a dumbbell chart is as easy as specifying the
 column names that have the value label (<code>labels</code>) and the
 label position (<code>labpos</code>) to the plotting function.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data4dumbbells</span> <span class="op">&lt;-</span> <span class="va">data4dumbbells</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    lab_position <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="va">year</span> <span class="op">==</span> <span class="st">"2022"</span>, <span class="va">percentage</span><span class="op">-</span><span class="fl">5</span>, <span class="va">percentage</span><span class="op">+</span><span class="fl">5</span><span class="op">)</span></span>
@@ -2001,7 +1845,7 @@ label position (<code>labpos</code>) to the plotting function.</p>
 <span>    labels    <span class="op">=</span> <span class="st">"value_label"</span>,</span>
 <span>    labpos    <span class="op">=</span> <span class="st">"lab_position"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="dataviz_files/figure-html/unnamed-chunk-25-1.png" width="150%"></p>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-26-1.png" width="150%"></p>
 </div>
 <div class="section level2">
 <h2 id="radar-chart">Radar Chart<a class="anchor" aria-label="anchor" href="#radar-chart"></a>
@@ -2016,7 +1860,7 @@ radar chart given a specific set of variables. Let’s assume that we want
 to plot the data points for a given set of variables that measure the
 performance of the justice system and we want to see disaggregated
 results per gender. We begin by wrangling the data accordingly:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data4radar</span> <span class="op">&lt;-</span> <span class="va">gpp_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">gend</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"q49"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
@@ -2329,7 +2173,8 @@ be plotted.</li>
 <li>
 <code>axis_var</code>: Equivalent to what is called
 <code>grouping</code> in other functions. It specifies the column
-containing the categorical groupings or variables.</li>
+containing the categorical groupings or variables that will be shown in
+each axis of the polar chart.</li>
 <li>
 <code>color_var</code>: The column name used to assign different
 data points to different lines. Each line will have a different
@@ -2341,22 +2186,15 @@ values to color codes.</li>
 <code>label_var</code>: Specifies the column containing the value
 labels to display.</li>
 </ul>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/wjp_radar.html">wjp_radar</a></span><span class="op">(</span></span>
 <span>    <span class="va">data4radar</span>,             </span>
 <span>    axis_var    <span class="op">=</span> <span class="st">"category"</span>,         </span>
-<span>    target_var  <span class="op">=</span> <span class="st">"percentage"</span>,       </span>
-<span>    label_var   <span class="op">=</span> <span class="st">"axis_label"</span>,        </span>
-<span>    color_var   <span class="op">=</span> <span class="st">"gender"</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Using one column matrices in `filter()` was deprecated in dplyr 1.1.0.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use one dimensional logical vectors instead.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">WJPr</span> package.</span></span>
-<span><span class="co">#&gt;   Please report the issue at <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/ctoruno/WJPr/issues&gt;</span>.</span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
-<p><img src="dataviz_files/figure-html/unnamed-chunk-27-1.png" width="150%"></p>
+<span>    target      <span class="op">=</span> <span class="st">"percentage"</span>,       </span>
+<span>    labels      <span class="op">=</span> <span class="st">"axis_label"</span>,        </span>
+<span>    colors      <span class="op">=</span> <span class="st">"gender"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-28-1.png" width="150%"></p>
 </div>
 <div class="section level3">
 <h3 id="markdown-support">Markdown support<a class="anchor" aria-label="anchor" href="#markdown-support"></a>
@@ -2368,8 +2206,8 @@ explanatory text along with the specific value labels for both lines we
 can do this by creating a new column called “axis_label” that will have
 bolded text using markdown syntax as well as the value labels displayed
 using some HTML and CSS styles:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data4radar</span> <span class="op">&lt;-</span> <span class="va">data4radar</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data4radar_md</span> <span class="op">&lt;-</span> <span class="va">data4radar</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">category</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    axis_label <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
@@ -2403,21 +2241,60 @@ using some HTML and CSS styles:</p>
 <span>  <span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/wjp_radar.html">wjp_radar</a></span><span class="op">(</span></span>
-<span>    data        <span class="op">=</span> <span class="va">data4radar</span>,</span>
+<span>    data        <span class="op">=</span> <span class="va">data4radar_md</span>,</span>
 <span>    axis_var    <span class="op">=</span> <span class="st">"category"</span>,</span>
-<span>    target_var  <span class="op">=</span> <span class="st">"percentage"</span>,</span>
-<span>    label_var   <span class="op">=</span> <span class="st">"axis_label_md"</span>,</span>
-<span>    color_var   <span class="op">=</span> <span class="st">"gender"</span>,</span>
+<span>    target      <span class="op">=</span> <span class="st">"percentage"</span>,       </span>
+<span>    labels      <span class="op">=</span> <span class="st">"axis_label_md"</span>,        </span>
+<span>    colors      <span class="op">=</span> <span class="st">"gender"</span>,</span>
 <span>    maincat     <span class="op">=</span> <span class="st">"Female"</span>,</span>
 <span>    cvec        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Male"</span>   <span class="op">=</span> <span class="st">"#141B41"</span>,</span>
 <span>                    <span class="st">"Female"</span> <span class="op">=</span> <span class="st">"#306BAC"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="dataviz_files/figure-html/unnamed-chunk-28-1.png" width="150%"></p>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-29-1.png" width="150%"></p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="rose-chart">Rose Chart<a class="anchor" aria-label="anchor" href="#rose-chart"></a>
 </h2>
+<p>A radar chart is an excellent option to display data points across
+multiple variables for a single unit or for a disaggregated overview
+within an unit. However, an alternative to display multiple data points
+for a single unit would be a rose chart, which also uses polar
+coordinates. For this, the user can make use of the
+<code><a href="../reference/wjp_rose.html">wjp_rose()</a></code> function. All the parameters used by
+<code><a href="../reference/wjp_rose.html">wjp_rose()</a></code> are used in the same way as in the previous
+functions:</p>
+<ul>
+<li>
+<code>target</code>: Specifies the column containing the values to
+be plotted.</li>
+<li>
+<code>grouping</code>: It specifies the column containing the
+categorical groupings or variables that will be shown in each axis of
+the polar chart.</li>
+<li>
+<code>cvec</code>: Contains a named vector that links specific
+values to color codes.</li>
+<li>
+<code>labels</code>: Specifies the column containing the axis labels
+to display.</li>
+</ul>
+<p>We can recreate the use of this plotting function using the same data
+used to exemplify the radar chart.</p>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data4rose</span> <span class="op">=</span> <span class="va">data4radar</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">gender</span> <span class="op">==</span> <span class="st">"Female"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/wjp_rose.html">wjp_rose</a></span><span class="op">(</span></span>
+<span>    <span class="va">data4rose</span>,             </span>
+<span>    target    <span class="op">=</span> <span class="st">"percentage"</span>,       </span>
+<span>    grouping  <span class="op">=</span> <span class="st">"category"</span>,    </span>
+<span>    labels    <span class="op">=</span> <span class="st">"axis_label"</span>,</span>
+<span>    cvec      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#FDF1E7"</span>, <span class="st">"#FBE2CF"</span>, <span class="st">"#F7C59F"</span>, </span>
+<span>                  <span class="st">"#E7C1A3"</span>, <span class="st">"#759EB8"</span>, <span class="st">"#7498B8"</span>, </span>
+<span>                  <span class="st">"#7392B7"</span>, <span class="st">"#4F6281"</span>, <span class="st">"#2A324B"</span><span class="op">)</span> </span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-30-1.png" width="150%"></p>
 </div>
 <div class="section level2">
 <h2 id="edgebars-chart">Edgebars Chart<a class="anchor" aria-label="anchor" href="#edgebars-chart"></a>
@@ -2439,7 +2316,7 @@ following in a specific order: Neverland (1), Atlantis (2), and Narnia
 (3). For this, we begin by setting the <code>custom_order</code> to TRUE
 and adding a new column to our data that has the specific order of the
 elements:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data4divbars</span> <span class="op">&lt;-</span> <span class="va">data4divbars</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    order_no <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
@@ -2461,9 +2338,9 @@ elements:</p>
 <span>    custom_order <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>    order        <span class="op">=</span> <span class="st">"order_no"</span> </span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="dataviz_files/figure-html/unnamed-chunk-29-1.png" width="150%"></p>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-31-1.png" width="150%"></p>
 <p>Same can be done when working with dot charts:</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data4dots</span> <span class="op">&lt;-</span> <span class="va">data4dots</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    order_no <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
@@ -2484,7 +2361,7 @@ elements:</p>
 <span>                    <span class="st">"Neverland"</span> <span class="op">=</span> <span class="st">"#2E0E02"</span><span class="op">)</span>,</span>
 <span>    order       <span class="op">=</span> <span class="st">"order_no"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="dataviz_files/figure-html/unnamed-chunk-30-1.png" width="150%"></p>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-32-1.png" width="150%"></p>
 </div>
 <div class="section level2">
 <h2 id="adding-more-customizations">Adding more customizations<a class="anchor" aria-label="anchor" href="#adding-more-customizations"></a>
@@ -2497,7 +2374,7 @@ from before and completely remove the panel grid and add some title and
 subtitle to it. We can do it by using the <code><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs()</a></code> and
 <code><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme()</a></code> functions from the ggplot2 package as shown
 bellow:</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">stacked_bar</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
 <span>    title    <span class="op">=</span> <span class="st">"Trust in Institution A"</span>,</span>
@@ -2509,7 +2386,7 @@ bellow:</p>
 <span>    plot.title.position <span class="op">=</span> <span class="st">"plot"</span>,</span>
 <span>    plot.subtitle       <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>face <span class="op">=</span> <span class="st">"italic"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> </span></code></pre></div>
-<p><img src="dataviz_files/figure-html/unnamed-chunk-31-1.png" width="150%"></p>
+<p><img src="dataviz_files/figure-html/unnamed-chunk-33-1.png" width="150%"></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
