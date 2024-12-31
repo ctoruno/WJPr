@@ -65,6 +65,13 @@ object with a dots chart following WJP style guidelines.
 wjp_fonts()
 
 # Preparing data
+gpp_data <- WJPr::gpp
+
+library(dplyr)
+library(tidyr)
+library(haven)
+
+# Preparing data
 data4dots <- gpp_data \%>\%
   select(country, q1a, q1b, q1c, q1d) \%>\%
   mutate(

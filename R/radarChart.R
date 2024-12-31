@@ -9,30 +9,65 @@
 #' @param target_var A string specifying the variable in the data frame that contains the values to be plotted.
 #' @param label_var A string specifying the variable in the data frame that contains the labels to be displayed.
 #' @param color_var A string specifying the variable in the data frame that contains the color groupings.
-#' @param colors A vector of colors to apply to lines. The first color will be applied to percentages in labels.
-#' @param order_var A string specifying the variable in the data frame that contains the display order of categories.
+#' @param cvec A vector of colors to apply to lines. The first color will be applied to percentages in labels.
+#' @param order_var A string specifying the variable in the data frame that contains the display order of categories. Default is NULL.
 #' @param maincat A string indicating the category of labels to show in the radar.
 #' @param source A string which can take two values (GPP or QRQ). 
 #'
 #' @return A ggplot object representing the radar plot.
 #'
 #' @examples
-#' \dontrun{
-#' data <- data.frame(
-#'   axis_var = rep(letters[1:5], each = 3),
-#'   target_var = runif(15, 0, 1),
-#'   label_var = rep(LETTERS[1:5], each = 3),
-#'   order_var = rep(1:5, each = 3),
-#'   year = rep(2020:2022, 5)
-#' )
-#' colors <- c("red", "blue", "green")
-#' maincat <- 2022
+#' # Always load the WJP fonts (optional)
+#' wjp_fonts()
 #' 
-#' wjp_radar(data, "axis_var", "target_var", "label_var", "order_var", colors, maincat)
-#' }
-#'
-#'
-#' @export
+#' # Preparing data
+#' gpp_data <- WJPr::gpp
+#' 
+#' library(dplyr)
+#' library(tidyr)
+#' library(haven)
+#' 
+#' data4radar <- gpp_data %>%
+#' select(gend, starts_with("q49")) %>%
+#'   mutate(
+#'     gender = case_when(
+#'       gend == 1 ~ "Male",
+#'       gend == 2 ~ "Female"
+#'     ),
+#'     across(
+#'       starts_with("q49"),
+#'       \(x) case_when(
+#'         x <= 2  ~ 1,
+#'         x <= 99 ~ 0
+#'       )
+#'     )
+#'   ) %>%
+#'   group_by(gender) %>%
+#'   summarise(
+#'     across(
+#'       starts_with("q49"),
+#'       \(x) mean(x, na.rm = T)*100
+#'     )
+#'   ) %>%
+#'   pivot_longer(
+#'     !gender,
+#'     names_to  = "category",
+#'     values_to = "percentage"
+#'   ) %>%
+#'   mutate(
+#'     axis_label = category
+#'   )
+#' 
+#' # Plotting chart
+#' wjp_radar(
+#'   data4radar,             
+#'  axis_var    = "category",         
+#'   target_var  = "percentage",       
+#'   label_var   = "axis_label",        
+#'   color_var   = "gender"
+#' )
+#' 
+
 
 wjp_radar <- function(
     data,             
@@ -40,10 +75,10 @@ wjp_radar <- function(
     target_var,       
     label_var,        
     color_var,
-    colors,   
-    order_var,
     maincat,
-    source = "GPP"
+    cvec      = NULL,   
+    order_var = NULL,
+    source    = "GPP"
 ){
   
   # Renaming variables in the data frame to match the function naming
@@ -51,8 +86,16 @@ wjp_radar <- function(
     rename(axis_var    = all_of(axis_var),
            target_var  = all_of(target_var),
            label_var   = all_of(label_var),
-           color_var   = all_of(color_var),
-           order_var   = all_of(order_var))
+           color_var   = all_of(color_var))
+  
+  if (is.null(order_var)){
+    data <- data %>%
+      group_by(color_var) %>% 
+      mutate(order_var = row_number())
+  } else {
+    data <- data %>%
+      rename(order_var = all_of(order_var))
+  }
   
   if (source == "GPP") {
     data <- data %>%
@@ -60,6 +103,12 @@ wjp_radar <- function(
         target_var = target_var/100
       )
   }
+  
+  # Default colors
+  if (is.null(cvec)){
+    cvec   <- c("#1D4E89", "#F79256")
+  }
+  cvec <- c(cvec, "#7D787D")
     
   # Counting number of axis for the radar
   nvertix <- length(unique(data$axis_var))
@@ -136,10 +185,13 @@ wjp_radar <- function(
   rescaled_data <- data %>% 
     bind_rows(
       data %>% 
-        filter(axis_var == data %>% 
-                 filter(order_var == 1) %>% 
-                 distinct(axis_var) %>% 
-                 pull(axis_var)) %>%
+        filter(
+          axis_var %in% 
+            (data %>% 
+               filter(order_var == 1) %>% 
+               distinct(axis_var) %>% 
+               pull(axis_var))
+        ) %>%
         mutate(axis_var  = "copy",
                order_var = nvertix)
     ) %>%
@@ -148,7 +200,7 @@ wjp_radar <- function(
     mutate(
       coords = rescaled_coords(target_var + central_distance)
     ) %>%
-    unnest(cols   = c(coords)) 
+    unnest(cols = c(coords)) 
   
   # Generating ggplot
   radar <-
@@ -214,7 +266,10 @@ wjp_radar <- function(
           y = y), 
       label = data %>% 
         arrange(order_var) %>% 
-        filter(color_var == maincat) %>% 
+        filter(color_var == data %>% 
+                 ungroup() %>% 
+                 distinct(color_var) %>% 
+                 slice_head(n=1)) %>% 
         pull(label_var),
       family      = "Lato Full",
       fontface    = "plain",
@@ -244,7 +299,7 @@ wjp_radar <- function(
     coord_cartesian(clip = "off") + 
     scale_x_continuous(expand = expansion(mult = 0.125)) + 
     scale_y_continuous(expand = expansion(mult = 0.10)) + 
-    scale_color_manual(values = colors) +
+    scale_color_manual(values = cvec) +
     theme_void() +
     theme(
       panel.background   = element_blank(),

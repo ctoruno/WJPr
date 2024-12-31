@@ -24,6 +24,10 @@
 #' # Always load the WJP fonts (optional)
 #' wjp_fonts()
 #' 
+#' library(dplyr)
+#' library(tidyr)
+#' library(haven)
+#' 
 #' # Preparing data
 #' data4divbars <- WJPr::gpp %>%
 #' filter(

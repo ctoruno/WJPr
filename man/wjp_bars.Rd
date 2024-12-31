@@ -61,6 +61,10 @@ wjp_fonts()
 # Preparing data
 gpp_data <- WJPr::gpp
 
+library(dplyr)
+library(tidyr)
+library(haven)
+
 data4bars <- gpp_data \%>\%
   select(country, year, q1a) \%>\%
   group_by(country, year) \%>\%

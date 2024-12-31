@@ -10,9 +10,9 @@ wjp_radar(
   target_var,
   label_var,
   color_var,
-  colors,
-  order_var,
   maincat,
+  cvec = NULL,
+  order_var = NULL,
   source = "GPP"
 )
 }
@@ -27,11 +27,11 @@ wjp_radar(
 
 \item{color_var}{A string specifying the variable in the data frame that contains the color groupings.}
 
-\item{colors}{A vector of colors to apply to lines. The first color will be applied to percentages in labels.}
-
-\item{order_var}{A string specifying the variable in the data frame that contains the display order of categories.}
-
 \item{maincat}{A string indicating the category of labels to show in the radar.}
+
+\item{cvec}{A vector of colors to apply to lines. The first color will be applied to percentages in labels.}
+
+\item{order_var}{A string specifying the variable in the data frame that contains the display order of categories. Default is NULL.}
 
 \item{source}{A string which can take two values (GPP or QRQ).}
 }
@@ -44,19 +44,54 @@ A ggplot object representing the radar plot.
 object with a radar chart following WJP style guidelines.
 }
 \examples{
-\dontrun{
-data <- data.frame(
-  axis_var = rep(letters[1:5], each = 3),
-  target_var = runif(15, 0, 1),
-  label_var = rep(LETTERS[1:5], each = 3),
-  order_var = rep(1:5, each = 3),
-  year = rep(2020:2022, 5)
+# Always load the WJP fonts (optional)
+wjp_fonts()
+
+# Preparing data
+gpp_data <- WJPr::gpp
+
+library(dplyr)
+library(tidyr)
+library(haven)
+
+data4radar <- gpp_data \%>\%
+select(gend, starts_with("q49")) \%>\%
+  mutate(
+    gender = case_when(
+      gend == 1 ~ "Male",
+      gend == 2 ~ "Female"
+    ),
+    across(
+      starts_with("q49"),
+      \(x) case_when(
+        x <= 2  ~ 1,
+        x <= 99 ~ 0
+      )
+    )
+  ) \%>\%
+  group_by(gender) \%>\%
+  summarise(
+    across(
+      starts_with("q49"),
+      \(x) mean(x, na.rm = T)*100
+    )
+  ) \%>\%
+  pivot_longer(
+    !gender,
+    names_to  = "category",
+    values_to = "percentage"
+  ) \%>\%
+  mutate(
+    axis_label = category
+  )
+
+# Plotting chart
+wjp_radar(
+  data4radar,             
+ axis_var    = "category",         
+  target_var  = "percentage",       
+  label_var   = "axis_label",        
+  color_var   = "gender"
 )
-colors <- c("red", "blue", "green")
-maincat <- 2022
-
-wjp_radar(data, "axis_var", "target_var", "label_var", "order_var", colors, maincat)
-}
-
 
 }

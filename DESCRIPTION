@@ -24,6 +24,7 @@ Imports:
     glue (>= 1.8.0),
     haven (>= 2.5.4),
     magrittr (>= 2.0.3),
+    purrr (>= 1.0.2),
     rlang (>= 1.1.4),
     showtext (>= 0.9.0),
     sysfonts (>= 0.8.9),

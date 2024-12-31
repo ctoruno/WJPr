@@ -34,7 +34,9 @@ This vignette demonstrates how to use the data visualization functions included 
 library(ggplot2)
 library(dplyr)
 library(tidyr)
+library(purrr)
 library(haven)
+library(ggtext)
 library(kableExtra)
 library(WJPr)
 ```
@@ -724,6 +726,115 @@ wjp_dumbbells(
 ```
 
 ## Radar Chart
+
+### Minimal example
+
+An alternative when trying to compare data points in multiple dimensions across groups is to use a radar chart. The `wjp_radar()` function can help you to quickly display a radar chart given a specific set of variables. Let's assume that we want to plot the data points for a given set of variables that measure the performance of the justice system and we want to see disaggregated results per gender. We begin by wrangling the data accordingly:
+
+```{r}
+data4radar <- gpp_data %>%
+  select(gend, starts_with("q49")) %>%
+  mutate(
+    gender = case_when(
+      gend == 1 ~ "Male",
+      gend == 2 ~ "Female"
+    ),
+    across(
+      starts_with("q49"),
+      \(x) case_when(
+        x <= 2  ~ 1,
+        x <= 99 ~ 0
+      )
+    )
+  ) %>%
+  group_by(gender) %>%
+  summarise(
+    across(
+      starts_with("q49"),
+      \(x) mean(x, na.rm = T)*100
+    )
+  ) %>%
+  pivot_longer(
+    !gender,
+    names_to  = "category",
+    values_to = "percentage"
+  ) %>%
+  mutate(
+    axis_label = category
+  )
+
+kbl(data4radar)
+```
+
+Once that we have the data ready, we can proceed by applying the `wjp_radar()` function. Several parameters are used in the same way as in the previous functions:
+
+- `target`: Specifies the column containing the values to be plotted.
+- `axis_var`: Equivalent to what is called `grouping` in other functions. It specifies the column containing the categorical groupings or variables.
+- `color_var`: The column name used to assign different data points to different lines. Each line will have a different color.
+- `cvec`: Contains a named vector that links specific values to color codes.
+- `label_var`: Specifies the column containing the value labels to display.
+
+
+```{r}
+wjp_radar(
+    data4radar,             
+    axis_var    = "category",         
+    target_var  = "percentage",       
+    label_var   = "axis_label",        
+    color_var   = "gender"
+)
+```
+
+### Markdown support
+
+One unique feature of the `wjp_radar()` function is its ability to support markdown and HTML aesthetics for the axis labels. Let's assume that we want to extend the previous plot by displaying some explanatory text along with the specific value labels for both lines we can do this by creating a new column called "axis_label" that will have bolded text using markdown syntax as well as the value labels displayed using some HTML and CSS styles:
+
+```{r}
+data4radar <- data4radar %>%
+  group_by(category) %>%
+  mutate(
+    axis_label = case_when(
+      category == "q49a"    ~ "**System is reliable**",
+      category == "q49e_G2" ~ "**System is trustworthy**",
+      category == "q49e_G1" ~ "**System is effective**",
+      category == "q49d_G2" ~ "**System is fast**",
+      category == "q49d_G1" ~ "**System is efficient**",
+      category == "q49c_G2" ~ "**System is stable**",
+      category == "q49c_G1" ~ "**System has no breaks**",
+      category == "q49b_G2" ~ "**System has plenty of<br>channels**",
+      category == "q49b_G1" ~ "**System has no loopholes**"
+    ),
+    
+    male_value   = percentage,
+    male_value   = if_else(gender == "Male", male_value, NA_real_),
+    male_value   = first(male_value, na_rm = T),
+    male_value   = paste0(format(round(male_value, 0), nsmall=0), "%"),
+    
+    female_value = percentage,
+    female_value = if_else(gender == "Female", female_value, NA_real_),
+    female_value = first(female_value, na_rm = T),
+    female_value   = paste0(format(round(female_value, 0), nsmall=0), "%"),
+    
+    axis_label_md = paste0(
+      "<span style='color:#49178e;font-size:4.217518mm'>",male_value,"</span>",
+      "<span style='color:#524F4C;font-size:4.217518mm'> | </span>",
+      "<span style='color:#dd58b1;font-size:4.217518mm'>",female_value,"</span><br>",
+      "<span style='color:#524F4C;font-size:3.514598mm;font-weight:bold'>",axis_label,"</span>"
+    )
+  )
+
+wjp_radar(
+    data        = data4radar_extended,
+    axis_var    = "category",
+    target_var  = "percentage",
+    label_var   = "axis_label_md",
+    color_var   = "gender",
+    maincat     = "Female",
+    cvec        = c("Male"   = "#141B41",
+                    "Female" = "#306BAC")
+)
+```
+
 
 ## Rose Chart
 

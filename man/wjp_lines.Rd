@@ -68,6 +68,10 @@ wjp_fonts()
 # Preparing data
 gpp_data <- WJPr::gpp
 
+library(dplyr)
+library(tidyr)
+library(haven)
+
 data4lines <- gpp_data \%>\%
 filter(
   country == "Atlantis"
