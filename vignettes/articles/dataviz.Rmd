@@ -860,7 +860,7 @@ A radar chart is an excellent option to display data points across multiple vari
 
 We can recreate the use of this plotting function using the same data used to exemplify the radar chart.
 
-```{r}
+```{r, fig.height=4}
 data4rose = data4radar %>% 
   filter(gender == "Female")
 
