@@ -1,25 +1,103 @@
+#' Plot a Rose Chart following WJP style guidelines
+#'
+#'#' @description
+#' `wjp_rose()` takes a data frame with a specific data structure (usually long shaped) and returns a ggplot
+#' object with a rose chart following WJP style guidelines.
+#'
+#' @param data A data frame containing the data to be plotted.
+#' @param target A string specifying the variable in the data frame that contains the values to be plotted.
+#' @param grouping A string specifying the variable in the data frame that contains the groups for the axis.
+#' @param labels A string specifying the variable in the data frame that contains the labels to be displayed.
+#' @param cvec A vector of colors to apply to lines.
+#' @param order_var A string specifying the variable in the data frame that contains the display order of categories. Default is NULL.
+#'
+#' @return A ggplot object representing the radar plot.
+#'
+#' @examples
+#' library(dplyr)
+#' library(tidyr)
+#' library(haven)
+#' library(ggplot2)
+#' 
+#' # Always load the WJP fonts (optional)
+#' wjp_fonts()
+#' 
+#' # Preparing data
+#' gpp_data <- WJPr::gpp
+#' 
+#' data4rose <- gpp_data %>%
+#' select(starts_with("q49")) %>%
+#'   mutate(
+#'     across(
+#'       starts_with("q49"),
+#'       \(x) case_when(
+#'         x <= 2  ~ 1,
+#'         x <= 99 ~ 0
+#'       )
+#'     )
+#'   ) %>%
+#'   summarise(
+#'     across(
+#'       starts_with("q49"),
+#'       \(x) mean(x, na.rm = T)*100
+#'     )
+#'   ) %>%
+#'   pivot_longer(
+#'     everything(),
+#'     names_to  = "category",
+#'     values_to = "percentage"
+#'   ) %>%
+#'   mutate(
+#'     axis_label = category
+#'   )
+#' 
+#' # Plotting chart
+#' wjp_rose(
+#'   data4rose,             
+#'   target    = "percentage",       
+#'   grouping  = "category",    
+#'   alabels   = "axis_label",
+#'   cvec      = c("#FDF1E7", "#FBE2CF", "#F7C59F", 
+#'                 "#E7C1A3", "#759EB8", "#7498B8", 
+#'                 "#7392B7", "#4F6281", "#2A324B") 
+#' )
+#' 
+
 wjp_rose <- function(
-    data,             # Data frame with data
-    target_var,       # Variable that will supply the values
-    grouping_var,     # Variable with the different categories to show
-    alabels_var,      # Variable that contains the axis labels to display
-    plabels_var,      # Variable that contains the percentages labels to displays
-    colors,           # Named vector with the colors to apply to bars.
-    order_var         # Variable to order the variables
+    data,             
+    target,       
+    grouping,    
+    labels,      
+    cvec      = NULL,           
+    order_var = NULL
 ){
   
   # Renaming variables in the data frame to match the function naming
   data <- data %>%
     rename(
-      target_var    = all_of(target_var),
-      grouping_var  = all_of(grouping_var),
-      alabels_var   = all_of(alabels_var),
-      plabels_var   = all_of(plabels_var),
-      order_var     = all_of(order_var)
+      target_var    = all_of(target),
+      grouping_var  = all_of(grouping),
+      alabels_var   = all_of(labels),
     ) %>%
     mutate(
       target_var = target_var/100
     )
+  
+  if (is.null(order_var)){
+    data <- data %>%
+      arrange(target_var) %>%
+      mutate(order_var = row_number())
+    
+    if (!is.null(cvec)) {
+      names(cvec) <- data %>%
+        arrange(target_var) %>%
+        pull(grouping_var)
+    }
+  } else {
+    data <- data %>%
+      rename(order_var = all_of(order_var))
+  }
+
   
   # Creating ggplot
   plt <- ggplot(data = data, 
@@ -48,12 +126,17 @@ wjp_rose <- function(
                   fill        = NA, 
                   label.color = NA) +
     coord_polar(clip = "off") +
-    scale_fill_manual(values  = colors) +
     scale_y_continuous(
       limits = c(-0.1, 1.35),
-      # expand = expansion(mult = 0.1),
       breaks = c(0, 0.2, 0.4, 0.6, 0.8, 1)
-    ) +
+    )
+  
+  if (!is.null(cvec)) {
+    plt <- plt +
+      scale_fill_manual(values  = cvec)
+  }
+  
+  plt <- plt +
     WJP_theme() +
     theme(legend.position    = "none",
           axis.line.x        = element_blank(),

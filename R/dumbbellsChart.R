@@ -30,7 +30,7 @@
 #' # Preparing data
 #' gpp_data <- WJPr::gpp
 #' 
-#' data4lines <- gpp_data %>%
+#' data4dumbbells <- gpp_data %>%
 #' filter(
 #'   country == "Atlantis" & year %in% c(2017, 2022)
 #' ) %>%
@@ -86,7 +86,7 @@
 #'   
 #'   # Plotting chart
 #'   wjp_dumbbells(
-#'     data = data4dumbbells,
+#'     data4dumbbells,
 #'     target    = "percentage",
 #'     grouping  = "institution",
 #'     color     = "year",

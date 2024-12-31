@@ -179,7 +179,7 @@ wjp_bars(
 The `wjp_bars()` function can also be used to create stacked bar charts. For instance, instead of plotting the percentage of respondents who have "a lot" or "some" trust in Institution A, we can visualize the percentage distribution for all possible responses in each country. First, we modify the data to reflect this new design:
 
 ```{r}
-data4bars <- gpp_data %>%
+data4stackedbars <- gpp_data %>%
   filter(
     year == 2022
   ) %>%
@@ -227,7 +227,7 @@ Once the data is ready, we can use the `wjp_bars()` function again, this time se
 
 ```{r, warning=FALSE}
 stacked_bar <- wjp_bars(
-    data4bars,              
+    data4stackedbars,              
     target    = "percentage",        
     grouping  = "country",
     labels    = "value_label",
@@ -324,6 +324,20 @@ wjp_divbars(
     cvec        = c("Trust"     = "#4F518C",
                     "No Trust"  = "#2C2A4A"),
     labels      = "value_label"
+)
+```
+
+## Edgebars
+
+Edgebars is a specific type of horizontal bars that have the Y-Axis text on top of the bar instead that along the axis. This design modification is a good option when the dimensions of the plot are small (narrow) and the axis texts are expected to be long. Use the  wjp_edgebars()` function to plot these bars in a similar way than previous examples.
+
+```{r}
+wjp_edgebars(
+    data4bars,              
+    target    = "trust",        
+    grouping  = "country",
+    labels    = "color_variable",
+    cvec      = "#F6D8AE"
 )
 ```
 
@@ -769,19 +783,19 @@ kbl(data4radar)
 Once that we have the data ready, we can proceed by applying the `wjp_radar()` function. Several parameters are used in the same way as in the previous functions:
 
 - `target`: Specifies the column containing the values to be plotted.
-- `axis_var`: Equivalent to what is called `grouping` in other functions. It specifies the column containing the categorical groupings or variables.
+- `axis_var`: Equivalent to what is called `grouping` in other functions. It specifies the column containing the categorical groupings or variables that will be shown in each axis of the polar chart.
 - `color_var`: The column name used to assign different data points to different lines. Each line will have a different color.
 - `cvec`: Contains a named vector that links specific values to color codes.
 - `label_var`: Specifies the column containing the value labels to display.
 
 
-```{r, fig.height=4}
+```{r, fig.height=4, warning=FALSE}
 wjp_radar(
     data4radar,             
     axis_var    = "category",         
-    target_var  = "percentage",       
-    label_var   = "axis_label",        
-    color_var   = "gender"
+    target      = "percentage",       
+    labels      = "axis_label",        
+    colors      = "gender"
 )
 ```
 
@@ -789,8 +803,8 @@ wjp_radar(
 
 One unique feature of the `wjp_radar()` function is its ability to support markdown and HTML aesthetics for the axis labels. Let's assume that we want to extend the previous plot by displaying some explanatory text along with the specific value labels for both lines we can do this by creating a new column called "axis_label" that will have bolded text using markdown syntax as well as the value labels displayed using some HTML and CSS styles:
 
-```{r, fig.height=4}
-data4radar <- data4radar %>%
+```{r, fig.height=4, warning=FALSE}
+data4radar_md <- data4radar %>%
   group_by(category) %>%
   mutate(
     axis_label = case_when(
@@ -824,11 +838,11 @@ data4radar <- data4radar %>%
   )
 
 wjp_radar(
-    data        = data4radar,
+    data        = data4radar_md,
     axis_var    = "category",
-    target_var  = "percentage",
-    label_var   = "axis_label_md",
-    color_var   = "gender",
+    target      = "percentage",       
+    labels      = "axis_label_md",        
+    colors      = "gender",
     maincat     = "Female",
     cvec        = c("Male"   = "#141B41",
                     "Female" = "#306BAC")
@@ -836,6 +850,30 @@ wjp_radar(
 ```
 
 ## Rose Chart
+
+A radar chart is an excellent option to display data points across multiple variables for a single unit or for a disaggregated overview within an unit. However, an alternative to display multiple data points for a single unit would be a rose chart, which also uses polar coordinates. For this, the user can make use of the `wjp_rose()` function. All the parameters used by `wjp_rose()` are used in the same way as in the previous functions:
+
+- `target`: Specifies the column containing the values to be plotted.
+- `grouping`: It specifies the column containing the categorical groupings or variables that will be shown in each axis of the polar chart.
+- `cvec`: Contains a named vector that links specific values to color codes.
+- `labels`: Specifies the column containing the axis labels to display.
+
+We can recreate the use of this plotting function using the same data used to exemplify the radar chart.
+
+```{r}
+data4rose = data4radar %>% 
+  filter(gender == "Female")
+
+wjp_rose(
+    data4rose,             
+    target    = "percentage",       
+    grouping  = "category",    
+    labels    = "axis_label",
+    cvec      = c("#FDF1E7", "#FBE2CF", "#F7C59F", 
+                  "#E7C1A3", "#759EB8", "#7498B8", 
+                  "#7392B7", "#4F6281", "#2A324B") 
+)
+```
 
 ## Edgebars Chart
 

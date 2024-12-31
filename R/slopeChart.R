@@ -22,6 +22,7 @@
 #' library(tidyr)
 #' library(haven)
 #' library(ggplot2)
+#' library(ggrepel)
 #' 
 #' # Always load the WJP fonts if not passing a custom theme to function
 #' wjp_fonts()

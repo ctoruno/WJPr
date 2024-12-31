@@ -7,9 +7,9 @@
 wjp_radar(
   data,
   axis_var,
-  target_var,
-  label_var,
-  color_var,
+  target,
+  labels,
+  colors,
   maincat,
   cvec = NULL,
   order_var = NULL,
@@ -21,15 +21,15 @@ wjp_radar(
 
 \item{axis_var}{A string specifying the variable in the data frame that contains the groups for the axis.}
 
-\item{target_var}{A string specifying the variable in the data frame that contains the values to be plotted.}
+\item{target}{A string specifying the variable in the data frame that contains the values to be plotted.}
 
-\item{label_var}{A string specifying the variable in the data frame that contains the labels to be displayed.}
+\item{labels}{A string specifying the variable in the data frame that contains the labels to be displayed.}
 
-\item{color_var}{A string specifying the variable in the data frame that contains the color groupings.}
+\item{colors}{A string specifying the variable in the data frame that contains the color groupings.}
 
 \item{maincat}{A string indicating the category of labels to show in the radar.}
 
-\item{cvec}{A vector of colors to apply to lines. The first color will be applied to percentages in labels.}
+\item{cvec}{A named vector of colors to apply to lines.}
 
 \item{order_var}{A string specifying the variable in the data frame that contains the display order of categories. Default is NULL.}
 
@@ -48,6 +48,7 @@ library(dplyr)
 library(tidyr)
 library(haven)
 library(ggplot2)
+library(purrr)
 
 # Always load the WJP fonts (optional)
 wjp_fonts()
@@ -89,10 +90,10 @@ select(gend, starts_with("q49")) \%>\%
 # Plotting chart
 wjp_radar(
   data4radar,             
- axis_var    = "category",         
-  target_var  = "percentage",       
-  label_var   = "axis_label",        
-  color_var   = "gender"
+  axis_var    = "category",         
+  target      = "percentage",       
+  labels      = "axis_label",        
+  colors      = "gender"
 )
 
 }

@@ -5,11 +5,10 @@
 #' object with an edgebar chart following WJP style guidelines.
 #'
 #' @param data A data frame containing the data to be plotted.
-#' @param y_value A string specifying the variable in the data frame that contains the numeric values to be plotted as bars.
-#' @param x_var A string specifying the variable in the data frame that contains the categories for the x-axis.
-#' @param label_var A string specifying the variable in the data frame that contains the labels to be displayed near the bars.
-#' @param color_var A string specifying the variable in the data frame that contains the the color groupings for the bars. Default is NULL.
-#' @param bar_colors A named vector specifying the colors for the bars. Default is NULL.
+#' @param target A string specifying the variable in the data frame that contains the numeric values to be plotted as bars.
+#' @param grouping A string specifying the variable in the data frame that contains the categories for the x-axis.
+#' @param labels A string specifying the variable in the data frame that contains the labels to be displayed near the bars.
+#' @param cvec String. Hex code of the color for the bars. Default is NULL.
 #' @param x_lab_pos A string specifying the variable in the data frame that contains the order in which the bars will be displayed. Default is NULL.
 #' @param y_lab_pos A numeric value specifying the y-axis position for displaying labels. Default is 0.
 #' @param nudge_lab A numeric value specifying the padding for displaying labels in milimeters. Default is 2.5.
@@ -20,26 +19,64 @@
 #' @return A ggplot object representing the edge bars plot.
 #'
 #' @examples
-#' \dontrun{
-#' data <- data.frame(
-#'   y_value = c(30, 50, 20),
-#'   x_var = c("Category A", "Category B", "Category C"),
-#'   label_var = c("Label A", "Label B", "Label C")
+#' library(dplyr)
+#' library(tidyr)
+#' library(haven)
+#' library(ggplot2)
+#' # Always load the WJP fonts (optional)
+#' wjp_fonts()
+#' 
+#' # Preparing data
+#' gpp_data <- WJPr::gpp
+#' 
+#' data4bars <- gpp_data %>%
+#'   select(country, year, q1a) %>%
+#'   group_by(country, year) %>%
+#'   mutate(
+#'     q1a = as.double(q1a),
+#'     trust = case_when(
+#'       q1a <= 2  ~ 1,
+#'       q1a <= 4  ~ 0,
+#'       q1a == 99 ~ NA_real_
+#'     ),
+#'     year = as.character(year)
+#'   ) %>%
+#'   summarise(
+#'     trust   = mean(trust, na.rm = TRUE),
+#'     .groups = "keep"
+#'   ) %>%
+#'   mutate(
+#'     trust = trust*100
+#'   ) %>%
+#'   filter(year == "2022") %>%
+#'   mutate(
+#'     color_variable = country,
+#'     value_label = paste0(
+#'       format(
+#'         round(trust, 0),
+#'         nsmall = 0
+#'       ),
+#'       "%"
+#'     ),
+#'     label_position = trust + 5
+#'   )
+#' 
+#' # Plotting chart
+#' wjp_edgebars(
+#'   data4bars,              
+#'   target    = "trust",        
+#'   grouping  = "country",
+#'   labels    = "color_variable",
+#'   cvec      = "#F6D8AE"
 #' )
 #' 
-#' wjp_edgebars(data, "y_value", "x_var", "label_var")
-#' }
-#'
-#'
-#' @export
 
 wjp_edgebars <- function(
     data,
-    y_value,
-    x_var,
-    label_var,
-    color_var    = NULL,
-    bar_colors   = NULL,
+    target,
+    grouping,
+    labels,
+    cvec         = NULL,
     x_lab_pos    = NULL,
     y_lab_pos    = 0,
     nudge_lab    = 2.5,
@@ -49,14 +86,16 @@ wjp_edgebars <- function(
   ) {
   
   # Renaming variables in the data frame to match the function naming
-  if(is.null(color_var)) {
-    color_var  <- "color"
-    bar_colors <- c("anchor" = "#2a2a94")
-    data <- data %>%
-      mutate(
-        color = "anchor"
-      )
+  if (is.null(cvec)) {
+    cvec <- c("anchor" = "#2a2a94")
+  } else {
+    cvec <- c("anchor" = cvec)
   }
+  
+  data <- data %>%
+    mutate(
+      color = "anchor"
+    )
   
   if (is.null(x_lab_pos)) {
     x_lab_pos <- "label_position"
@@ -69,11 +108,10 @@ wjp_edgebars <- function(
   
   data <- data %>%
     rename(
-      y_value   = all_of(y_value),
-      x_var     = all_of(x_var),
-      label_var = all_of(label_var),
-      x_lab_pos = all_of(x_lab_pos),
-      color_var = all_of(color_var)
+      y_value   = all_of(target),
+      x_var     = all_of(grouping),
+      label_var = all_of(labels),
+      x_lab_pos = all_of(x_lab_pos)
     )
   
   # Creating plot
@@ -82,7 +120,7 @@ wjp_edgebars <- function(
     aes(
       x    = reorder(x_var,x_lab_pos),
       y    = y_value, 
-      fill = color_var
+      fill = color
     )
   ) +
     geom_bar(
@@ -122,7 +160,7 @@ wjp_edgebars <- function(
       hjust    = -0.1
     ) +
     scale_fill_manual(
-      values = bar_colors
+      values = cvec
     ) +
     scale_y_continuous(
       expand = expansion(mult = c(0,0.15))

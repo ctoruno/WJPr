@@ -6,10 +6,10 @@
 #'
 #' @param data A data frame containing the data to be plotted.
 #' @param axis_var A string specifying the variable in the data frame that contains the groups for the axis.
-#' @param target_var A string specifying the variable in the data frame that contains the values to be plotted.
-#' @param label_var A string specifying the variable in the data frame that contains the labels to be displayed.
-#' @param color_var A string specifying the variable in the data frame that contains the color groupings.
-#' @param cvec A vector of colors to apply to lines. The first color will be applied to percentages in labels.
+#' @param target A string specifying the variable in the data frame that contains the values to be plotted.
+#' @param labels A string specifying the variable in the data frame that contains the labels to be displayed.
+#' @param colors A string specifying the variable in the data frame that contains the color groupings.
+#' @param cvec A named vector of colors to apply to lines.
 #' @param order_var A string specifying the variable in the data frame that contains the display order of categories. Default is NULL.
 #' @param maincat A string indicating the category of labels to show in the radar.
 #' @param source A string which can take two values (GPP or QRQ). 
@@ -21,6 +21,7 @@
 #' library(tidyr)
 #' library(haven)
 #' library(ggplot2)
+#' library(purrr)
 #' 
 #' # Always load the WJP fonts (optional)
 #' wjp_fonts()
@@ -62,10 +63,10 @@
 #' # Plotting chart
 #' wjp_radar(
 #'   data4radar,             
-#'  axis_var    = "category",         
-#'   target_var  = "percentage",       
-#'   label_var   = "axis_label",        
-#'   color_var   = "gender"
+#'   axis_var    = "category",         
+#'   target      = "percentage",       
+#'   labels      = "axis_label",        
+#'   colors      = "gender"
 #' )
 #' 
 
@@ -73,9 +74,9 @@
 wjp_radar <- function(
     data,             
     axis_var,         
-    target_var,       
-    label_var,        
-    color_var,
+    target,       
+    labels,        
+    colors,
     maincat,
     cvec      = NULL,   
     order_var = NULL,
@@ -85,9 +86,9 @@ wjp_radar <- function(
   # Renaming variables in the data frame to match the function naming
   data <- data %>%
     rename(axis_var    = all_of(axis_var),
-           target_var  = all_of(target_var),
-           label_var   = all_of(label_var),
-           color_var   = all_of(color_var))
+           target_var  = all_of(target),
+           label_var   = all_of(labels),
+           color_var   = all_of(colors))
   
   if (is.null(order_var)){
     data <- data %>%

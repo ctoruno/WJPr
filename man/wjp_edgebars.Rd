@@ -6,11 +6,10 @@
 \usage{
 wjp_edgebars(
   data,
-  y_value,
-  x_var,
-  label_var,
-  color_var = NULL,
-  bar_colors = NULL,
+  target,
+  grouping,
+  labels,
+  cvec = NULL,
   x_lab_pos = NULL,
   y_lab_pos = 0,
   nudge_lab = 2.5,
@@ -22,15 +21,13 @@ wjp_edgebars(
 \arguments{
 \item{data}{A data frame containing the data to be plotted.}
 
-\item{y_value}{A string specifying the variable in the data frame that contains the numeric values to be plotted as bars.}
+\item{target}{A string specifying the variable in the data frame that contains the numeric values to be plotted as bars.}
 
-\item{x_var}{A string specifying the variable in the data frame that contains the categories for the x-axis.}
+\item{grouping}{A string specifying the variable in the data frame that contains the categories for the x-axis.}
 
-\item{label_var}{A string specifying the variable in the data frame that contains the labels to be displayed near the bars.}
+\item{labels}{A string specifying the variable in the data frame that contains the labels to be displayed near the bars.}
 
-\item{color_var}{A string specifying the variable in the data frame that contains the the color groupings for the bars. Default is NULL.}
-
-\item{bar_colors}{A named vector specifying the colors for the bars. Default is NULL.}
+\item{cvec}{String. Hex code of the color for the bars. Default is NULL.}
 
 \item{x_lab_pos}{A string specifying the variable in the data frame that contains the order in which the bars will be displayed. Default is NULL.}
 
@@ -52,15 +49,55 @@ A ggplot object representing the edge bars plot.
 object with an edgebar chart following WJP style guidelines.
 }
 \examples{
-\dontrun{
-data <- data.frame(
-  y_value = c(30, 50, 20),
-  x_var = c("Category A", "Category B", "Category C"),
-  label_var = c("Label A", "Label B", "Label C")
+library(dplyr)
+library(tidyr)
+library(haven)
+library(ggplot2)
+# Always load the WJP fonts (optional)
+wjp_fonts()
+
+# Preparing data
+gpp_data <- WJPr::gpp
+
+data4bars <- gpp_data \%>\%
+  select(country, year, q1a) \%>\%
+  group_by(country, year) \%>\%
+  mutate(
+    q1a = as.double(q1a),
+    trust = case_when(
+      q1a <= 2  ~ 1,
+      q1a <= 4  ~ 0,
+      q1a == 99 ~ NA_real_
+    ),
+    year = as.character(year)
+  ) \%>\%
+  summarise(
+    trust   = mean(trust, na.rm = TRUE),
+    .groups = "keep"
+  ) \%>\%
+  mutate(
+    trust = trust*100
+  ) \%>\%
+  filter(year == "2022") \%>\%
+  mutate(
+    color_variable = country,
+    value_label = paste0(
+      format(
+        round(trust, 0),
+        nsmall = 0
+      ),
+      "\%"
+    ),
+    label_position = trust + 5
+  )
+
+# Plotting chart
+wjp_edgebars(
+  data4bars,              
+  target    = "trust",        
+  grouping  = "country",
+  labels    = "color_variable",
+  cvec      = "#F6D8AE"
 )
-
-wjp_edgebars(data, "y_value", "x_var", "label_var")
-}
-
 
 }
