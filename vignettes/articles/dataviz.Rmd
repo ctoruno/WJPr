@@ -775,7 +775,7 @@ Once that we have the data ready, we can proceed by applying the `wjp_radar()` f
 - `label_var`: Specifies the column containing the value labels to display.
 
 
-```{r}
+```{r, fig.height=5}
 wjp_radar(
     data4radar,             
     axis_var    = "category",         
@@ -789,7 +789,7 @@ wjp_radar(
 
 One unique feature of the `wjp_radar()` function is its ability to support markdown and HTML aesthetics for the axis labels. Let's assume that we want to extend the previous plot by displaying some explanatory text along with the specific value labels for both lines we can do this by creating a new column called "axis_label" that will have bolded text using markdown syntax as well as the value labels displayed using some HTML and CSS styles:
 
-```{r}
+```{r, fig.height=5}
 data4radar <- data4radar %>%
   group_by(category) %>%
   mutate(
