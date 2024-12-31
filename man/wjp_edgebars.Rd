@@ -53,6 +53,8 @@ library(dplyr)
 library(tidyr)
 library(haven)
 library(ggplot2)
+library(ggtext)
+
 # Always load the WJP fonts (optional)
 wjp_fonts()
 
