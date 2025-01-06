@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   articles/dataviz: dataviz.html
-last_built: 2025-01-06T14:50Z
+last_built: 2025-01-06T15:04Z
 urls:
   reference: https://ctoruno.github.io/WJPr/reference
   article: https://ctoruno.github.io/WJPr/articles
