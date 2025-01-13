@@ -98,7 +98,7 @@ wjp_gauge <- function(
           y     = labpos,
           x     = 1.5),
       color     = "white",
-      size      = 2.166058*.pt,
+      size      = 1.966058*.pt,
       family    = "Lato Full",
       fontface  = "bold"
     ) +
